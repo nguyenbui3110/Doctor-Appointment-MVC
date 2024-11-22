@@ -5,9 +5,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="Email\" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\DoctorAppointment.Application\DoctorAppointment.Application.csproj" />
     <ProjectReference Include="..\DoctorAppointment.Domain\DoctorAppointment.Domain.csproj" />
   </ItemGroup>
