@@ -1,0 +1,52 @@
+﻿@*
+For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_AuthLayout";
+    ViewData["title"] = "Register";
+    ViewData["Greeting"] = "Create an Account!";
+}
+@model RegisterModel
+<form asp-action="register" asp-controller="Auth" method="post">
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <input asp-for="UserName" class="form-control form-control-user" placeholder="UserName">
+            <span asp-validation-for="UserName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-12">
+            <input asp-for="FullName" class="form-control form-control-user" placeholder="FullName">
+            <span asp-validation-for="FullName" class="text-danger"></span>
+        </div>
+    </div>
+    <div class="form-group">
+        <input asp-for="Email" class="form-control form-control-user" placeholder="Email Address">
+        <span asp-validation-for="Email" class="text-danger"></span>
+    </div>
+    <div class="form-group row">
+        <div class="col-sm-6 mb-3 mb-sm-0">
+            <input asp-for="Password" class="form-control form-control-user"
+                   placeholder="Password">
+            <span asp-validation-for="Password" class="text-danger"></span>
+        </div>
+        <div class="col-sm-6">
+            <input asp-for="ConfirmPassword" class="form-control form-control-user" id="exampleRepeatPassword"
+                   placeholder="Repeat Password">
+            <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary btn-user btn-block">
+        Register Account
+    </button>
+    <hr>
+    <a href="#" class="btn btn-google btn-user btn-block">
+        <i class="fab fa-google fa-fw"></i> Register with Google
+    </a>
+    <a href="#" class="btn btn-facebook btn-user btn-block">
+        <i class="fab fa-facebook-f fa-fw"></i> Register with Facebook
+    </a>
+</form>
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
