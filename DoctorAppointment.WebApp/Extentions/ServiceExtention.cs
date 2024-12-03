@@ -1,4 +1,5 @@
-using System;
+﻿using System;
+using AutoMapper;
 using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Application.Services;
 using DoctorAppointment.Domain.Data;
@@ -26,6 +27,7 @@ public static class ServiceExtentions
     {
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
+        services.AddScoped<IDoctorRepo, DoctorRepo>();
 
         return services;
     }
