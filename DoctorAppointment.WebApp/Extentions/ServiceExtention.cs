@@ -2,6 +2,7 @@
 using AutoMapper;
 using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Application.Services;
+using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Infrastructure.Data;
@@ -20,6 +21,10 @@ public static class ServiceExtentions
 			.AddClasses(c => c.AssignableTo<BaseService>())
 			.AsSelf()
 			.WithScopedLifetime());
+        services.Scan(scan => scan.FromAssemblyOf<IBaseService>()
+            .AddClasses(c => c.AssignableTo<IBaseService>())
+            .AsImplementedInterfaces()
+            .WithScopedLifetime());
         return services;
     }
 

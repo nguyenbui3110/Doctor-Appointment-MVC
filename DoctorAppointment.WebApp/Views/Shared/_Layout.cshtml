@@ -62,7 +62,7 @@
     </nav>
     <div class="min-vh-100">
        
-
+        @RenderBody()
         @if (string.IsNullOrEmpty(ViewData["BodyContent"] as string))
         {
         <!-- Popular Specialties Section -->
@@ -103,10 +103,6 @@
                 </div>
             </div>
         </div>
-        }
-        else
-        {
-            @RenderBody()
         }
         
     </div>
