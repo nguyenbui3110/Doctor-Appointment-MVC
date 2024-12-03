@@ -5,6 +5,7 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
+    <Folder Include="Views\Admin\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DoctorAppointment.Application\DoctorAppointment.Application.csproj" />
