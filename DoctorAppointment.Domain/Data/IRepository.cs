@@ -1,29 +1,16 @@
 using System;
 using System.Linq.Expressions;
-using DoctorAppointment.Domain.Specification;
 
 namespace DoctorAppointment.Domain.Data;
 
-public interface IRepository<T>
-    {
-        Task<T?> GetByIdAsync(int id, bool isNoTracking = false);
-        Task<IEnumerable<T>> GetAllAsync();
-        
-        void Add(T entity);
-        void Update(T entity);
-        void Delete(T entity);
-        void RemoveRange(IEnumerable<T> entities);
-        
-        Task<T?> FindOneAsync(ISpecification<T> spec);
-        Task<IEnumerable<T>> FindListAsync(ISpecification<T> spec);
-        
-        Task<int> CountAsync(ISpecification<T> spec);
-        Task<int> CountAsync(Expression<Func<T, bool>> predicate);
-        // Task<double> AverageAsync(ISpecification<T> spec, Expression<Func<T, int>> selector);
-        Task<double> AverageAsync(ISpecification<T> spec, Expression<Func<T, double>> selector);
-        Task<bool> AnyAsync(ISpecification<T> spec);
-        Task<bool> AnyAsync(int id);
-        
-        Task<(IEnumerable<T>, int)> FindWithTotalCountAsync(ISpecification<T> specification);
-        Task<double> SumAsync(ISpecification<T> spec, Expression<Func<T, double>> selector);
-    }
+public interface IRepository<TEntity>
+{
+    IQueryable<TEntity> GetAll();
+    Task<TEntity?> GetByIdAsync(int id);
+
+    void Add(TEntity entity);
+    void Update(TEntity entity);
+    void Delete(TEntity entity);
+    void RemoveRange(IEnumerable<TEntity> entities);
+    public Task<(IEnumerable<TEntity>, int)> ApplyPaing(IQueryable<TEntity> queryable, int page, int pageSize);
+}

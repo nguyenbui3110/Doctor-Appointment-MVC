@@ -12,5 +12,5 @@ public class DoctorViewModel
     public string? About { get; set; }
 
     // Optional for tracking users associated with doctors
-    public User User { get; set; }
+    public UserViewModel User { get; set; }
 }
