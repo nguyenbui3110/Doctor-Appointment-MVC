@@ -14,6 +14,7 @@ public class DoctorProfile : Profile
             .ForMember(dest => dest.Specialization, opt => opt.MapFrom(src => src.Specialization))
             .ForMember(dest => dest.YearsOfExperience, opt => opt.MapFrom(src => src.YearsOfExperience))
             .ForMember(dest => dest.About, opt => opt.MapFrom(src => src.About))
-            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User));
+            .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User)).ReverseMap();
+        CreateMap<DoctorPostModel, Doctor>();
     }
 }

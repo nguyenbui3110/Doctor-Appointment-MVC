@@ -1,0 +1,24 @@
+﻿@page
+@model List<DoctorAppointment.Application.Model.DoctorViewModel>
+@{
+    ViewData["BodyContent"] = "true";
+    ViewData["Title"] = "Doctors";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        @foreach (var doctor in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="" class="card-img-top" alt="@doctor.User.FullName" />
+                    <div class="card-body">
+                        <h5 class="card-title">@doctor.User.FullName</h5>
+                        <h6 class="card-subtitle mb-2 text-muted">@doctor.Specialization</h6>
+                        <p class="card-text">@doctor.About</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</div>

@@ -61,9 +61,10 @@
         </div>
     </nav>
     <div class="min-vh-100">
+       
         @RenderBody()
-
-
+        @if (string.IsNullOrEmpty(ViewData["BodyContent"] as string))
+        {
         <!-- Popular Specialties Section -->
         <div class="container my-5">
             <h2 class="mb-4">Chuyên khoa phổ biến</h2>
@@ -102,6 +103,8 @@
                 </div>
             </div>
         </div>
+        }
+        
     </div>
     <!-- Footer -->
     <footer class="bg-light py-3">
