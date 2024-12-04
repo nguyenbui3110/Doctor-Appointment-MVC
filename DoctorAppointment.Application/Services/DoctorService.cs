@@ -3,25 +3,82 @@ using AutoMapper;
 using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
+using DoctorAppointment.Domain.Constants;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Domain.Enums;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace DoctorAppointment.Application.Services;
 
-public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUser currentUser) 
-    :BaseService(unitOfWork, mapper, currentUser), IDoctorService
+public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
+                             IMapper mapper, ICurrentUser currentUser,
+                              UserManager<User> userManager, AuthService authService)
+    : BaseService(unitOfWork, mapper, currentUser), IDoctorService
 {
     public async Task<DoctorViewModel> GetByIdAsync(int id)
     {
-        var doctor = await repository.GetByIdAsync(id);
+        var doctor = await repository.QueryGetById(id).Include(d=>d.User).FirstOrDefaultAsync();
         return Mapper.Map<DoctorViewModel>(doctor);
     }
 
+    public async Task<PagingItem<DoctorViewModel>> GetPagedAsync(int page, int pageSize = 8)
+    {
+        var doctors = repository.GetAll().Include(doctor => doctor.User);
+        (var data, var Count) = await repository.ApplyPaing(doctors, page, pageSize);
+        return new PagingItem<DoctorViewModel>
+        {
+            Items = Mapper.Map<List<DoctorViewModel>>(data),
+            CountPages = (int)Math.Ceiling(Count / (double)pageSize),
+            CurrentPage = page,
+            PageSize = pageSize,
+            PageUrl = i => $"?page={i}"
+        };
+    }
     public async Task<List<DoctorViewModel>> GetBySpecialization(Specialization specialization)
     {
         var doctors = await repository.GetBySpecialization(specialization).ToListAsync();
         return Mapper.Map<List<DoctorViewModel>>(doctors);
+    }
+
+    public async Task<bool> AddDoctor(DoctorPostModel model)
+    {
+        var doctor = Mapper.Map<Doctor>(model);
+        var user = new User
+        {
+            UserName = model.RegisterModel.UserName,
+            FullName = model.RegisterModel.FullName,
+            Email = model.RegisterModel.Email
+        };
+        var result = await userManager.CreateAsync(user, model.RegisterModel.Password);
+        if (result.Succeeded)
+        {
+            user = await userManager.FindByNameAsync(model.RegisterModel.UserName);
+            user.EmailConfirmed = true;
+            var addRoleResult = await userManager.AddToRoleAsync(user, AppRole.Doctor);
+            if (!addRoleResult.Succeeded)
+                {
+                    throw new Exception("Error while adding role");
+                    
+                }
+            doctor.UserId = user.Id;
+            repository.Add(doctor);
+            await UnitOfWork.SaveChangesAsync();
+            return true;
+        }
+        return false;
+
+    }
+
+    public async Task<bool> UpdateDoctor(DoctorViewModel model)
+    {
+        var doctor = await repository.QueryGetById(model.Id).Include(d=>d.User).FirstOrDefaultAsync();
+        if (doctor == null)
+            return false;
+        Mapper.Map(model, doctor);
+        // repository.Update(doctor);
+        await UnitOfWork.SaveChangesAsync();
+        return true;
     }
 }

@@ -4,7 +4,7 @@ namespace DoctorAppointment.Application.Model;
 
 public class PagingItem<T> : IPagingItem
 {
-    public int pageSize { get; set; } = 8;
+    public int PageSize { get; set; } = 8;
     public List<T> Items { get; set; }
     public int CurrentPage { get; set; }
     public int CountPages { get; set; }
