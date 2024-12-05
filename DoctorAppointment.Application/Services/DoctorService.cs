@@ -19,6 +19,12 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork, IMapp
         return Mapper.Map<DoctorViewModel>(doctor);
     }
 
+    public async Task<List<DoctorViewModel>> GetByNameAndSpecialization(string name, Specialization specialization)
+    {
+        var doctors = await repository.GetByNameAndSpecialization(name, specialization).ToListAsync();
+        return Mapper.Map<List<DoctorViewModel>>(doctors);
+    }
+
     public async Task<List<DoctorViewModel>> GetBySpecialization(Specialization specialization)
     {
         var doctors = await repository.GetBySpecialization(specialization).ToListAsync();

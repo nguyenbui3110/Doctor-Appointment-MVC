@@ -13,7 +13,7 @@
             var displayName = GetEnumDisplayName(specialization);
             var image = GetImageUrl(specialization);
 
-            <div class="col-md-3 mb-4">
+            <div class="col-md-3">
                 <a class="card" style="cursor: pointer;" href="@Url.Action("Doctors", "Home", new { specialization = specialization })">
                     <img src="@Url.Content(image)" class="card-img-top" alt="@displayName">
                     <div class="card-body text-center">

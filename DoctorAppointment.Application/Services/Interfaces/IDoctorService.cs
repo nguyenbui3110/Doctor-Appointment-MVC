@@ -8,5 +8,6 @@ public interface IDoctorService : IBaseService
 {
     Task<DoctorViewModel> GetByIdAsync(int id);
     Task<List<DoctorViewModel>> GetBySpecialization(Specialization specialization);
+    Task<List<DoctorViewModel>> GetByNameAndSpecialization(string name, Specialization specialization);
 
 }
