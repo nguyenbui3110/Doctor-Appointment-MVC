@@ -6,6 +6,7 @@ namespace DoctorAppointment.Domain.Data;
 public interface IRepository<TEntity>
 {
     IQueryable<TEntity> GetAll();
+    public IQueryable<TEntity> QueryGetById(int id);
     Task<TEntity?> GetByIdAsync(int id);
 
     void Add(TEntity entity);

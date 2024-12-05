@@ -1,4 +1,5 @@
 using System;
+using System.Linq.Dynamic.Core;
 using System.Linq.Expressions;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities.Base;
@@ -24,6 +25,10 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Enti
         return  _dbContext.Set<TEntity>();
     }
 
+    public IQueryable<TEntity> QueryGetById(int id)
+    {
+        return _dbContext.Set<TEntity>().Where(e => e.Id == id);
+    }
     public async Task<TEntity?> GetByIdAsync(int id)
     {
         return await _dbContext.Set<TEntity>().FindAsync(id);

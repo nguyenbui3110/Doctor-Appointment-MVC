@@ -17,19 +17,19 @@
     <div class="row">
         @if (Model != null)
         {
-            @foreach (var doctor in Model)
-            {
-                <div class="col-md-4 mb-4">
-                    <div class="card h-100 shadow-sm">
-                        <img src="" class="card-img-top" alt="@doctor.User.FullName" />
-                        <div class="card-body">
+        @foreach (var doctor in Model)
+        {
+            <div class="col-md-4 mb-4">
+                <div class="card h-100 shadow-sm">
+                    <img src="" class="card-img-top" alt="@doctor.User.FullName" />
+                    <div class="card-body">
                             <h5 class="card-title">Name: @doctor.User.FullName</h5>
                             <h6 class="card-subtitle mb-2 text-muted"> Specialization: @doctor.Specialization</h6>
                             <p class="card-text">About: @doctor.About</p>
-                        </div>
                     </div>
                 </div>
-            }
+            </div>
+        }
         }
         else
         {

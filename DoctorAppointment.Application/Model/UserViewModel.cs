@@ -6,6 +6,7 @@ namespace DoctorAppointment.Application.Model;
 
 public class UserViewModel
 {
+    public int Id { get; set; }
     [Required]
     public string FullName { get; set; } = string.Empty;
     [Required]
