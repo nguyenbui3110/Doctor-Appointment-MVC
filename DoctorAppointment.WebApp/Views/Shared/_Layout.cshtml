@@ -1,4 +1,5 @@
 ﻿@using DoctorAppointment.Domain.Enums
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -23,11 +24,11 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <form class="nav-item fw-bold" id="searchForm"  asp-controller="Doctor" asp-action="Search" method="post">
+                    <form class="nav-item fw-bold" id="searchForm"  asp-controller="Home" asp-action="SearchDoctors" method="post">
                         <input class="nav-item fw-bold" type="text" name="searchQuery" placeholder="Bác Sĩ..."
                             class="form-control" aria-label="Search Doctor" />
 
-                        <select class="nav-item form-select-sm fw-bold" name="Specialization"
+                        <select class="nav-item form-select-sm fw-bold" name="specialization"
                             asp-items="Html.GetEnumSelectList<Specialization>()">
                             <option value="" disabled selected>Khoa</option>
                         </select>
@@ -60,52 +61,13 @@
             </div>
         </div>
     </nav>
+
     <div class="min-vh-100">
-       
-        @RenderBody()
-        @if (string.IsNullOrEmpty(ViewData["BodyContent"] as string))
-        {
-        <!-- Popular Specialties Section -->
-        <div class="container my-5">
-            <h2 class="mb-4">Chuyên khoa phổ biến</h2>
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="card">
-                        <img src="~/img/da-khoa.png" class="card-img-top" alt="Specialty">
-                        <div class="card-body text-center">
-                            <p class="card-text">Đa khoa</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <img src="~/img/tim-mach.png" class="card-img-top" alt="Specialty">
-                        <div class="card-body text-center">
-                            <p class="card-text">Tim mạch</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <img src="~/img/da-lieu.png" class="card-img-top" alt="Specialty">
-                        <div class="card-body text-center">
-                            <p class="card-text">Da liễu</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <img src="~/img/than-kinh.png" class="card-img-top" alt="Specialty">
-                        <div class="card-body text-center">
-                            <p class="card-text">Thần kinh</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="content">
+            @RenderBody()
         </div>
-        }
-        
     </div>
+
     <!-- Footer -->
     <footer class="bg-light py-3">
         <div class="container text-center">
@@ -117,3 +79,5 @@
 </body>
 @RenderSection("Scripts", required: false)
 </html>
+
+

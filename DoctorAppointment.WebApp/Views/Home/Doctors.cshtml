@@ -1,24 +1,39 @@
-﻿@page
-@model List<DoctorAppointment.Application.Model.DoctorViewModel>
+﻿@model List<DoctorViewModel>
 @{
-    ViewData["BodyContent"] = "true";
-    ViewData["Title"] = "Doctors";
+    Layout = "_Layout";
 }
+
+<form action="/Home/Index" method="get">
+    <button type="submit" class="btn btn-primary m-2">
+        << Quay lại
+    </button>
+</form>
+
+<div class="container d-flex justify-content-center" style="width: 100vh">
+    <h1>Danh sách bác sĩ</h1>
+</div>
 
 <div class="container mt-5">
     <div class="row">
+        @if (Model != null)
+        {
         @foreach (var doctor in Model)
         {
             <div class="col-md-4 mb-4">
                 <div class="card h-100 shadow-sm">
                     <img src="" class="card-img-top" alt="@doctor.User.FullName" />
                     <div class="card-body">
-                        <h5 class="card-title">@doctor.User.FullName</h5>
-                        <h6 class="card-subtitle mb-2 text-muted">@doctor.Specialization</h6>
-                        <p class="card-text">@doctor.About</p>
+                            <h5 class="card-title">Name: @doctor.User.FullName</h5>
+                            <h6 class="card-subtitle mb-2 text-muted"> Specialization: @doctor.Specialization</h6>
+                            <p class="card-text">About: @doctor.About</p>
                     </div>
                 </div>
             </div>
+        }
+        }
+        else
+        {
+            <p>No doctors available.</p>
         }
     </div>
 </div>

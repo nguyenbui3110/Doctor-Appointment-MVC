@@ -18,9 +18,28 @@ namespace DoctorAppointment.Infrastructure.Repositories
             
         }
 
+        public IQueryable<Doctor> GetByNameAndSpecialization(string name, Specialization specialization)
+        {
+            var query = DbSet.Include(dr => dr.User).AsQueryable();
+
+            if (!string.IsNullOrEmpty(name))
+            {
+                query = query.Where(dr => dr.User.FullName.Contains(name));
+            }
+
+            if (specialization != 0)
+            {
+                query = query.Where(dr => dr.Specialization == specialization);
+            }
+
+            return query;
+        }
+
         public IQueryable<Doctor> GetBySpecialization(Specialization specialization)
         {
-            return DbSet.Where(dr => dr.Specialization == specialization);
+            return DbSet
+                    .Include(dr => dr.User)
+                    .Where(dr => dr.Specialization == specialization);
         }
     }
 }

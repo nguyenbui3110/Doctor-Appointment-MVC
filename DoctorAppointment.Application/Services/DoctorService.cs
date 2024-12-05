@@ -36,12 +36,6 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
             PageUrl = i => $"?page={i}"
         };
     }
-    public async Task<List<DoctorViewModel>> GetBySpecialization(Specialization specialization)
-    {
-        var doctors = await repository.GetBySpecialization(specialization).ToListAsync();
-        return Mapper.Map<List<DoctorViewModel>>(doctors);
-    }
-
     public async Task<bool> AddDoctor(DoctorPostModel model)
     {
         var doctor = Mapper.Map<Doctor>(model);
@@ -80,5 +74,16 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
         // repository.Update(doctor);
         await UnitOfWork.SaveChangesAsync();
         return true;
+    }
+    public async Task<List<DoctorViewModel>> GetByNameAndSpecialization(string name, Specialization specialization)
+    {
+        var doctors = await repository.GetByNameAndSpecialization(name, specialization).ToListAsync();
+        return Mapper.Map<List<DoctorViewModel>>(doctors);
+    }
+
+    public async Task<List<DoctorViewModel>> GetBySpecialization(Specialization specialization)
+    {
+        var doctors = await repository.GetBySpecialization(specialization).ToListAsync();
+        return Mapper.Map<List<DoctorViewModel>>(doctors);
     }
 }
