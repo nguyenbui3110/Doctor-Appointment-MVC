@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Enums;
+using DoctorAppointment.Domain.Entities;
 
 namespace DoctorAppointment.WebApp.Controllers;
 
@@ -43,5 +44,11 @@ public class HomeController : Controller
     {
         var doctors = await _doctorService.GetByNameAndSpecialization(searchQuery, specialization);
         return View("Doctors", doctors);
+    }
+
+    public async Task<IActionResult> DoctorDetail(int id)
+    {
+        var doctor = await _doctorService.GetByIdAsync(id);
+        return View("DoctorDetail", doctor);
     }
 }

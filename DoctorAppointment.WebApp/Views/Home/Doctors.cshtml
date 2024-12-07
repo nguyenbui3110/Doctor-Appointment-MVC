@@ -19,7 +19,7 @@
         {
         @foreach (var doctor in Model)
         {
-            <div class="col-md-4 mb-4">
+                <a class="col-md-4 mb-4" asp-action="DoctorDetail" asp-controller="Home" asp-route-id="@doctor.UserId">
                 <div class="card h-100 shadow-sm">
                     <img src="" class="card-img-top" alt="@doctor.User.FullName" />
                     <div class="card-body">
@@ -28,7 +28,7 @@
                             <p class="card-text">About: @doctor.About</p>
                     </div>
                 </div>
-            </div>
+            </a>
         }
         }
         else
