@@ -1,0 +1,58 @@
+﻿@model DoctorViewModel
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "DoctorDetail";
+}
+
+<div class="container mt-5">
+    <div class="row">
+        <!-- Cột chứa ảnh bác sĩ -->
+        <div class="col-md-4">
+            <img src="@Model.User.FullName" alt="Ảnh bác sĩ" class="img-fluid rounded-circle">
+        </div>
+
+        <!-- Cột chứa thông tin chi tiết -->
+        <div class="col-md-8">
+            <h2>@Model.User.FullName</h2>
+            <p><strong>Năm kinh nghiệm:</strong>@Model.YearsOfExperience</p>
+            <p><strong>Khoa:</strong> @Model.Specialization</p>
+            <p><strong>Mô tả:</strong> @Model.About</p>
+            <p><strong>Số điện thoại:</strong> @Model.User.PhoneNumber</p>
+
+            <!-- Nút đặt lịch hẹn -->
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookingModal">
+                Đặt lịch hẹn
+            </button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal đặt lịch hẹn -->
+<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="bookingModalLabel">Đặt lịch hẹn với bác sĩ @Model.User.FullName</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form>
+                    <div class="mb-3">
+                        <label for="patientName" class="form-label">Tên bệnh nhân</label>
+                        <input type="text" class="form-control" id="patientName" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="appointmentDate" class="form-label">Ngày hẹn</label>
+                        <input type="date" class="form-control" id="appointmentDate" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="appointmentTime" class="form-label">Giờ hẹn</label>
+                        <input type="time" class="form-control" id="appointmentTime" required>
+                    </div>
+                    <button type="submit" class="btn btn-success">Xác nhận</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
