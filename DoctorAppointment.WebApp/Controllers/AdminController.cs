@@ -9,9 +9,12 @@ namespace DoctorAppointment.WebApp.Controllers
     public class AdminController : Controller
     {
         private readonly IDoctorService _doctorService;
-        public AdminController(IDoctorService doctorService)
+        private readonly IPatientService _patientService;
+
+        public AdminController(IDoctorService doctorService, IPatientService patientService)
         {
             _doctorService = doctorService;
+            _patientService = patientService;
         }
 
         // GET: AdminController
@@ -59,6 +62,12 @@ namespace DoctorAppointment.WebApp.Controllers
         {
             await _doctorService.DeleteDoctor(id);
             return RedirectToAction("Index");
+        }
+
+        public async Task<ActionResult> PatientPage(int page = 1)
+        {
+            var model = await _patientService.GetPagedAsync(page);
+            return View(model);
         }
     }
 }
