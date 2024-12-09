@@ -13,7 +13,9 @@ builder.Services.AddServices()
     .AddRepositorys()
     .AddDbContext(builder.Configuration)
     .ConfigureIdentity()
-    .AddCurrentUser();
+    .AddCurrentUser()
+    .ConfigureConfigurations(builder.Configuration)
+    .AddEmailSender();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllersWithViews();
 

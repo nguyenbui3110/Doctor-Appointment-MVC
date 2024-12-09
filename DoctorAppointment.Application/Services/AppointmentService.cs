@@ -1,5 +1,6 @@
 using System;
 using AutoMapper;
+using DoctorAppointment.Application.Commons.Helpers;
 using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
@@ -8,7 +9,10 @@ using DoctorAppointment.Domain.Entities;
 
 namespace DoctorAppointment.Application.Services;
 
-public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo patientRepo, IScheduleService scheduleService, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUser currentUser)
+public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo patientRepo,
+                                IScheduleService scheduleService, IUnitOfWork unitOfWork,
+                                 IMapper mapper, ICurrentUser currentUser,
+                                 IMailTemplateHelper mailTemplateHelper, IEmailSender emailSender)
     : BaseService(unitOfWork, mapper, currentUser), IAppointmentService
 {
     public async Task<Appointment> GetDoctorAppointmentsAsync(int doctorId, DateTime date)
@@ -55,6 +59,10 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         }
         appointmentRepo.Add(appointment);
         await UnitOfWork.SaveChangesAsync();
+        var appointmentInfo = await appointmentRepo.GetAppointmentAsync(appointment.Id);
+        var template = mailTemplateHelper.GetAppointmentInfoTemplate(appointment);
+        var message = new Message(new List<string> {appointment.Patient.User.Email!}, "Thông tin lịch hẹn", template);
+        await emailSender.SendEmailAsync(message);
         return true;
     }   
 }
