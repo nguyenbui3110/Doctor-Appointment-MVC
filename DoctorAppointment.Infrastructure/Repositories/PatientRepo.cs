@@ -1,4 +1,5 @@
-﻿using DoctorAppointment.Domain.Data;
+﻿using Bogus.DataSets;
+using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
@@ -21,6 +22,15 @@ namespace DoctorAppointment.Infrastructure.Repositories
         {
             return await DbSet.Where(x => x.UserId == id)
                 .FirstOrDefaultAsync();
+        }
+        public IQueryable<Patient> Search(string searchQuery)
+        {
+            var patients = DbSet.Include(dr => dr.User).AsQueryable();
+            if (!string.IsNullOrEmpty(searchQuery))
+            {
+                patients = patients.Where(dr => dr.User.FullName.Contains(searchQuery));
+            }
+            return patients;
         }
     }
 }

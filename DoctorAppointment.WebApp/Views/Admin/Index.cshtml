@@ -1,8 +1,24 @@
-﻿@{
+﻿@using DoctorAppointment.Domain.Enums
+@{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Admin";
 }
 @model PagingItem<DoctorViewModel>
+
+<ul class="navbar-nav me-auto">
+    <form class="nav-item fw-bold" id="searchForm" asp-controller="Admin" asp-action="Index" method="post">
+        <input class="nav-item fw-bold" type="text" name="searchQuery" placeholder="Bác Sĩ..."
+               class="form-control" aria-label="Search Doctor" value="@ViewBag.SearchQuery" />
+
+        <select class="nav-item form-select-sm fw-bold" name="specialization"
+                asp-items="Html.GetEnumSelectList<Specialization>()">
+            <option value="" disabled selected>Khoa</option>
+        </select>
+
+        <button type="submit" class="btn btn-primary fw-bold">Search</button>
+    </form>
+
+</ul>
 
 <div class="d-flex justify-content-end mb-2">
     <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addDoctorModal">Tạo mới bác

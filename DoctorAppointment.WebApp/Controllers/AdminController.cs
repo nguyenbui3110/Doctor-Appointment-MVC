@@ -1,5 +1,7 @@
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
+using DoctorAppointment.Domain.Enums;
+using MailKit.Search;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,9 +20,10 @@ namespace DoctorAppointment.WebApp.Controllers
         }
 
         // GET: AdminController
-        public async Task<ActionResult> Index(int page = 1)
+        public async Task<ActionResult> Index(int page = 1, string  searchQuery = "", Specialization specialization = 0)
         {
-            var model = await _doctorService.GetPagedAsync(page);
+            var model = await _doctorService.GetPagedAsync(page, searchQuery, specialization);
+            ViewBag.SearchQuery = searchQuery;
             return View(model);
         }
         public ActionResult AddDoctor()
@@ -64,10 +67,17 @@ namespace DoctorAppointment.WebApp.Controllers
             return RedirectToAction("Index");
         }
 
-        public async Task<ActionResult> PatientPage(int page = 1)
+        public async Task<ActionResult> PatientPage(int page = 1, string searchQuery = "")
         {
-            var model = await _patientService.GetPagedAsync(page);
+            var model = await _patientService.GetPagedAsync(page, searchQuery);
+            ViewBag.SearchQuery = searchQuery;
             return View(model);
+        }
+
+        public async Task<ActionResult> DeletePatient(int id)
+        {
+            var model = await _patientService.DeletePatient(id);
+            return RedirectToAction("PatientPage");
         }
     }
 }
