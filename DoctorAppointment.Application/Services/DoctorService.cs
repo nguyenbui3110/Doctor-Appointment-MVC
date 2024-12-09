@@ -23,9 +23,9 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
         return Mapper.Map<DoctorViewModel>(doctor);
     }
 
-    public async Task<PagingItem<DoctorViewModel>> GetPagedAsync(int page, int pageSize = 8)
+    public async Task<PagingItem<DoctorViewModel>> GetPagedAsync(int page, string searchQuery, Specialization specialization, int pageSize = 8)
     {
-        var doctors = repository.GetAll().Include(doctor => doctor.User);
+        var doctors = repository.GetByNameAndSpecialization(searchQuery, specialization);
         (var data, var Count) = await repository.ApplyPaing(doctors, page, pageSize);
         return new PagingItem<DoctorViewModel>
         {

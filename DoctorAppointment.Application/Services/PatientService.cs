@@ -19,9 +19,10 @@ namespace DoctorAppointment.Application.Services
                               UserManager<User> userManager)
     : BaseService(unitOfWork, mapper, currentUser), IPatientService
     {
-        public async Task<PagingItem<PatientViewModel>> GetPagedAsync(int page, int pageSize = 8)
+        public async Task<PagingItem<PatientViewModel>> GetPagedAsync(int page, string searchQuery,int pageSize = 8)
         {
-            var patients = repository.GetAll().Include(patient => patient.User);
+            var patients = repository.Search(searchQuery);
+
             (var data, var Count) = await repository.ApplyPaing(patients, page, pageSize);
             return new PagingItem<PatientViewModel>
             {

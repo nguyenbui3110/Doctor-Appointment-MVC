@@ -1,14 +1,18 @@
 ﻿@{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Admin";
+    var searchQuery = ViewBag.SearchQuery ?? "";
 }
 @model PagingItem<PatientViewModel>
 
-<div class="d-flex justify-content-end mb-2">
-    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="">
-        Tạo mới bệnh nhân
-    </button>
-</div>
+<ul class="navbar-nav me-auto" style="margin-bottom: 10px;">
+    <form class="nav-item fw-bold" id="searchForm" asp-controller="Admin" asp-action="PatientPage" method="post">
+        <input class="nav-item fw-bold" type="text" name="searchQuery" placeholder="Tên bệnh nhân..."
+               class="form-control" aria-label="Search Doctor" value="@ViewBag.SearchQuery"/>
+        <button type="submit" class="btn btn-primary fw-bold">Search</button>
+    </form>
+
+</ul>
 
 <table class="table table-striped table-bordered table-hover">
     <thead>
@@ -38,14 +42,13 @@
 </table>
 
 <partial name="_Paging" model="Model" />
-@section Scripts {
-    <style>
-        .modal-body {
-            max-height: 400px;
-            overflow-y: auto;
-        }
-        .modal {
-            overflow: hidden;
-        }
-    </style>
-}
+
+<style>
+    .modal-body {
+        max-height: 400px;
+        overflow-y: auto;
+    }
+    .modal {
+        overflow: hidden;
+    }
+</style>
