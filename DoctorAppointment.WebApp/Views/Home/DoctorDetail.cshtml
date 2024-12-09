@@ -8,7 +8,7 @@
     <div class="row">
         <!-- Cột chứa ảnh bác sĩ -->
         <div class="col-md-4">
-            <img src="@Model.User.FullName" alt="Ảnh bác sĩ" class="img-fluid rounded-circle">
+            <img src="@Model.User.AvatarUrl" alt="Ảnh bác sĩ" class="rounded-circle" style="width: 100%">
         </div>
 
         <!-- Cột chứa thông tin chi tiết -->
@@ -19,40 +19,61 @@
             <p><strong>Mô tả:</strong> @Model.About</p>
             <p><strong>Số điện thoại:</strong> @Model.User.PhoneNumber</p>
 
-            <!-- Nút đặt lịch hẹn -->
-            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#bookingModal">
-                Đặt lịch hẹn
-            </button>
+            <form id="appointmentForm">
+                <div class="mb-3">
+                    <label for="appointmentDate" class="form-label">Ngày hẹn</label>
+                    <select class="form-select" id="appointmentDate" required>
+                        <option value="">Chọn ngày</option>
+                        @{
+                            for (int i = 0; i < 5; i++)
+                            {
+                                var date = DateTime.Now.AddDays(i);
+                                <option value="@date.ToString("yyyy-MM-dd")">
+                                    @date.ToString("dd/MM/yyyy") - @date.ToString("dddd", new
+                            System.Globalization.CultureInfo("vi-VN"))
+                                </option>
+                            }
+                        }
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="appointmentTime" class="form-label">Giờ hẹn</label>
+                    <div id="timeSlotsContainer"></div>
+                </div>
+                <button type="submit" class="btn btn-success">Xác nhận đặt lịch</button>
+            </form>
+            
         </div>
     </div>
+
+
 </div>
 
-<!-- Modal đặt lịch hẹn -->
-<div class="modal fade" id="bookingModal" tabindex="-1" aria-labelledby="bookingModalLabel" aria-hidden="true">
-    <div class="modal-dialog">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="bookingModalLabel">Đặt lịch hẹn với bác sĩ @Model.User.FullName</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <form>
-                    <div class="mb-3">
-                        <label for="patientName" class="form-label">Tên bệnh nhân</label>
-                        <input type="text" class="form-control" id="patientName" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="appointmentDate" class="form-label">Ngày hẹn</label>
-                        <input type="date" class="form-control" id="appointmentDate" required>
-                    </div>
-                    <div class="mb-3">
-                        <label for="appointmentTime" class="form-label">Giờ hẹn</label>
-                        <input type="time" class="form-control" id="appointmentTime" required>
-                    </div>
-                    <button type="submit" class="btn btn-success">Xác nhận</button>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
+@section Scripts {
+<script>
+    $(document).ready(function () {
+        $('#appointmentDate').on('change', function () {
+            var selectedDate = $(this).val();
 
+            if (selectedDate) {
+                $.ajax({
+                    url: '/Schedule/GetFreeTimeSlots',
+                    type: 'GET',
+                    data: { 
+                        DoctorId: @Model.Id,
+                        date: selectedDate
+                         },
+                    success: function (response) {
+                        $('#timeSlotsContainer').html(response);
+                    },
+                    error: function () {
+                        $('#timeSlotsContainer').html('<p class="text-danger">Không thể tải giờ khả dụng. Vui lòng thử lại.</p>');
+                    }
+                });
+            } else {
+                $('#timeSlotsContainer').html('<p class="text-muted">Chọn ngày để xem giờ khả dụng.</p>');
+            }
+        });
+    });
+</script>
+}

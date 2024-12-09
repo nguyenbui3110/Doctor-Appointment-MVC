@@ -15,4 +15,5 @@ public class Doctor:EntityBase
 
     // Optional for tracking users associated with doctors
     public User User { get; set; }
+    public ICollection<Schedule> Schedules { get; set; }
 }

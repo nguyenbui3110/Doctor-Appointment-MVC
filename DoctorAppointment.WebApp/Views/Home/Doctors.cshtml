@@ -19,7 +19,7 @@
         {
         @foreach (var doctor in Model)
         {
-                <a class="col-md-4 mb-4" asp-action="DoctorDetail" asp-controller="Home" asp-route-id="@doctor.UserId">
+            <a class="col-md-4 mb-4 text-decoration-none" asp-action="DoctorDetail" asp-controller="Home" asp-route-id="@doctor.Id">
                 <div class="card h-100 shadow-sm">
                     <img src="" class="card-img-top" alt="@doctor.User.FullName" />
                     <div class="card-body">

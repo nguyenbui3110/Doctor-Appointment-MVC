@@ -31,6 +31,8 @@
                     @* <a asp-action="UpdateItem" asp-route-id="@item.UserId" class="btn btn-primary">Update</a> *@
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateDoctorModal"
                         UpdateId="@item.Id">Update</button>
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteDoctorModal_@item.Id" DeleteId="@item.Id">Delete</button>
+                    <partial name="_DeleteDoctor" model="@item.Id" />
                 </td>
             </tr>
         }
@@ -61,17 +63,20 @@
         $(document).ready(function () {
             // Load add modal content dynamically
             $('button[data-bs-target="#addDoctorModal"]').on('click', function () {
+                $('#addDoctorModal').hide();
                 $.get('/Admin/AddDoctor', function (data) {
                     $('#addDoctorModalContainer').html(data);
-                    $('#addDoctorModal').modal('show');
+                    $('#addDoctorModal_1').modal('show');
                 });
             });
             // Load update modal content dynamically
             $('button[data-bs-target="#updateDoctorModal"]').on('click', function () {
+                @* $('#updateDoctorModalContainer').empty(); *@
+                $('#updateDoctorModal').hide();
                 var id = $(this).attr('UpdateId');
                 $.get('/Admin/UpdateDoctor/' + id, function (data) {
                     $('#updateDoctorModalContainer').html(data);
-                    $('#updateDoctorModal').modal('show');
+                    $('#updateDoctorModal_'+id).modal('show');
                 });
             });
         });

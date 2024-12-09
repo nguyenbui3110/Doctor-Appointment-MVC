@@ -21,6 +21,7 @@ public class DrAppointmentDbContext : IdentityDbContext<User, IdentityRole<int>,
     public DbSet<Doctor> Doctors { get; set; }
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
+    public DbSet<Schedule> Schedules { get; set; }
 
     protected override void OnModelCreating (ModelBuilder modelBuilder)
     {
@@ -37,12 +38,18 @@ public class DrAppointmentDbContext : IdentityDbContext<User, IdentityRole<int>,
         }
         // Add soft delete query filter
         // https://www.thereformedprogrammer.net/ef-core-in-depth-soft-deleting-data-with-global-query-filters/
-        var softDeleteEntityTypes = modelBuilder.Model
-            .GetEntityTypes()
-            .Where(e => e.ClrType.IsAssignableFrom(typeof(IDeleteEntity)));
-        
-        foreach (var entityType in softDeleteEntityTypes)
-            entityType.AddSoftDeleteQueryFilter();
+        foreach (var entityType in modelBuilder.Model.GetEntityTypes())
+        {
+            if (!typeof(EntityBase).IsAssignableFrom(entityType.ClrType)) continue;
+            var parameter = Expression.Parameter(entityType.ClrType, "p");
+            var deletedCheck =
+                Expression.Lambda(
+                    Expression.Equal(Expression.Property(parameter, nameof(EntityBase.IsDeleted)),
+                        Expression.Constant(false)),
+                    parameter);
+            modelBuilder.Entity(entityType.ClrType).HasQueryFilter(deletedCheck);
+        }
+            
         
     }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -88,27 +95,5 @@ public class DrAppointmentDbContext : IdentityDbContext<User, IdentityRole<int>,
             entry.State = EntityState.Modified;
             entry.Entity.IsDeleted = true;
         }
-    }
-}
-
-public static class SoftDeleteQueryExtension
-{
-    public static void AddSoftDeleteQueryFilter(
-        this IMutableEntityType entityData)
-    {
-        var methodToCall = typeof(SoftDeleteQueryExtension)
-            .GetMethod(nameof(GetSoftDeleteFilter))!
-            .MakeGenericMethod(entityData.ClrType);
-        
-        var filter = methodToCall.Invoke(null, []);
-        
-        entityData.SetQueryFilter((LambdaExpression)filter!);
-        entityData.AddIndex(entityData.FindProperty(nameof(IDeleteEntity.IsDeleted))!);
-    }
- 
-    private static LambdaExpression GetSoftDeleteFilter<TEntity>() where TEntity : IDeleteEntity
-    {
-        Expression<Func<TEntity, bool>> filter = x => !x.IsDeleted;
-        return filter;
     }
 }

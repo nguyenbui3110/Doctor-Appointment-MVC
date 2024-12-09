@@ -14,7 +14,7 @@ namespace DoctorAppointment.Application.Services;
 
 public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
                              IMapper mapper, ICurrentUser currentUser,
-                              UserManager<User> userManager, AuthService authService)
+                              UserManager<User> userManager)
     : BaseService(unitOfWork, mapper, currentUser), IDoctorService
 {
     public async Task<DoctorViewModel> GetByIdAsync(int id)
@@ -72,6 +72,16 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
             return false;
         Mapper.Map(model, doctor);
         // repository.Update(doctor);
+        await UnitOfWork.SaveChangesAsync();
+        return true;
+    }
+
+    public async Task<bool> DeleteDoctor(int id)
+    {
+        var doctor = await repository.GetByIdAsync(id);
+        if (doctor == null)
+            return false;
+        repository.Delete(doctor);
         await UnitOfWork.SaveChangesAsync();
         return true;
     }
