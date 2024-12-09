@@ -55,5 +55,10 @@ namespace DoctorAppointment.WebApp.Controllers
             ModelState.AddModelError("", "Error while updating doctor");
             return PartialView("_UpdateDoctor", model);
         }
+        public async Task<ActionResult> DeleteDoctor(int id)
+        {
+            await _doctorService.DeleteDoctor(id);
+            return RedirectToAction("Index");
+        }
     }
 }

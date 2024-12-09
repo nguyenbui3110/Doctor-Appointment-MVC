@@ -29,6 +29,7 @@ public static class SeedData
 
         modelBuilder.Entity<Patient>().HasData(Patients);
         modelBuilder.Entity<Doctor>().HasData(Doctors);
+        modelBuilder.Entity<Schedule>().HasData(GetSchedules(Doctors));
         modelBuilder.Entity<Appointment>().HasData(GetAppointment(Doctors, Patients));
 
         modelBuilder.Entity<IdentityUserRole<int>>().HasData(Doctors.Select(b => new IdentityUserRole<int>
@@ -75,7 +76,7 @@ public static class SeedData
     }
     private static List<User> GetUser()
     {
-        return new Faker<User>()
+        return new Faker<User>("vi")
             .RuleFor(u => u.Id, f => f.IndexFaker + 2)
             .RuleFor(u => u.FullName, f => f.Name.FullName())
             .RuleFor(u => u.Email, f => f.Internet.Email())
@@ -90,6 +91,9 @@ public static class SeedData
             .RuleFor(u => u.EmailConfirmed, _ => true)
             .RuleFor(u => u.SecurityStamp, _ => Guid.NewGuid().ToString())
             .RuleFor(u => u.PasswordHash, _ => new PasswordHasher<User>().HashPassword(null!, "User@123"))
+            .RuleFor(u => u.AvatarUrl, (f,u) => f.Image.PlaceholderUrl(100, 100, u.FullName))
+            .RuleFor(u => u.DateOfBirth, f => f.Date.Past(30).Date)
+            .RuleFor(u => u.Gender, f => f.PickRandom<Gender>())
             .Generate(30);
     }
     private static List<Doctor> GetDoctors(List<User> users)
@@ -98,7 +102,7 @@ public static class SeedData
 
         var doctors = users.Take(10).ToList();
         users.RemoveRange(0, 10);
-        return new Faker<Doctor>()
+        return new Faker<Doctor>("vi")
             .RuleFor(d => d.Id, f => f.IndexFaker + 1)
             .RuleFor(d => d.UserId, f => doctors[f.IndexFaker].Id)
             .RuleFor(d => d.Specialization, f => f.PickRandom<Specialization>())
@@ -125,25 +129,44 @@ public static class SeedData
             .RuleFor(a => a.AppointmentDate, (f, a) =>
             {
                 DateTime uniqueDate;
-                // Ensure the AppointmentDate is unique and within work hours (9 AM - 5 PM)
                 do
                 {
                     // Generate a random date within the past 30 days (adjust as needed)
-                    var date = f.Date.Past(30);
+                    var date = f.Date.Between(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30)).Date;
 
-                    // Generate a random time between 9 AM and 5 PM
-                    var randomHour = f.Random.Number(9, 17); // 9 to 17 (5 PM)
-                    var randomMinute = f.Random.Number(0, 59); // 0 to 59 minutes
-
-                    // Combine date and time to form a complete DateTime
-                    uniqueDate = date.AddHours(randomHour).AddMinutes(randomMinute);
-
+                    uniqueDate = date;
                 } while (!usedDates.Add(uniqueDate)); // Add returns false if the date already exists
 
                 return uniqueDate;
             })
+            .RuleFor(a => a.StartTime, f => TimeSpan.FromHours(f.Random.Int(8, 17)))
+            .RuleFor(a => a.EndTime, (f, a) => a.StartTime?.Add(TimeSpan.FromHours(1)))
             .RuleFor(a => a.Status, f => f.PickRandom<AppointmentStatus>())
             .Generate(40);
         return appointments;
+    }
+    private static List<Schedule> GetSchedules(List<Doctor> doctors)
+    {
+        // for each doctor generate schedule each day of the week
+
+        var schedules = new List<Schedule>();
+        var id = 1;
+        foreach (var doctor in doctors)
+        {
+
+            for (var i = 1; i < 7; i++)
+            {
+                schedules.Add(new Schedule
+                {
+                    Id = id++,
+                    DoctorId = doctor.Id,
+                    DayOfWeek = (DayOfWeek)i,
+                    StartTime = TimeSpan.FromHours(8),
+                    EndTime = TimeSpan.FromHours(17)
+                });
+            }
+        }
+
+        return schedules;
     }
 }

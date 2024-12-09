@@ -33,6 +33,8 @@ public static class ServiceExtentions
         services.AddScoped<IUnitOfWork, UnitOfWork>();
         services.AddScoped(typeof(IRepository<>), typeof(RepositoryBase<>));
         services.AddScoped<IDoctorRepo, DoctorRepo>();
+        services.AddScoped<IAppointmentRepo, AppointmentRepo>();
+        services.AddScoped<IScheduleRepo, ScheduleRepo>();
 
         return services;
     }
