@@ -20,4 +20,8 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
     {
         throw new NotImplementedException();
     }
+    public async Task<Appointment?> GetAppointmentAsync(int Id)
+    {
+        return await DbSet.Include(a => a.Doctor.User).Include(a => a.Patient.User).Where(a =>a.Id ==Id).FirstOrDefaultAsync();
+    }
 }
