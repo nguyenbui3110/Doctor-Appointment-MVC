@@ -32,6 +32,15 @@ namespace DoctorAppointment.Application.Services
                 PageUrl = i => $"?page={i}"
             };
         }
-        
+
+        public async Task<bool> DeletePatient(int id)
+        {
+            var patient = await repository.GetByIdAsync(id);
+            if (patient == null)
+                return false;
+            repository.Delete(patient);
+            await UnitOfWork.SaveChangesAsync();
+            return true;
+        }
     }
 }

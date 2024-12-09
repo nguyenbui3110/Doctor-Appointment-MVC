@@ -29,22 +29,13 @@
                 <td>@item.User.Email</td>
                 <td>@item.User.Address</td>
                 <td>
-                    @* <a asp-action="UpdateItem" asp-route-id="@item.UserId" class="btn btn-primary">Update</a> *@
-                    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateDoctorModal"
-                            UpdateId="@item.Id">
-                        Update
-                    </button>
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteDoctorModal_@item.Id" DeleteId="@item.Id">Delete</button>
-                    <partial name="_DeleteDoctor" model="@item.Id" />
+                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deletePatientModal_@item.Id" DeleteId="@item.Id">Delete</button>
+                    <partial name="_DeletePatient" model="@item.Id" />
                 </td>
             </tr>
         }
     </tbody>
 </table>
-
-<!-- Modal Placeholder -->
-<div id="addDoctorModalContainer"></div>
-<div id="updateDoctorModalContainer"></div>
 
 <partial name="_Paging" model="Model" />
 @section Scripts {
@@ -57,88 +48,4 @@
             overflow: hidden;
         }
     </style>
-    <script>
-        $(document).ready(function () {
-            // Load add modal content dynamically
-            $('button[data-bs-target="#addDoctorModal"]').on('click', function () {
-                $('#addDoctorModal').hide();
-                $.get('/Admin/AddDoctor', function (data) {
-                    $('#addDoctorModalContainer').html(data);
-                    $('#addDoctorModal_1').modal('show');
-                });
-            });
-            // Load update modal content dynamically
-            $('button[data-bs-target="#updateDoctorModal"]').on('click', function () {
-        @* $('#updateDoctorModalContainer').empty(); *@
-                $('#updateDoctorModal').hide();
-                var id = $(this).attr('UpdateId');
-                $.get('/Admin/UpdateDoctor/' + id, function (data) {
-                    $('#updateDoctorModalContainer').html(data);
-                    $('#updateDoctorModal_'+id).modal('show');
-                });
-            });
-        });
-
-        // Handle form submission for adding a doctor
-        $(document).on('click', '#AddDoctorForm button[type="submit"]', function (e) {
-            e.preventDefault(); // Prevent default form submission
-
-            var form = $('#AddDoctorForm'); // Get the form element
-
-            // Use AJAX to submit the form
-            $.ajax({
-                url: form.attr('action'), // The form action URL
-                type: 'POST', // The HTTP method
-                data: form.serialize(), // Serialize the form data
-                success: function (data) {
-                    if (data.success) {
-                        // If submission is successful
-                        $('#addDoctorModal').modal('hide'); // Close the modal
-                        location.reload(); // Reload the page to reflect changes
-                    } else {
-                        $('#addDoctorModal').modal('hide'); // Close the modal
-                        // If there are errors, show them in the modal
-                        $('#addDoctorModalContainer').html(data);
-                        $('#addDoctorModal').modal('show');
-                        // Replace modal content with the response
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                    alert('An error occurred while adding the doctor.');
-                }
-            });
-        });
-
-        // Handle form submission for updating a doctor
-        $(document).on('click', '#UpdateDoctorForm button[type="submit"]', function (e) {
-            e.preventDefault(); // Prevent default form submission
-
-            var form = $('#UpdateDoctorForm'); // Get the form element
-
-            // Use AJAX to submit the form
-            $.ajax({
-                url: form.attr('action'), // The form action URL
-                type: 'POST', // The HTTP method
-                data: form.serialize(), // Serialize the form data
-                success: function (data) {
-                    if (data.success) {
-                        // If submission is successful
-                        $('#updateDoctorModal').modal('hide'); // Close the modal
-                        location.reload(); // Reload the page to reflect changes
-                    } else {
-                        $('#updateDoctorModal').modal('hide'); // Close the modal
-                        // If there are errors, show them in the modal
-                        $('#updateDoctorModalContainer').html(data);
-                        $('#updateDoctorModal').modal('show');
-                        // Replace modal content with the response
-                    }
-                },
-                error: function (xhr, status, error) {
-                    console.error('Error:', error);
-                    alert('An error occurred while updating the doctor.');
-                }
-            });
-        });
-    </script>
 }

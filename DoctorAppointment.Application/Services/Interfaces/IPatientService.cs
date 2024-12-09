@@ -13,5 +13,6 @@ namespace DoctorAppointment.Application.Services.Interfaces
 
     {
         Task<PagingItem<PatientViewModel>> GetPagedAsync(int page, int pageSize = 8);
+        Task<bool> DeletePatient(int id);
     }
 }
