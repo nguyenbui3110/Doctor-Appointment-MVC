@@ -8,7 +8,7 @@
             foreach (var timeSlot in Model)
             {
                 <div class="col-4 mb-2">
-                    <button class="btn btn-outline-primary w-100" type="button" onclick="selectTimeSlot('@timeSlot.ToString(@"hh\:mm")')">
+                    <button class="btn btn-outline-primary w-100" type="button" onclick="selectTimeSlot('@timeSlot')">
                         @timeSlot.ToString("hh\\:mm") - @timeSlot.Add(new TimeSpan(1,0,0)).ToString("hh\\:mm")
                     </button>
                 </div>
@@ -36,6 +36,7 @@
         event.target.classList.add('btn-primary');
 
         // Update hidden input with selected time
-        document.getElementById('selectedTime').value = time;
+        document.getElementById('StartTime').value = time;
+        document.getElementById('EndTime').value = time;
     }
 </script>

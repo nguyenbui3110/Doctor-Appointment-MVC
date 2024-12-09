@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Identity;
 
 public class AuthService(SignInManager<User> signInManager, UserManager<User> userManager,IUnitOfWork unitOfWork,
     IMapper mapper,
-    ICurrentUser currentUser) : BaseService(unitOfWork, mapper, currentUser)
+    ICurrentUser currentUser,IRepository<Patient> patientRepo) : BaseService(unitOfWork, mapper, currentUser)
 {
 
 
@@ -51,9 +51,11 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
         {
             user = await userManager.FindByNameAsync(model.UserName);
             user.EmailConfirmed = true;
-            // var addRoleResult = await userManager.AddToRoleAsync(user, AppRole.Patient);
-            // if (!addRoleResult.Succeeded)
-            //     return false;
+            var addRoleResult = await userManager.AddToRoleAsync(user, AppRole.Patient);
+            if (!addRoleResult.Succeeded)
+                return false;
+            patientRepo.Add( new Patient{UserId=user.Id});
+            await UnitOfWork.SaveChangesAsync();
             await signInManager.SignInAsync(user, false);
             return true;
         }

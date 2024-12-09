@@ -1,11 +1,14 @@
 ﻿using System;
 using AutoMapper;
+using DoctorAppointment.Application.Commons;
+using DoctorAppointment.Application.Commons.Helpers;
 using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Application.Services;
 using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Infrastructure.Data;
+using DoctorAppointment.Infrastructure.Email;
 using DoctorAppointment.Infrastructure.Repositories;
 using DoctorAppointment.WebApp.Commons.Identity;
 using Microsoft.AspNetCore.Identity;
@@ -75,6 +78,17 @@ public static class ServiceExtentions
     {
         services.AddScoped<ICurrentUser, CurrentUser>();
         services.AddHttpContextAccessor();
+        return services;
+    }
+    public static IServiceCollection ConfigureConfigurations(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.Configure<EmailSettings>(configuration.GetSection("EmailConfiguration"));
+        return services;
+    }
+    public static IServiceCollection AddEmailSender(this IServiceCollection services)
+    {
+        services.AddScoped<IEmailSender, EmailSender>();
+        services.AddScoped<IMailTemplateHelper, MailTemplateHelper>();
         return services;
     }
 }

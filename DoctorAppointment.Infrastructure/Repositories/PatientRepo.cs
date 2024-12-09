@@ -1,9 +1,11 @@
 ﻿using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,6 +15,12 @@ namespace DoctorAppointment.Infrastructure.Repositories
     {
         public PatientRepo(DrAppointmentDbContext dbContext) : base(dbContext)
         {
+        }
+
+        public async Task<Patient?> GetPatientByUserIdAsync(int id)
+        {
+            return await DbSet.Where(x => x.UserId == id)
+                .FirstOrDefaultAsync();
         }
     }
 }
