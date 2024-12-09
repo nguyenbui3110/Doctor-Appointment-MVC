@@ -49,6 +49,6 @@ public class HomeController : Controller
     public async Task<IActionResult> DoctorDetail(int id)
     {
         var doctor = await _doctorService.GetByIdAsync(id);
-        return View("DoctorDetail", doctor);
+        return View(doctor);
     }
 }

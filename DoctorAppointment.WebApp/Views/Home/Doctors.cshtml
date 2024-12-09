@@ -17,19 +17,19 @@
     <div class="row">
         @if (Model != null)
         {
-        @foreach (var doctor in Model)
-        {
-            <a class="col-md-4 mb-4 text-decoration-none" asp-action="DoctorDetail" asp-controller="Home" asp-route-id="@doctor.Id">
-                <div class="card h-100 shadow-sm">
-                    <img src="" class="card-img-top" alt="@doctor.User.FullName" />
-                    <div class="card-body">
-                            <h5 class="card-title">Name: @doctor.User.FullName</h5>
-                            <h6 class="card-subtitle mb-2 text-muted"> Specialization: @doctor.Specialization</h6>
-                            <p class="card-text">About: @doctor.About</p>
+            @foreach (var doctor in Model)
+            {
+                <a class="col-md-4 mb-4 text-decoration-none" href="@Url.Action("DoctorDetail", "Home", new { id = doctor.Id })">
+                    <div class="card h-100 shadow-sm">
+                                <img src="@Url.Content((doctor.User.AvatarUrl != null) ? doctor.User.AvatarUrl : "~/img/doctorAvatar.png")" class="card-img-top" alt="@doctor.User.FullName" />
+                        <div class="card-body">
+                                <h5 class="card-title">Name: @doctor.User.FullName</h5>
+                                <h6 class="card-subtitle mb-2 text-muted"> Specialization: @doctor.Specialization</h6>
+                                <p class="card-text">About: @doctor.About</p>
+                        </div>
                     </div>
-                </div>
-            </a>
-        }
+                </a>
+            }
         }
         else
         {
