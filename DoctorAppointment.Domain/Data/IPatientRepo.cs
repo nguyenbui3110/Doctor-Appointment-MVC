@@ -10,6 +10,6 @@ namespace DoctorAppointment.Domain.Data
 {
     public interface IPatientRepo : IRepository<Patient>
     {
-        
+        Task<Patient?> GetPatientByUserIdAsync(int id);
     }
 }

@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel.DataAnnotations;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Domain.Enums;
 

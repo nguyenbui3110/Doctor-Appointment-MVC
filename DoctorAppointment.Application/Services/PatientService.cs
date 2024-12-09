@@ -32,5 +32,6 @@ namespace DoctorAppointment.Application.Services
                 PageUrl = i => $"?page={i}"
             };
         }
+        
     }
 }

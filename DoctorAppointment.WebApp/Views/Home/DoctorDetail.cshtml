@@ -1,4 +1,7 @@
-﻿@model DoctorViewModel
+﻿@using System.ComponentModel.DataAnnotations
+@using System.Reflection
+@using DoctorAppointment.Domain.Enums
+@model DoctorViewModel
 @{
     Layout = "_Layout";
     ViewData["Title"] = "DoctorDetail";
@@ -15,16 +18,24 @@
 
         <!-- Cột chứa thông tin chi tiết -->
         <div class="col-md-8">
+
             <h2>@Model.User.FullName</h2>
             <p><strong>Năm kinh nghiệm: </strong>@Model.YearsOfExperience năm</p>
-            <p><strong>Khoa:</strong> @Model.Specialization</p>
+            <p><strong>Khoa:</strong>
+                @{
+                    var memberInfo = typeof(Specialization).GetMember(Model.Specialization.ToString())[0];
+                    var displayAttribute = memberInfo.GetCustomAttribute<DisplayAttribute>();
+                    var displayName = displayAttribute?.Name ?? Model.Specialization.ToString();
+                }
+                @displayName
+            </p>
             <p><strong>Mô tả:</strong> @Model.About</p>
             <p><strong>Số điện thoại:</strong> @Model.User.PhoneNumber</p>
 
-            <form id="appointmentForm">
+            <form id="AppointmentForm" asp-controller="Appointment" asp-action="BookAppointment">
                 <div class="mb-3">
-                    <label for="appointmentDate" class="form-label">Ngày hẹn</label>
-                    <select class="form-select" id="appointmentDate" required>
+                    <label for="AppointmentDate" class="form-label">Ngày hẹn</label>
+                    <select class="form-select" id="AppointmentDate" name="AppointmentDate" required>
                         <option value="">Chọn ngày</option>
                         @{
                             for (int i = 0; i < 5; i++)
@@ -40,11 +51,14 @@
                 </div>
                 <div class="mb-3">
                     <label for="appointmentTime" class="form-label">Giờ hẹn</label>
+                    <input type="hidden" id="DoctorId" name="DoctorId" value="@Model.Id">
+                    <input type="hidden" id="StartTime" name="StartTime">
+                    <input type="hidden" id="EndTime" name="EndTime">
                     <div id="timeSlotsContainer"></div>
                 </div>
                 <button type="submit" class="btn btn-success">Xác nhận đặt lịch</button>
             </form>
-            
+
         </div>
     </div>
 
@@ -52,30 +66,69 @@
 </div>
 
 @section Scripts {
-<script>
-    $(document).ready(function () {
-        $('#appointmentDate').on('change', function () {
-            var selectedDate = $(this).val();
+    <script>
+        $(document).ready(function () {
+            $('#AppointmentDate').on('change', function () {
+                var selectedDate = $(this).val();
 
-            if (selectedDate) {
-                $.ajax({
-                    url: '/Schedule/GetFreeTimeSlots',
-                    type: 'GET',
-                    data: { 
+                if (selectedDate) {
+                    $.ajax({
+                        url: '/Schedule/GetFreeTimeSlots',
+                        type: 'GET',
+                        data: {
+                            DoctorId: @Model.Id,
+                            date: selectedDate
+                        },
+                        success: function (response) {
+                            $('#timeSlotsContainer').html(response);
+                        },
+                        error: function () {
+                            $('#timeSlotsContainer').html('<p class="text-danger">Không thể tải giờ khả dụng. Vui lòng thử lại.</p>');
+                        }
+                    });
+                } else {
+                    $('#timeSlotsContainer').html('<p class="text-muted">Chọn ngày để xem giờ khả dụng.</p>');
+                }
+            });
+            $('#AppointmentForm').on('submit', function (e) {
+                e.preventDefault(); // Prevent default form submission
+
+                // Gather form data
+                @* var appointmentData = {
+                    appointment:
+                    {
                         DoctorId: @Model.Id,
-                        date: selectedDate
-                         },
+                        AppointmentDate: $('#AppointmentDate').val(),
+                        StartTime: $('#selectedTime').val(),
+                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
+                        EndTime: $('#selectedTime').val() // Adjust if end time is separate
+                    }
+                }; *@
+
+                // Validate inputs
+                if (!$('#AppointmentDate').val() || !$('#StartTime').val()) {
+                    alert('Vui lòng chọn ngày và giờ.');
+                    return;
+                }
+                var formData = $('#AppointmentForm').serialize();
+                // AJAX POST request to book the appointment
+                $.ajax({
+                    url: '/Appointment/BookAppointment',
+                    type: 'POST',
+                    data: formData,
                     success: function (response) {
-                        $('#timeSlotsContainer').html(response);
+                        if (response.success) {
+                            alert('Đặt lịch thành công!');
+                            window.location.reload(); // Reload or redirect if needed
+                        } else {
+                            alert('Đã xảy ra lỗi: ' + response.message);
+                        }
                     },
                     error: function () {
-                        $('#timeSlotsContainer').html('<p class="text-danger">Không thể tải giờ khả dụng. Vui lòng thử lại.</p>');
+                        alert('Không thể đặt lịch. Vui lòng thử lại.');
                     }
                 });
-            } else {
-                $('#timeSlotsContainer').html('<p class="text-muted">Chọn ngày để xem giờ khả dụng.</p>');
-            }
+            });
         });
-    });
-</script>
+    </script>
 }
