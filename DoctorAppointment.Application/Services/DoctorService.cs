@@ -33,7 +33,7 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
             CountPages = (int)Math.Ceiling(Count / (double)pageSize),
             CurrentPage = page,
             PageSize = pageSize,
-            PageUrl = i => $"?page={i}"
+            PageUrl = i => $"?page={i}&searchQuery={searchQuery}&specialization={specialization}"
         };
     }
     public async Task<bool> AddDoctor(DoctorPostModel model)

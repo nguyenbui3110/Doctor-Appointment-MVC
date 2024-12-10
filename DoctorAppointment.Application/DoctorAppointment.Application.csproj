@@ -5,12 +5,10 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-    <Folder Include="BackgroundServices\" />
-  </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Microsoft.AspNetCore.Identity" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Hosting.Abstractions" Version="8.0.0" />
+    <PackageReference Include="Quartz" Version="3.13.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DoctorAppointment.Domain\DoctorAppointment.Domain.csproj" />

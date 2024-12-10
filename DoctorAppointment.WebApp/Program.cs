@@ -15,7 +15,8 @@ builder.Services.AddServices()
     .ConfigureIdentity()
     .AddCurrentUser()
     .ConfigureConfigurations(builder.Configuration)
-    .AddEmailSender();
+    .AddEmailSender()
+    .AddQuartz();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllersWithViews();
 

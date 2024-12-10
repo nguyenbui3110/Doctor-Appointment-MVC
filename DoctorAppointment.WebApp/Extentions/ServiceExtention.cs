@@ -1,5 +1,6 @@
 ﻿using System;
 using AutoMapper;
+using DoctorAppointment.Application.BackgroundServices;
 using DoctorAppointment.Application.Commons;
 using DoctorAppointment.Application.Commons.Helpers;
 using DoctorAppointment.Application.Commons.Identity;
@@ -13,6 +14,7 @@ using DoctorAppointment.Infrastructure.Repositories;
 using DoctorAppointment.WebApp.Commons.Identity;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Quartz;
 
 namespace DoctorAppointment.WebApp.Extentions;
 
@@ -89,6 +91,34 @@ public static class ServiceExtentions
     {
         services.AddScoped<IEmailSender, EmailSender>();
         services.AddScoped<IMailTemplateHelper, MailTemplateHelper>();
+        return services;
+    }
+     public static IServiceCollection AddQuartz(this IServiceCollection services)
+    {
+        services.AddQuartz(options =>
+        {
+            var jobKey = new JobKey("RemindAppointmentJob");
+            options.AddJob<RemindAppointmentJob>(jobKey)
+                   .AddTrigger(trigger =>
+                        trigger.ForJob(jobKey)
+                            .WithSimpleSchedule(schedule =>
+                                schedule.WithIntervalInHours(24)
+                                        .RepeatForever()));
+            
+            // // Run at 12:00 PM every day
+            // var jobKey2 = new JobKey("MarkCheckoutDateBookingJob");
+            // options.AddJob<MarkCheckOutJob>(jobKey2)
+            //        .AddTrigger(trigger =>
+            //             trigger.ForJob(jobKey2)
+            //                 .WithCronSchedule("0 0 12 * * ? *"));
+        });
+
+        services.AddQuartzHostedService(options =>
+        {
+            options.AwaitApplicationStarted = true;
+            options.WaitForJobsToComplete = true;
+        });
+            
         return services;
     }
 }

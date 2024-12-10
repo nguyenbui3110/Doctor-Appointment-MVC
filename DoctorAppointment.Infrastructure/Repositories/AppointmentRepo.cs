@@ -24,4 +24,9 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
     {
         return await DbSet.Include(a => a.Doctor.User).Include(a => a.Patient.User).Where(a =>a.Id ==Id).FirstOrDefaultAsync();
     }
+
+    public async Task<List<Appointment>> GetAppointmentsByDateAsync(DateTime date)
+    {
+        return await DbSet.Include(a => a.Doctor.User).Include(a => a.Patient.User).Where(a=>a.AppointmentDate.Value.Date== date.Date).ToListAsync();
+    }
 }
