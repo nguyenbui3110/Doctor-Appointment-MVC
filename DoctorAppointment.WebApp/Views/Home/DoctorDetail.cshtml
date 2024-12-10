@@ -13,7 +13,8 @@
     <div class="row">
         <!-- Cột chứa ảnh bác sĩ -->
         <div class="col-md-4">
-            <img src="@Url.Content((Model.User.AvatarUrl != null) ? Model.User.AvatarUrl : "~/img/doctorAvatar.png")" alt="Ảnh bác sĩ" class="rounded-circle" style="width: 100%">
+            <img src="@Url.Content((Model.User.AvatarUrl != null) ? Model.User.AvatarUrl : "~/img/doctorAvatar.png")"
+                alt="Ảnh bác sĩ" class="rounded-circle" style="width: 100%">
         </div>
 
         <!-- Cột chứa thông tin chi tiết -->
@@ -67,6 +68,37 @@
 
 @section Scripts {
     <script>
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/appointmentHub")
+            .build();
+
+        connection.on("UpdateTimeSlots", (doctorId, date) => {
+            // Kiểm tra xem doctorId và date có khớp với lịch hiển thị hiện tại không
+            const selectedDoctorId = $('#DoctorId').val();
+            const selectedDate = $('#AppointmentDate').val();
+
+            if (doctorId == selectedDoctorId && date == selectedDate) {
+                // Gửi yêu cầu Ajax để cập nhật khung giờ
+                $.ajax({
+                    url: '/Schedule/GetFreeTimeSlots',
+                    type: 'GET',
+                    data: {
+                        DoctorId: doctorId,
+                        date: date
+                    },
+                    success: function (response) {
+                        $('#timeSlotsContainer').html(response);
+                    },
+                    error: function () {
+                        $('#timeSlotsContainer').html('<p class="text-danger">Không thể tải giờ khả dụng. Vui lòng thử lại.</p>');
+                    }
+                });
+            }
+        });
+
+        connection.start().catch(err => console.error(err.toString()));
+    </script>
+    <script>
         $(document).ready(function () {
             $('#AppointmentDate').on('change', function () {
                 var selectedDate = $(this).val();
@@ -92,18 +124,6 @@
             });
             $('#AppointmentForm').on('submit', function (e) {
                 e.preventDefault(); // Prevent default form submission
-
-                // Gather form data
-                @* var appointmentData = {
-                    appointment:
-                    {
-                        DoctorId: @Model.Id,
-                        AppointmentDate: $('#AppointmentDate').val(),
-                        StartTime: $('#selectedTime').val(),
-                        __RequestVerificationToken: $('input[name="__RequestVerificationToken"]').val()
-                        EndTime: $('#selectedTime').val() // Adjust if end time is separate
-                    }
-                }; *@
 
                 // Validate inputs
                 if (!$('#AppointmentDate').val() || !$('#StartTime').val()) {

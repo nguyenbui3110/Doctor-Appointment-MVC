@@ -26,7 +26,7 @@ public class RemindAppointmentJob : IJob
             if(appointment.Status != AppointmentStatus.Confirmed) continue;
             var template = _mailTemplateHelper.GetRemindAppointmentTemplate(appointment);
             var message = new Message(new List<string> {appointment.Patient.User.Email!}, "nhắc lịch hẹn", template);
-            await _emailSender.SendEmailAsync(message);
+            // await _emailSender.SendEmailAsync(message);
         }
     }
 }

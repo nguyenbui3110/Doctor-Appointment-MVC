@@ -1,16 +1,20 @@
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
+using DoctorAppointment.WebApp.Hubs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 
 namespace DoctorAppointment.WebApp.Controllers
 {
     public class AppointmentController : Controller
     {
         private readonly IAppointmentService _appointmentService;
-        public AppointmentController(IAppointmentService appointmentService)
+        private readonly IHubContext<AppointmentHub> _context;
+        public AppointmentController(IAppointmentService appointmentService, IHubContext<AppointmentHub> context)
         {
             _appointmentService = appointmentService;
+            _context = context;
         }
         // GET: AppointmentController
         public ActionResult Index()
@@ -26,7 +30,12 @@ namespace DoctorAppointment.WebApp.Controllers
                 return Json(new { success = false, message="invalid model" });
             }
             if(await _appointmentService.CreateAppointmentAsync(appointment))
+            {
+                await _context.Clients.All.SendAsync("UpdateTimeSlots", appointment.DoctorId?.ToString(), appointment.AppointmentDate?.ToString("yyyy-MM-dd"));
                 return Json(new { success = true});
+
+            }
+                
             return Json(new { success = false, message="error when create appointment" });
         }
 
