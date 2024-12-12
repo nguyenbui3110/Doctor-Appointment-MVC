@@ -14,5 +14,6 @@ public interface IDoctorService : IBaseService
     Task<bool> UpdateDoctor(DoctorViewModel model);
     Task<bool> DeleteDoctor(int id);
     Task<List<DoctorViewModel>> GetByNameAndSpecialization(string name, Specialization specialization);
+    Task<List<DoctorViewModel>> GetAll();
 
 }

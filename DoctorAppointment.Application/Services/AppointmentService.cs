@@ -34,6 +34,10 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         var timeSlots = new List<TimeSpan>();
         var start = schedule.StartTime;
         var end = schedule.EndTime;
+        if(date.Date==DateTime.Today.Date)
+        {
+            start = new TimeSpan(DateTime.UtcNow.ToLocalTime().Hour+1,0,0);
+        }
         //duration 1 hour
         var duration = new TimeSpan(1, 0, 0);
         while (start < end)

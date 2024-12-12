@@ -9,10 +9,12 @@
         <input asp-for="Email" type="email" class="form-control form-control-user" id="exampleInputEmail"
                aria-describedby="emailHelp" placeholder="Enter Email Address...">
     </div>
+        <span asp-validation-for="Email" class="text-danger"></span>
     <div class="form-group">
         <input asp-for="Password" asp-validation-for="Password" class="form-control form-control-user"
                id="exampleInputPassword" placeholder="Password">
     </div>
+        <span asp-validation-for="Password" class="text-danger"></span>
     <div class="form-group">
         <div class="custom-control custom-checkbox small">
             <input asp-for="RememberMe" asp-validation-for="Password" class="custom-control-input" id="customCheck">
@@ -41,5 +43,13 @@
     </div>
 </form>
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+        @if (ViewData.ModelState.ContainsKey("LoginError") && ViewData.ModelState["LoginError"].Errors.Count > 0)
+        {
+            var loginErrorMessage = ViewData.ModelState["LoginError"].Errors[0].ErrorMessage;
+            <text>
+                <script>
+                    alert("Login Error: @Html.Raw(System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(loginErrorMessage))");
+                </script>
+            </text>
+        }
 }

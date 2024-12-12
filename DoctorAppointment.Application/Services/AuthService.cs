@@ -51,9 +51,6 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
         {
             user = await userManager.FindByNameAsync(model.UserName);
             user.EmailConfirmed = true;
-            var addRoleResult = await userManager.AddToRoleAsync(user, AppRole.Patient);
-            if (!addRoleResult.Succeeded)
-                return false;
             patientRepo.Add( new Patient{UserId=user.Id});
             await UnitOfWork.SaveChangesAsync();
             await signInManager.SignInAsync(user, false);

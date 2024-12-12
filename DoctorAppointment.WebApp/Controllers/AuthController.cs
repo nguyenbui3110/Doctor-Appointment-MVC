@@ -26,7 +26,11 @@ namespace DoctorAppointment.WebApp.Controllers
         [HttpPost]
         public async Task<ActionResult> Login(LoginModel model)
         {
-            await _authService.LoginAsync(model);
+            if(!await _authService.LoginAsync(model))
+            {
+                ModelState.AddModelError("LoginError","Sai tài khoản hoặc mật khẩu");
+                return View(model);
+            }
             return RedirectToAction("Index", "Home");
         }
 
@@ -40,7 +44,11 @@ namespace DoctorAppointment.WebApp.Controllers
         [HttpPost]
         public async Task<ActionResult> Register(RegisterModel model)
         {
-            await _authService.RegisterAsync(model);
+            if(!await _authService.RegisterAsync(model))
+            {
+                ModelState.AddModelError("","Tài khoản đã tồn tại");
+                return View(model);
+            }
 
             return RedirectToAction("Index", "Home");
         }

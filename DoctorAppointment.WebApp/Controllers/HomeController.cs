@@ -18,9 +18,10 @@ public class HomeController : Controller
         _doctorService = doctorService;
     }
 
-    public IActionResult Index()
+    public async Task<IActionResult> Index()
     {
-        return View();
+        var doctors = await _doctorService.GetAll();
+        return View(doctors);
     }
 
     public IActionResult Privacy()

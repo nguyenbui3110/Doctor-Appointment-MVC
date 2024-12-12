@@ -1,4 +1,6 @@
 using System;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using Bogus;
 using DoctorAppointment.Domain.Constants;
 using DoctorAppointment.Domain.Entities;
@@ -34,11 +36,6 @@ public static class SeedData
 
         modelBuilder.Entity<IdentityUserRole<int>>().HasData(Doctors.Select(b => new IdentityUserRole<int>
         {
-            RoleId = roles[2].Id,
-            UserId = b.UserId
-        }));
-        modelBuilder.Entity<IdentityUserRole<int>>().HasData(Patients.Select(b => new IdentityUserRole<int>
-        {
             RoleId = roles[1].Id,
             UserId = b.UserId
         }));
@@ -69,8 +66,7 @@ public static class SeedData
         var roles = new List<IdentityRole<int>>
         {
             new() { Id = 1, Name = AppRole.Admin, NormalizedName = AppRole.Admin.ToUpper() },
-            new() { Id = 2, Name = AppRole.Patient, NormalizedName = AppRole.Patient.ToUpper() },
-            new() { Id = 3, Name = AppRole.Doctor, NormalizedName = AppRole.Doctor.ToUpper() }
+            new() { Id = 2, Name = AppRole.Doctor, NormalizedName = AppRole.Doctor.ToUpper() }
         };
         return roles;
     }
@@ -91,24 +87,29 @@ public static class SeedData
             .RuleFor(u => u.EmailConfirmed, _ => true)
             .RuleFor(u => u.SecurityStamp, _ => Guid.NewGuid().ToString())
             .RuleFor(u => u.PasswordHash, _ => new PasswordHasher<User>().HashPassword(null!, "User@123"))
-            .RuleFor(u => u.AvatarUrl, (f,u) => f.Image.PlaceholderUrl(100, 100, u.FullName))
+            .RuleFor(u => u.AvatarUrl, (f,u) => f.Image.PlaceholderUrl(250, 250, u.FullName))
             .RuleFor(u => u.DateOfBirth, f => f.Date.Past(30).Date)
             .RuleFor(u => u.Gender, f => f.PickRandom<Gender>())
-            .Generate(30);
+            .Generate(60);
     }
     private static List<Doctor> GetDoctors(List<User> users)
     {
         //first 10 users are doctors
 
-        var doctors = users.Take(10).ToList();
-        users.RemoveRange(0, 10);
+        var doctors = users.Take(20).ToList();
         return new Faker<Doctor>("vi")
             .RuleFor(d => d.Id, f => f.IndexFaker + 1)
             .RuleFor(d => d.UserId, f => doctors[f.IndexFaker].Id)
             .RuleFor(d => d.Specialization, f => f.PickRandom<Specialization>())
-            .RuleFor(d => d.About, f => f.Lorem.Sentence())
-            .RuleFor(d => d.YearsOfExperience, f => f.Random.Number(1, 20))
-            .Generate(10);
+            .RuleFor(d => d.YearsOfExperience, f => f.Random.Number(1, 10))
+            .RuleFor(d => d.About, (f,d)=> 
+            {
+                var memberInfo = typeof(Specialization).GetMember(d.Specialization.ToString())[0];
+                var displayAttribute = memberInfo.GetCustomAttribute<DisplayAttribute>();
+                var displayName = displayAttribute?.Name ?? d.Specialization.ToString();
+                return $"Bác sĩ có hơn {d.YearsOfExperience} năm trong lĩnh vực {displayName}";
+            })
+            .Generate(20);
 
     }
     private static List<Patient> GetPatients(List<User> users)
@@ -116,7 +117,7 @@ public static class SeedData
         return new Faker<Patient>()
             .RuleFor(p => p.Id, f => f.IndexFaker + 1)
             .RuleFor(p => p.UserId, f => users[f.IndexFaker].Id)
-            .Generate(20);
+            .Generate(users.Count);
     }
     private static List<Appointment> GetAppointment(List<Doctor> doctors, List<Patient> patients)
     {

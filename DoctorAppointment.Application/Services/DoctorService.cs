@@ -96,4 +96,10 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
         var doctors = await repository.GetBySpecialization(specialization).ToListAsync();
         return Mapper.Map<List<DoctorViewModel>>(doctors);
     }
+
+    public async Task<List<DoctorViewModel>> GetAll()
+    {
+        var doctors= await repository.GetAll().Include(d=>d.User).ToListAsync();
+        return Mapper.Map<List<DoctorViewModel>>(doctors);
+    }
 }
