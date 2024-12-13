@@ -18,5 +18,12 @@ public class UserService(UserManager<User> userManager,IUnitOfWork unitOfWork,
         var user= await userManager.FindByIdAsync(CurrentUser.Id);
         return Mapper.Map<UserViewModel>(user);
     }
+    public async Task<bool> UpdateUserAsync(UserViewModel model)
+    {
+        var user = await userManager.FindByIdAsync(CurrentUser.Id);
+        user = Mapper.Map(model, user);
+        var result = await userManager.UpdateAsync(user);
+        return result.Succeeded;
+    }
 
 }

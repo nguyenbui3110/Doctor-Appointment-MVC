@@ -2,9 +2,10 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @{
-    Layout="_Layout";
-    ViewData["Title"]="Profile";
+    Layout = "_Layout";
+    ViewData["Title"] = "Profile";
 }
+@using DoctorAppointment.Domain.Enums
 @model UserViewModel
 <div class="container-xl px-4 mt-4">
     <!-- Account page navigation-->
@@ -29,36 +30,44 @@
                     <form asp-action="Update" method="post">
                         <!-- Form Group (username)-->
                         <div class="mb-3">
-                            <label class="small mb-1" for="inputUsername">Fullname </label>
+                            <label class="small mb-1" asp-for="FullName"></label>
                             <input class="form-control" asp-for="FullName">
                         </div>
-                        
-                        <!-- Form Row        -->
+
+                        <!-- Form Row -->
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (location)-->
                             <div class="col-md-12">
-                                <label class="small mb-1" for="inputLocation">Address</label>
+                                <label class="small mb-1" asp-for="Address"></label>
                                 <input class="form-control" asp-for="Address">
                             </div>
                         </div>
                         <!-- Form Group (email address)-->
                         <div class="mb-3">
-                            <label class="small mb-1" for="inputEmailAddress">Email address</label>
+                            <label class="small mb-1" asp-for="Email"></label>
                             <input class="form-control" asp-for="Email">
                         </div>
                         <!-- Form Row-->
                         <div class="row gx-3 mb-3">
                             <!-- Form Group (phone number)-->
                             <div class="col-md-6">
-                                <label class="small mb-1" for="inputPhone">Phone number</label>
+                                <label class="small mb-1" asp-for="PhoneNumber"></label>
                                 <input class="form-control" asp-for="PhoneNumber">
                                 <span asp-validation-for="PhoneNumber" class="text-danger"></span>
                             </div>
                             <!-- Form Group (birthday)-->
-                            <div class="col-md-6">
-                                <label class="small mb-1" for="inputBirthday">Birthday</label>
-                                <input class="form-control" asp-for = "DateOfBirth">
+                            <div class="col-md-4">
+                                <label class="small mb-1" asp-for="DateOfBirth"></label>
+                                <input class="form-control" type="date" id="DateOfBirthPicker" value="@Model.DateOfBirth?.ToString("yyyy-MM-dd")">
+                                <input type="hidden" asp-for="DateOfBirth" id="DateOfBirth">
                                 <span asp-validation-for="DateOfBirth" class="text-danger"></span>
+                            </div>
+                            <!-- Form Group (gender)-->
+                            <div class="col-md-2">
+                                <label class="small mb-1" asp-for="Gender"></label>
+                                <select asp-for="Gender" class="form-control" asp-items="Html.GetEnumSelectList<Gender>()">
+                                </select>
+                                <span asp-validation-for="Gender" class="text-danger"></span>
                             </div>
                         </div>
                         <!-- Save changes button-->
@@ -69,6 +78,13 @@
         </div>
     </div>
 </div>
-@section Scripts{
+@section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    <script>
+        $(document).ready(function () {
+            $('#DateOfBirthPicker').on('change', function () {
+                $('#DateOfBirth').val($(this).val());
+            });
+        });
+    </script>
 }
