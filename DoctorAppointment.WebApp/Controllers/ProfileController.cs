@@ -28,7 +28,7 @@ namespace DoctorAppointment.WebApp.Controllers
             {
                 return View("Index", model);
             }
-            // await _userService.UpdateUserAsync(model);
+            await _userService.UpdateUserAsync(model);
             return RedirectToAction("Index");
         }
     }

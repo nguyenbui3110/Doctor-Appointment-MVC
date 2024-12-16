@@ -1,6 +1,7 @@
 using System;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
+using DoctorAppointment.Domain.Enums;
 using DoctorAppointment.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,9 +17,18 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
         return await DbSet.Where(a => a.DoctorId == doctorId && a.AppointmentDate == date).ToListAsync();
     }
 
-    public Task<IEnumerable<Appointment>> GetPatientAppointmentsAsync(int patientId, DateTime date)
+    public async Task<List<Appointment>> GetPatientAppointmentsAsync(int patientId, DateTime? from, DateTime? to, AppointmentStatus? appointmentStatus = null)
     {
-        throw new NotImplementedException();
+        var query =DbSet.Include(a => a.Doctor.User).Include(a => a.Patient.User).Where(a => a.PatientId == patientId);
+        if (appointmentStatus.HasValue)
+        {
+            query = query.Where(a => a.Status == appointmentStatus);
+        }
+        if(from<to && from!=null && to!=null)
+        {
+            query = query.Where(a => a.AppointmentDate >= from && a.AppointmentDate <= to);
+        }
+        return await query.ToListAsync();
     }
     public async Task<Appointment?> GetAppointmentAsync(int Id)
     {

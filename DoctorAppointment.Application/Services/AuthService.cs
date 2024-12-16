@@ -27,8 +27,10 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
         if (user == null) return false;
         var result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
         if (!result.Succeeded)
+        {
             // throw new Exception("Invalid login attempt");
             return false;
+        }
         return true;
     }
 

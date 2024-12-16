@@ -20,9 +20,15 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         throw new NotImplementedException();
     }
 
-    public async Task<Appointment> GetPatientAppointmentsAsync(int patientId, DateTime date)
+    public async Task<List<AppointmentViewModel>> GetPatientAppointmentsAsync(AppointmentSearchModel model)
     {
-        throw new NotImplementedException();
+        var currentUserId = int.Parse(CurrentUser.Id);
+        var patient = await patientRepo.GetPatientByUserIdAsync(currentUserId);
+        if (patient == null)
+            throw new Exception("Patient not found");
+        var appointments = await appointmentRepo.GetPatientAppointmentsAsync(patient.Id, model.From, model.To, model.Status);
+        return Mapper.Map<List<AppointmentViewModel>>(appointments);
+        // throw new NotImplementedException();
     }
 
     public async Task<IEnumerable<TimeSpan>> GetFreeTimeSlotsAsync(int doctorId, DateTime date)

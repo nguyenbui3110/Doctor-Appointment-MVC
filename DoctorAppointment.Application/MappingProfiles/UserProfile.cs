@@ -9,7 +9,8 @@ public class UserProfile : Profile
 {
     public UserProfile()
     {
-        CreateMap<User, UserViewModel>().ReverseMap();
+        CreateMap<User, UserViewModel>();
+        CreateMap<UserViewModel, User>().ForMember(u => u.Id, opt => opt.Ignore());
             
     }
 }
