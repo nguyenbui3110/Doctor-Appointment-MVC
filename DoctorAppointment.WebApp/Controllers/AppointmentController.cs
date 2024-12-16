@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.SignalR;
 
 namespace DoctorAppointment.WebApp.Controllers
 {
+    [Authorize]
     public class AppointmentController : Controller
     {
         private readonly IAppointmentService _appointmentService;
@@ -21,7 +22,6 @@ namespace DoctorAppointment.WebApp.Controllers
         {
             return View();
         }
-        [Authorize]
         [HttpPost]
         public async Task<IActionResult> BookAppointment(AppointmentPostModel appointment)
         {
@@ -37,6 +37,13 @@ namespace DoctorAppointment.WebApp.Controllers
             }
                 
             return Json(new { success = false, message="error when create appointment" });
+        }
+        [Route("patient")]
+        public async Task<IActionResult> PatientAppointments(AppointmentSearchModel model)
+        {
+            var appointments = await _appointmentService.GetPatientAppointmentsAsync(model);
+            return View(appointments);
+            // throw new NotImplementedException();
         }
 
     }

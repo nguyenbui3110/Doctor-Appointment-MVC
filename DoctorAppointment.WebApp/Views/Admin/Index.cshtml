@@ -79,10 +79,14 @@
         $(document).ready(function () {
             // Load add modal content dynamically
             $('button[data-bs-target="#addDoctorModal"]').on('click', function () {
-                $('#addDoctorModal').hide();
+                const modalElement = document.getElementById('addDoctorModal');
+                if (modalElement) {
+                    const bootstrapModal = bootstrap.Modal.getInstance(modalElement);
+                    bootstrapModal.dispose();
+                }
                 $.get('/Admin/AddDoctor', function (data) {
                     $('#addDoctorModalContainer').html(data);
-                    $('#addDoctorModal_1').modal('show');
+                    $('#addDoctorModal').modal('show');
                 });
             });
             // Load update modal content dynamically
@@ -114,9 +118,11 @@
                         $('#addDoctorModal').modal('hide'); // Close the modal
                         location.reload(); // Reload the page to reflect changes
                     } else {
-                        $('#addDoctorModal').modal('hide'); // Close the modal
-                        // If there are errors, show them in the modal
+                        const modalElement = document.getElementById('addDoctorModal');
+                        const bootstrapModal = bootstrap.Modal.getInstance(modalElement);
+                        bootstrapModal.dispose();
                         $('#addDoctorModalContainer').html(data);
+                        // If there are errors, show them in the modal
                         $('#addDoctorModal').modal('show');
                         // Replace modal content with the response
                     }

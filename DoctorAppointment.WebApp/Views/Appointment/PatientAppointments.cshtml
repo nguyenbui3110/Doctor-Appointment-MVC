@@ -2,6 +2,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @using DoctorAppointment.Domain.Enums
+@model List<AppointmentViewModel>
 @{
 }
 
@@ -59,21 +60,21 @@
                     </thead>
                     <tbody>
                         <!-- Sample row -->
-                        <tr>
-                            <td>1</td>
-                            <td>John Doe</td>
-                            <td>Dr. Smith</td>
-                            <td>2024-12-15</td>
-                            <td>10:30 AM</td>
-                            <td><span class="badge bg-success">Scheduled</span></td>
-                            <td>
-                                <div class="btn-group" role="group">
-                                    <button class="btn btn-sm btn-danger">
-                                        <i class="fa fa-ban"></i> hủy hẹn
-                                    </button>
-                                </div>
-                            </td>
-                        </tr>
+                        @foreach(var Appointment in Model)
+                        {
+                            <tr>
+                                <td>1</td>
+                                <td>@Appointment?.PatientName</td>
+                                <td>@Appointment?.DoctorName</td>
+                                <td>@Appointment?.AppointmentDate</td>
+                                <td>@Appointment?.StartTime</td>
+                                <td>@Appointment?.Status</td>
+                                <td>
+                                    <a href="#" class="btn btn-primary">View</a>
+                                    <a href="#" class="btn btn-danger">Cancel</a>
+                                </td>
+                            </tr>
+                        }
                         <!-- Repeat for other appointments -->
                     </tbody>
                 </table>
