@@ -79,5 +79,9 @@ namespace DoctorAppointment.WebApp.Controllers
             var model = await _patientService.DeletePatient(id);
             return RedirectToAction("PatientPage");
         }
+        public async Task<ActionResult> Statistics()
+        {
+            return View();
+        }
     }
 }

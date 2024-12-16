@@ -55,6 +55,12 @@
                 <span>QUẢN LÝ BỆNH NHÂN</span>
             </a>
         </li>
+        <li class="nav-item active">
+                <a class="nav-link" asp-controller="Admin" asp-action="Statistics">
+                <i class="fas fa-fw fa-tachometer-alt"></i>
+                <span>THỐNG KÊ</span>
+            </a>
+        </li>
 
         <!-- Divider -->
         <hr class="sidebar-divider">
@@ -198,7 +204,8 @@
 
 <!-- Custom scripts for all pages-->
 <script src="~/js/sb-admin-2.min.js" asp-append-version="true"></script>
-
-@await RenderSectionAsync("Scripts", false)
+<script src="~/lib/Chart.js/chart.umd.js"></script>
 <partial name="_ValidationScriptsPartial" />
+@await RenderSectionAsync("Scripts", false)
+
 </html>

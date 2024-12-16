@@ -3,7 +3,7 @@
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
 @model DoctorAppointment.Application.Model.DoctorViewModel
-<a class="col-md-2 mb-2 text-decoration-none" href="@Url.Action("DoctorDetail", "Home", new { id = Model.Id })">
+<a class="col-lg-2 col-md-6 mb-2 text-decoration-none" href="@Url.Action("DoctorDetail", "Home", new { id = Model.Id })">
     <div class="card h-100 shadow-sm">
         <img src="@Url.Content((Model.User.AvatarUrl != null) ? Model.User.AvatarUrl : "~/img/doctorAvatar.png")"
             class="card-img-top" alt="@Model.User.FullName" loading="lazy" />

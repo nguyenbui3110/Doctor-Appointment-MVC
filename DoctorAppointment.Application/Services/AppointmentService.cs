@@ -6,6 +6,7 @@ using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
+using DoctorAppointment.Domain.Enums;
 
 namespace DoctorAppointment.Application.Services;
 
@@ -74,6 +75,17 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         var message = new Message(new List<string> {appointment.Patient.User.Email!}, "Thông tin lịch hẹn", template);
         await emailSender.SendEmailAsync(message);
         return true;
-    }   
+    }
+
+    public async Task<bool> CancelAppointmentAsync(int id)
+    {
+        var appointment = await appointmentRepo.GetByIdAsync(id);
+        if (appointment == null)
+            return false;
+        appointment.Status = AppointmentStatus.Cancelled;
+        await UnitOfWork.SaveChangesAsync();
+        return true;
+        
+    }
 }
 
