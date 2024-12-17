@@ -1,0 +1,26 @@
+﻿<script>
+    const patientctx = document.getElementById('patientChart');
+
+    new Chart(patientctx, {
+        type: 'pie',
+        data: {
+            labels: ['New Patients', 'Returning Patients'],
+            datasets: [{
+                data: [30, 70],
+                backgroundColor: [
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 99, 132)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Patient Distribution'
+                }
+            }
+        }
+    });
+</script>

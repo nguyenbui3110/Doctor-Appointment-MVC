@@ -50,8 +50,10 @@ namespace DoctorAppointment.WebApp.Controllers
         }
         public async Task<IActionResult> PatientAppointmentCancel(int id)
         {
-            if(await _appointmentService.CancelAppointmentAsync(id))
+            var appointment = await _appointmentService.CancelAppointmentAsync(id);
+            if(appointment!=null)
             {
+                await _context.Clients.All.SendAsync("UpdateTimeSlots", appointment.DoctorId?.ToString(), appointment.AppointmentDate?.ToString("yyyy-MM-dd"));
                 return RedirectToAction("PatientAppointments");
             }
             ModelState.AddModelError("", "Error while cancel appointment");

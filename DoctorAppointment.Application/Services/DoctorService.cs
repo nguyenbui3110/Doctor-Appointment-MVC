@@ -13,9 +13,9 @@ using Microsoft.EntityFrameworkCore;
 namespace DoctorAppointment.Application.Services;
 
 public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
-                             IMapper mapper, ICurrentUser currentUser,
-                              UserManager<User> userManager)
-    : BaseService(unitOfWork, mapper, currentUser), IDoctorService
+                            IMapper mapper, ICurrentUser currentUser,
+                            UserManager<User> userManager)
+                            : BaseService(unitOfWork, mapper, currentUser), IDoctorService
 {
     public async Task<DoctorViewModel> GetByIdAsync(int id)
     {

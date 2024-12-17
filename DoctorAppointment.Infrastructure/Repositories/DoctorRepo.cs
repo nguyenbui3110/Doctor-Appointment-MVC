@@ -41,5 +41,6 @@ namespace DoctorAppointment.Infrastructure.Repositories
                     .Include(dr => dr.User)
                     .Where(dr => dr.Specialization == specialization);
         }
+        
     }
 }

@@ -12,8 +12,8 @@ namespace DoctorAppointment.Application.Services;
 
 public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo patientRepo,
                                 IScheduleService scheduleService, IUnitOfWork unitOfWork,
-                                 IMapper mapper, ICurrentUser currentUser,
-                                 IMailTemplateHelper mailTemplateHelper, IEmailSender emailSender)
+                                IMapper mapper, ICurrentUser currentUser,
+                                IMailTemplateHelper mailTemplateHelper, IEmailSender emailSender)
     : BaseService(unitOfWork, mapper, currentUser), IAppointmentService
 {
     public async Task<Appointment> GetDoctorAppointmentsAsync(int doctorId, DateTime date)
@@ -77,14 +77,14 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         return true;
     }
 
-    public async Task<bool> CancelAppointmentAsync(int id)
+    public async Task<Appointment> CancelAppointmentAsync(int id)
     {
         var appointment = await appointmentRepo.GetByIdAsync(id);
         if (appointment == null)
-            return false;
+            return null;
         appointment.Status = AppointmentStatus.Cancelled;
         await UnitOfWork.SaveChangesAsync();
-        return true;
+        return appointment;
         
     }
 }

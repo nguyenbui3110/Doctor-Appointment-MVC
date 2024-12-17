@@ -15,9 +15,9 @@ using System.Threading.Tasks;
 namespace DoctorAppointment.Application.Services
 {
     public class PatientService(IPatientRepo repository, IUnitOfWork unitOfWork,
-                             IMapper mapper, ICurrentUser currentUser,
-                              UserManager<User> userManager)
-    : BaseService(unitOfWork, mapper, currentUser), IPatientService
+                                IMapper mapper, ICurrentUser currentUser,
+                                UserManager<User> userManager)
+                                : BaseService(unitOfWork, mapper, currentUser), IPatientService
     {
         public async Task<PagingItem<PatientViewModel>> GetPagedAsync(int page, string searchQuery,int pageSize = 8)
         {
