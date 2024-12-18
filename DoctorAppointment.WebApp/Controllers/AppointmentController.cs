@@ -39,11 +39,25 @@ namespace DoctorAppointment.WebApp.Controllers
             return Json(new { success = false, message="error when create appointment" });
         }
         [Route("patient")]
-        public async Task<IActionResult> PatientAppointments(AppointmentSearchModel model)
+        public IActionResult PatientAppointments()
+        {
+            return View();
+        }
+        public async Task<IActionResult> PatientAppointmentsFilter(AppointmentSearchModel model)
         {
             var appointments = await _appointmentService.GetPatientAppointmentsAsync(model);
-            return View(appointments);
-            // throw new NotImplementedException();
+            return PartialView("_AppointmentTable", appointments);
+        }
+        public async Task<IActionResult> PatientAppointmentCancel(int id)
+        {
+            var appointment = await _appointmentService.CancelAppointmentAsync(id);
+            if(appointment!=null)
+            {
+                await _context.Clients.All.SendAsync("UpdateTimeSlots", appointment.DoctorId?.ToString(), appointment.AppointmentDate?.ToString("yyyy-MM-dd"));
+                return RedirectToAction("PatientAppointments");
+            }
+            ModelState.AddModelError("", "Error while cancel appointment");
+            return RedirectToAction("PatientAppointments");
         }
 
     }

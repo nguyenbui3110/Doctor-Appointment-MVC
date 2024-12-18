@@ -32,5 +32,6 @@ namespace DoctorAppointment.Infrastructure.Repositories
             }
             return patients;
         }
+
     }
 }

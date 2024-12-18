@@ -10,8 +10,8 @@ using Microsoft.AspNetCore.Identity;
 namespace DoctorAppointment.Application.Services;
 
 public class UserService(UserManager<User> userManager,IUnitOfWork unitOfWork,
-    IMapper mapper,
-    ICurrentUser currentUser) : BaseService(unitOfWork, mapper, currentUser),IUserService
+                        IMapper mapper,ICurrentUser currentUser) 
+                        : BaseService(unitOfWork, mapper, currentUser),IUserService
 {   
     public async Task<UserViewModel> GetCurrentUserAsync()
     {

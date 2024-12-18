@@ -1,0 +1,38 @@
+﻿@model Dictionary<int, int>
+<script>
+    var dailyctx = document.getElementById('dailyChart');
+
+    dailyChart=new Chart(dailyctx, {
+        type: 'line',
+        data: {
+            labels: ['Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+            datasets: [{
+                label: 'Appointments per Day',
+                data: @Json.Serialize(Model.Values),
+                backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                borderColor: 'rgba(75, 192, 192, 1)',
+                borderWidth: 2,
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Appointments'
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Daily Appointment Distribution'
+                }
+            }
+        }
+    });
+</script>

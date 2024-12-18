@@ -7,8 +7,9 @@ using DoctorAppointment.Domain.Entities;
 
 namespace DoctorAppointment.Application.Services;
 
-public class ScheduleService(IScheduleRepo scheduleRepo, IUnitOfWork unitOfWork, IMapper mapper, ICurrentUser currentUser)
-    : BaseService(unitOfWork, mapper, currentUser), IScheduleService
+public class ScheduleService(IScheduleRepo scheduleRepo, IUnitOfWork unitOfWork,
+                            IMapper mapper, ICurrentUser currentUser)
+                            : BaseService(unitOfWork, mapper, currentUser), IScheduleService
 {
     public async Task<Schedule> GetDoctorScheduleAsync(int doctorId, DayOfWeek date)
     {

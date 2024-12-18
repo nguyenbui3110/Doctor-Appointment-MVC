@@ -12,5 +12,6 @@ namespace DoctorAppointment.Domain.Data
     {
         IQueryable<Doctor> GetByNameAndSpecialization(string name, Specialization specialization);
         IQueryable<Doctor> GetBySpecialization(Specialization specialization);
+        public  Task<string?> GetDoctorNameAsync(int doctorId);
     }
 }

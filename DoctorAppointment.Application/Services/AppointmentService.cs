@@ -6,13 +6,14 @@ using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
+using DoctorAppointment.Domain.Enums;
 
 namespace DoctorAppointment.Application.Services;
 
 public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo patientRepo,
                                 IScheduleService scheduleService, IUnitOfWork unitOfWork,
-                                 IMapper mapper, ICurrentUser currentUser,
-                                 IMailTemplateHelper mailTemplateHelper, IEmailSender emailSender)
+                                IMapper mapper, ICurrentUser currentUser,
+                                IMailTemplateHelper mailTemplateHelper, IEmailSender emailSender)
     : BaseService(unitOfWork, mapper, currentUser), IAppointmentService
 {
     public async Task<Appointment> GetDoctorAppointmentsAsync(int doctorId, DateTime date)
@@ -74,6 +75,17 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         var message = new Message(new List<string> {appointment.Patient.User.Email!}, "Thông tin lịch hẹn", template);
         await emailSender.SendEmailAsync(message);
         return true;
-    }   
+    }
+
+    public async Task<Appointment> CancelAppointmentAsync(int id)
+    {
+        var appointment = await appointmentRepo.GetByIdAsync(id);
+        if (appointment == null)
+            return null;
+        appointment.Status = AppointmentStatus.Cancelled;
+        await UnitOfWork.SaveChangesAsync();
+        return appointment;
+        
+    }
 }
 

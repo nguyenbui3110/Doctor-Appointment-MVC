@@ -1,0 +1,44 @@
+﻿@model Dictionary<int, int>
+<script>
+    var monthlyctx = document.getElementById('monthlyChart');
+    function getMonthName(monthNumber) {
+            var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+            return monthNames[monthNumber - 1];
+        }
+    var monthData = @Html.Raw(Json.Serialize(Model.Keys));
+    var labels = Object.keys(monthData).map(index => getMonthName(monthData[index]));
+    console.log(labels);
+    monthlyChart=new Chart(monthlyctx, {
+        type: 'line',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Appointments per Month',
+                data: @Json.Serialize(Model.Values),
+                backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                borderColor: 'rgba(153, 102, 255, 1)',
+                borderWidth: 2,
+                tension: 0.3,
+                fill: true
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    title: {
+                        display: true,
+                        text: 'Number of Appointments'
+                    }
+                }
+            },
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Monthly Appointment Distribution'
+                }
+            }
+        }
+    });
+</script>

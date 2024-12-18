@@ -5,6 +5,7 @@ namespace DoctorAppointment.Application.Model;
 
 public class AppointmentViewModel
 {
+    public int Id { get; set; }
 
     public DateTime? AppointmentDate { get; set; }
     public TimeSpan? StartTime { get; set; }

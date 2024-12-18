@@ -10,9 +10,10 @@ using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
-public class AuthService(SignInManager<User> signInManager, UserManager<User> userManager,IUnitOfWork unitOfWork,
-    IMapper mapper,
-    ICurrentUser currentUser,IRepository<Patient> patientRepo) : BaseService(unitOfWork, mapper, currentUser)
+public class AuthService(SignInManager<User> signInManager, UserManager<User> userManager,
+                        IUnitOfWork unitOfWork,IMapper mapper,
+                        ICurrentUser currentUser,IRepository<Patient> patientRepo)
+                        : BaseService(unitOfWork, mapper, currentUser)
 {
 
 

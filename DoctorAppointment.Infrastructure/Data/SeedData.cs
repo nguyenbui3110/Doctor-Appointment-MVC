@@ -87,10 +87,10 @@ public static class SeedData
             .RuleFor(u => u.EmailConfirmed, _ => true)
             .RuleFor(u => u.SecurityStamp, _ => Guid.NewGuid().ToString())
             .RuleFor(u => u.PasswordHash, _ => new PasswordHasher<User>().HashPassword(null!, "User@123"))
-            .RuleFor(u => u.AvatarUrl, (f,u) => f.Image.PlaceholderUrl(250, 250, u.FullName))
+            .RuleFor(u => u.AvatarUrl, (f, u) => f.Image.PlaceholderUrl(250, 250, u.FullName))
             .RuleFor(u => u.DateOfBirth, f => f.Date.Past(30).Date)
             .RuleFor(u => u.Gender, f => f.PickRandom<Gender>())
-            .Generate(60);
+            .Generate(100);
     }
     private static List<Doctor> GetDoctors(List<User> users)
     {
@@ -102,7 +102,7 @@ public static class SeedData
             .RuleFor(d => d.UserId, f => doctors[f.IndexFaker].Id)
             .RuleFor(d => d.Specialization, f => f.PickRandom<Specialization>())
             .RuleFor(d => d.YearsOfExperience, f => f.Random.Number(1, 10))
-            .RuleFor(d => d.About, (f,d)=> 
+            .RuleFor(d => d.About, (f, d) =>
             {
                 var memberInfo = typeof(Specialization).GetMember(d.Specialization.ToString())[0];
                 var displayAttribute = memberInfo.GetCustomAttribute<DisplayAttribute>();
@@ -116,12 +116,12 @@ public static class SeedData
     {
         return new Faker<Patient>()
             .RuleFor(p => p.Id, f => f.IndexFaker + 1)
-            .RuleFor(p => p.UserId, f => users[f.IndexFaker].Id)
-            .Generate(users.Count);
+            .RuleFor(p => p.UserId, f => f.IndexFaker + 1)
+            .Generate(users.Count + 1);
     }
     private static List<Appointment> GetAppointment(List<Doctor> doctors, List<Patient> patients)
     {
-        var usedDates = new HashSet<DateTime>();
+        var usedDateTimePairs = new HashSet<(DateTime, TimeSpan)>();
 
         var appointments = new Faker<Appointment>()
             .RuleFor(a => a.Id, f => f.IndexFaker + 1)
@@ -129,21 +129,24 @@ public static class SeedData
             .RuleFor(a => a.PatientId, f => f.PickRandom(patients).Id)
             .RuleFor(a => a.AppointmentDate, (f, a) =>
             {
-                DateTime uniqueDate;
+                DateTime appointmentDate;
+                TimeSpan startTime;
+
+                // Ensure unique (AppointmentDate, StartTime) pairs
                 do
                 {
-                    // Generate a random date within the past 30 days (adjust as needed)
-                    var date = f.Date.Between(DateTime.Now.AddDays(-30), DateTime.Now.AddDays(30)).Date;
+                    appointmentDate = f.Date.Between(DateTime.Now.AddMonths(-30), DateTime.Now.AddDays(30)).Date;
+                    startTime = TimeSpan.FromHours(f.Random.Int(8, 17));
+                } while (!usedDateTimePairs.Add((appointmentDate, startTime)));
 
-                    uniqueDate = date;
-                } while (!usedDates.Add(uniqueDate)); // Add returns false if the date already exists
-
-                return uniqueDate;
+                a.StartTime = startTime; // Assign the unique start time here
+                return appointmentDate;
             })
-            .RuleFor(a => a.StartTime, f => TimeSpan.FromHours(f.Random.Int(8, 17)))
+            .RuleFor(a => a.StartTime, (f, a) => a.StartTime) // Already assigned in AppointmentDate rule
             .RuleFor(a => a.EndTime, (f, a) => a.StartTime?.Add(TimeSpan.FromHours(1)))
             .RuleFor(a => a.Status, f => f.PickRandom<AppointmentStatus>())
-            .Generate(40);
+            .Generate(200);
+
         return appointments;
     }
     private static List<Schedule> GetSchedules(List<Doctor> doctors)

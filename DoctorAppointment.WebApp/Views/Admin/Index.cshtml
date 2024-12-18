@@ -1,4 +1,5 @@
 ﻿@using DoctorAppointment.Domain.Enums
+@using DoctorAppointment.WebApp.Commons.Helpers
 @{
     Layout = "_AdminLayout";
     ViewData["Title"] = "Admin";
@@ -41,7 +42,7 @@
             <tr>
                 <td>@item.UserId</td>
                 <td>@item.User.FullName</td>
-                <td>@item.Specialization</td>
+                <td>@GetSpecializationDisplayName.Get(@item.Specialization)</td>
                 <td>@item.YearsOfExperience</td>
                 <td>
                     @* <a asp-action="UpdateItem" asp-route-id="@item.UserId" class="btn btn-primary">Update</a> *@

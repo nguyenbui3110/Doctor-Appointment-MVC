@@ -41,5 +41,13 @@ namespace DoctorAppointment.Infrastructure.Repositories
                     .Include(dr => dr.User)
                     .Where(dr => dr.Specialization == specialization);
         }
+
+        public async Task<string?> GetDoctorNameAsync(int doctorId)
+        {
+            return await DbSet.Include(dr => dr.User)
+                .Where(dr => dr.Id == doctorId)
+                .Select(dr => dr.User.FullName)
+                .FirstOrDefaultAsync();
+        }
     }
 }
