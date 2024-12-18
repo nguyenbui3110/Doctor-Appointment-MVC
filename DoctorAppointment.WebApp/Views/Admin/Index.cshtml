@@ -33,6 +33,7 @@
             <th scope="col">Tên</th>
             <th scope="col">khoa</th>
             <th scope="col">Số năm kinh nghiệm</th>
+            <th scope="col">Is Delete </th>
             <th scope="col">Actions</th>
         </tr>
     </thead>
@@ -44,13 +45,24 @@
                 <td>@item.User.FullName</td>
                 <td>@GetSpecializationDisplayName.Get(@item.Specialization)</td>
                 <td>@item.YearsOfExperience</td>
+                <td><input type="checkbox" value="" disabled checked=@item.IsDeleted ></td>
                 <td>
                     @* <a asp-action="UpdateItem" asp-route-id="@item.UserId" class="btn btn-primary">Update</a> *@
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateDoctorModal"
                         UpdateId="@item.Id">Update</button>
-                    <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteDoctorModal_@item.Id" DeleteId="@item.Id">Delete</button>
+                    @if (item.IsDeleted)
+                    {
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#restoreDoctorModal"
+                            RestoreId="@item.Id">Restore</button>
+                    }
+                    else
+                    {
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteDoctorModal"
+                            DeleteId="@item.Id">Delete</button>
+                    }
                     <partial name="_DeleteDoctor" model="@item.Id" />
                 </td>
+                
             </tr>
         }
     </tbody>

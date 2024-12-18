@@ -1,6 +1,3 @@
-using System;
-using System.Linq.Dynamic.Core;
-using System.Linq.Expressions;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities.Base;
 using DoctorAppointment.Infrastructure.Data;

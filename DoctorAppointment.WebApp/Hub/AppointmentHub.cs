@@ -1,11 +1,9 @@
-using System;
 using Microsoft.AspNetCore.SignalR;
-using System.Threading.Tasks;
 
-namespace DoctorAppointment.WebApp.Hubs;
+namespace DoctorAppointment.WebApp.Hub;
 
 
-public class AppointmentHub : Hub
+public class AppointmentHub : Microsoft.AspNetCore.SignalR.Hub
 {
     public async Task NotifyTimeSlotsUpdated(int doctorId, string date)
     {

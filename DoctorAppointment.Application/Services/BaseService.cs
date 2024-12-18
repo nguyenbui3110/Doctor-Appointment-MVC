@@ -1,4 +1,3 @@
-using System;
 using AutoMapper;
 using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Domain.Data;

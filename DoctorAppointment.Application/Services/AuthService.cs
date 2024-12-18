@@ -1,11 +1,9 @@
-using System;
 
 namespace DoctorAppointment.Application.Services;
 
 using AutoMapper;
 using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Application.Model;
-using DoctorAppointment.Domain.Constants;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using Microsoft.AspNetCore.Identity;

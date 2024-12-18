@@ -6,7 +6,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Smile</title>
+    <title>@((ViewData["Title"]!=null)?@ViewData["Title"]:"DoctorABC")</title>
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
 </head>
@@ -53,7 +53,7 @@
                         {
                             <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="Appointment" asp-action="PatientAppointments">Lịch hẹn</a></li>
                         }
-                        <li class="nav-item"><a class="nav-link text-primary fw-bold" href="/profile">Xin chào,
+                        <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="profile" asp-action="index">Xin chào,
                                 @User.Identity.Name</a></li>
                         <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-action="Logout" asp-controller="Auth"><i class="fa fa-sign-out" aria-hidden="true"></i></a> </li>
                     }
@@ -89,5 +89,4 @@
 </body>
 @RenderSection("Scripts", required: false)
 </html>
-
 

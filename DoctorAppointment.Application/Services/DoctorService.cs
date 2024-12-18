@@ -1,4 +1,3 @@
-using System;
 using AutoMapper;
 using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Application.Model;
@@ -25,12 +24,12 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
 
     public async Task<PagingItem<DoctorViewModel>> GetPagedAsync(int page, string searchQuery, Specialization specialization, int pageSize = 8)
     {
-        var doctors = repository.GetByNameAndSpecialization(searchQuery, specialization);
-        (var data, var Count) = await repository.ApplyPaing(doctors, page, pageSize);
+        var doctors = repository.GetByNameAndSpecialization(searchQuery, specialization).IgnoreQueryFilters().OrderBy(d=>d.IsDeleted);
+        (var data, var count) = await repository.ApplyPaing(doctors, page, pageSize);
         return new PagingItem<DoctorViewModel>
         {
             Items = Mapper.Map<List<DoctorViewModel>>(data),
-            CountPages = (int)Math.Ceiling(Count / (double)pageSize),
+            CountPages = (int)Math.Ceiling(count / (double)pageSize),
             CurrentPage = page,
             PageSize = pageSize,
             PageUrl = i => $"?page={i}&searchQuery={searchQuery}&specialization={specialization}"

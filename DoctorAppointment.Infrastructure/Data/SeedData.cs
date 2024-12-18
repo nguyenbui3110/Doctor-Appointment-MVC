@@ -1,4 +1,3 @@
-using System;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using Bogus;
@@ -24,17 +23,17 @@ public static class SeedData
             UserId = admin.Id
         });
 
-        var User = GetUser();
-        modelBuilder.Entity<User>().HasData(User);
-        var Doctors = GetDoctors(User);
-        var Patients = GetPatients(User);
+        var user = GetUser();
+        modelBuilder.Entity<User>().HasData(user);
+        var doctors = GetDoctors(user);
+        var patients = GetPatients(user);
 
-        modelBuilder.Entity<Patient>().HasData(Patients);
-        modelBuilder.Entity<Doctor>().HasData(Doctors);
-        modelBuilder.Entity<Schedule>().HasData(GetSchedules(Doctors));
-        modelBuilder.Entity<Appointment>().HasData(GetAppointment(Doctors, Patients));
+        modelBuilder.Entity<Patient>().HasData(patients);
+        modelBuilder.Entity<Doctor>().HasData(doctors);
+        modelBuilder.Entity<Schedule>().HasData(GetSchedules(doctors));
+        modelBuilder.Entity<Appointment>().HasData(GetAppointment(doctors, patients));
 
-        modelBuilder.Entity<IdentityUserRole<int>>().HasData(Doctors.Select(b => new IdentityUserRole<int>
+        modelBuilder.Entity<IdentityUserRole<int>>().HasData(doctors.Select(b => new IdentityUserRole<int>
         {
             RoleId = roles[1].Id,
             UserId = b.UserId
@@ -74,7 +73,7 @@ public static class SeedData
     {
         return new Faker<User>("vi")
             .RuleFor(u => u.Id, f => f.IndexFaker + 2)
-            .RuleFor(u => u.FullName, f => f.Name.FullName())
+            .RuleFor(u => u.FullName, f => $"{f.Name.LastName()} {f.Name.FirstName()}")
             .RuleFor(u => u.Email, f => f.Internet.Email())
             .RuleFor(u => u.NormalizedEmail, (_,
                 u) => u.Email?.ToUpper())

@@ -3,7 +3,6 @@ using Microsoft.AspNetCore.Mvc;
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Enums;
-using DoctorAppointment.Domain.Entities;
 
 namespace DoctorAppointment.WebApp.Controllers;
 

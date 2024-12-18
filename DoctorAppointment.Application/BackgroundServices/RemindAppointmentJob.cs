@@ -1,4 +1,3 @@
-using System;
 using DoctorAppointment.Application.Commons.Helpers;
 using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Data;

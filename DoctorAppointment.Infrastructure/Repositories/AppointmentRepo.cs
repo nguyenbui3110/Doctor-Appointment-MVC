@@ -1,4 +1,3 @@
-using System;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Domain.Enums;
@@ -19,7 +18,11 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
 
     public async Task<List<Appointment>> GetPatientAppointmentsAsync(int patientId, DateTime? from, DateTime? to, AppointmentStatus? appointmentStatus = null)
     {
-        var query = DbSet.Include(a => a.Doctor.User).Include(a => a.Patient.User).Where(a => a.PatientId == patientId);
+        var query = DbSet
+                    .IgnoreQueryFilters()
+                    .Include(a => a.Doctor.User)
+                    .Include(a => a.Patient.User)
+                    .Where(a => a.PatientId == patientId);
         if (appointmentStatus.HasValue)
         {
             query = query.Where(a => a.Status == appointmentStatus);
@@ -30,9 +33,9 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
         }
         return await query.ToListAsync();
     }
-    public async Task<Appointment?> GetAppointmentAsync(int Id)
+    public async Task<Appointment?> GetAppointmentAsync(int id)
     {
-        return await DbSet.Include(a => a.Doctor.User).Include(a => a.Patient.User).Where(a => a.Id == Id).FirstOrDefaultAsync();
+        return await DbSet.Include(a => a.Doctor.User).Include(a => a.Patient.User).Where(a => a.Id == id).FirstOrDefaultAsync();
     }
 
     public async Task<List<Appointment>> GetAppointmentsByDateAsync(DateTime date)
@@ -42,6 +45,7 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
     public Dictionary<int, int> GetDailyAppointmentsCount(DateTime start, DateTime end)
     {
         var appointments = DbSet
+            .IgnoreQueryFilters()
             .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end)
             .AsEnumerable()
             .GroupBy(a => (int)a.AppointmentDate.Value.DayOfWeek) // Project as integer
@@ -54,7 +58,7 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
                 day => appointments.ContainsKey(day) ? appointments[day] : 0
             )
             .OrderBy(kv => kv.Key) // Order by month (key)
-            .ToDictionary(kv => kv.Key, kv => kv.Value); ;
+            .ToDictionary(kv => kv.Key, kv => kv.Value); 
 
         return result;
     }
@@ -62,6 +66,7 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
     {
         // Step 1: Get appointments grouped by month
         var appointments = await DbSet
+            .IgnoreQueryFilters()
             .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end)
             .GroupBy(a => a.AppointmentDate.Value.Month)
             .ToDictionaryAsync(g => g.Key, g => g.Count());
@@ -83,7 +88,9 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
     public async Task<Dictionary<int, int>> GetTop5DoctorsAsync(DateTime start, DateTime end)
     {
         //get top 5 doctors who have the most appointments
-        var doctors = await DbSet.Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end)
+        var doctors = await DbSet
+            .IgnoreQueryFilters()
+            .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end)
             .GroupBy(a => a.DoctorId)
             .Select(g => new { DoctorId = g.Key, Count = g.Count() })
             .OrderByDescending(a => a.Count)
@@ -96,6 +103,7 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
     public Task<int> GetNewPatientsCountAsync(DateTime start, DateTime end)
     {
         return DbSet
+            .IgnoreQueryFilters()
             .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end && a.Status == AppointmentStatus.Completed)  // Appointments in the date range
             .GroupBy(a => a.PatientId)
             .Where(g=>
@@ -109,10 +117,11 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
     public Task<int> GetReturningPatientsCountAsync(DateTime start, DateTime end)
     {
         return DbSet
+            .IgnoreQueryFilters()
             .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end && a.Status == AppointmentStatus.Completed)  // Appointments in the date range
             .GroupBy(a => a.PatientId)
             .Where(g =>
-                g.Count() > 1 || // More than 1 appointments in date range
+                g.Count() > 1 || // More than 1 appointment in date range
                 DbSet.Any(b => b.PatientId == g.Key && b.AppointmentDate < start && b.Status == AppointmentStatus.Completed) // Or has prior appointments
             )
             .CountAsync();  // Count the number of such patients

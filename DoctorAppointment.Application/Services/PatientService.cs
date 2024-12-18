@@ -5,12 +5,6 @@ using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace DoctorAppointment.Application.Services
 {
@@ -23,11 +17,11 @@ namespace DoctorAppointment.Application.Services
         {
             var patients = repository.Search(searchQuery);
 
-            (var data, var Count) = await repository.ApplyPaing(patients, page, pageSize);
+            (var data, var count) = await repository.ApplyPaing(patients, page, pageSize);
             return new PagingItem<PatientViewModel>
             {
                 Items = Mapper.Map<List<PatientViewModel>>(data),
-                CountPages = (int)Math.Ceiling(Count / (double)pageSize),
+                CountPages = (int)Math.Ceiling(count / (double)pageSize),
                 CurrentPage = page,
                 PageSize = pageSize,
                 PageUrl = i => $"?page={i}&searchQuery={searchQuery}"

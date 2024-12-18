@@ -1,6 +1,4 @@
-﻿using System;
-using AutoMapper;
-using DoctorAppointment.Application.BackgroundServices;
+﻿using DoctorAppointment.Application.BackgroundServices;
 using DoctorAppointment.Application.Commons;
 using DoctorAppointment.Application.Commons.Helpers;
 using DoctorAppointment.Application.Commons.Identity;

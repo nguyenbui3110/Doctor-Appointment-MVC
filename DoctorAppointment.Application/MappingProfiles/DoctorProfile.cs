@@ -1,4 +1,3 @@
-using System;
 using AutoMapper;
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Domain.Entities;

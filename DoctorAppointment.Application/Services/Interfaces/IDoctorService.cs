@@ -1,4 +1,3 @@
-using System;
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Domain.Enums;
 
@@ -9,7 +8,7 @@ public interface IDoctorService : IBaseService
     Task<DoctorViewModel> GetByIdAsync(int id);
     Task<List<DoctorViewModel>> GetBySpecialization(Specialization specialization);
 
-    Task<PagingItem<DoctorViewModel>> GetPagedAsync(int page,string SearchQuery, Specialization specialization, int pageSize = 8);
+    Task<PagingItem<DoctorViewModel>> GetPagedAsync(int page,string searchQuery, Specialization specialization, int pageSize = 8);
     Task<bool> AddDoctor(DoctorPostModel model);
     Task<bool> UpdateDoctor(DoctorViewModel model);
     Task<bool> DeleteDoctor(int id);

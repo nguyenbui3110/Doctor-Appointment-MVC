@@ -1,4 +1,3 @@
-using System;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Domain.Entities.Base;
 using Microsoft.AspNetCore.Identity;
@@ -6,7 +5,6 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using DoctorAppointment.Application.Commons.Identity;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace DoctorAppointment.Infrastructure.Data;
 

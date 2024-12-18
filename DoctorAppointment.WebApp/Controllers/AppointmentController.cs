@@ -1,6 +1,6 @@
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
-using DoctorAppointment.WebApp.Hubs;
+using DoctorAppointment.WebApp.Hub;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;

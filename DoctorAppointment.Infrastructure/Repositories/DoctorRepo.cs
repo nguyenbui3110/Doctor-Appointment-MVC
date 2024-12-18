@@ -1,10 +1,5 @@
 ﻿using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Infrastructure.Data;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
@@ -44,7 +39,9 @@ namespace DoctorAppointment.Infrastructure.Repositories
 
         public async Task<string?> GetDoctorNameAsync(int doctorId)
         {
-            return await DbSet.Include(dr => dr.User)
+            return await DbSet
+                .IgnoreQueryFilters()
+                .Include(dr => dr.User)
                 .Where(dr => dr.Id == doctorId)
                 .Select(dr => dr.User.FullName)
                 .FirstOrDefaultAsync();

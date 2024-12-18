@@ -1,5 +1,5 @@
 using DoctorAppointment.WebApp.Extentions;
-using DoctorAppointment.WebApp.Hubs;
+using DoctorAppointment.WebApp.Hub;
 
 var builder = WebApplication.CreateBuilder(args);
 

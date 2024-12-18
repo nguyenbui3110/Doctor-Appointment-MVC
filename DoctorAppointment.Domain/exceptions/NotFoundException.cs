@@ -1,4 +1,3 @@
-using System;
 
 namespace DoctorAppointment.Domain.exceptions;
 

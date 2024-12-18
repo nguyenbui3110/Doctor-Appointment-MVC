@@ -1,4 +1,3 @@
-using System;
 using AutoMapper;
 using DoctorAppointment.Application.Commons.Helpers;
 using DoctorAppointment.Application.Commons.Identity;
@@ -7,10 +6,11 @@ using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Domain.Enums;
+using Microsoft.EntityFrameworkCore;
 
 namespace DoctorAppointment.Application.Services;
 
-public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo patientRepo,
+public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo patientRepo, IDoctorRepo doctorRepo,
                                 IScheduleService scheduleService, IUnitOfWork unitOfWork,
                                 IMapper mapper, ICurrentUser currentUser,
                                 IMailTemplateHelper mailTemplateHelper, IEmailSender emailSender)
@@ -60,20 +60,20 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
     public async Task<bool> CreateAppointmentAsync(AppointmentPostModel model)
     {
         var appointment = Mapper.Map<Appointment>(model);
-        appointment.EndTime = appointment.StartTime?.Add(new TimeSpan(1,0,0));
-        appointment.PatientId = int.Parse(CurrentUser.Id);
-        var patient = await patientRepo.GetPatientByUserIdAsync(appointment.PatientId.Value);
-        appointment.PatientId = patient.Id;
-        if(appointment.DoctorId == appointment.PatientId)
+        var doctor = await doctorRepo.GetByIdAsync(appointment.DoctorId.Value);
+        if(doctor?.UserId == int.Parse(CurrentUser.Id))
         {
             return false;
         }
+        appointment.EndTime = appointment.StartTime?.Add(new TimeSpan(1,0,0));
+        var patient = await patientRepo.GetPatientByUserIdAsync(int.Parse(CurrentUser.Id));
+        appointment.PatientId = patient.Id;
         appointmentRepo.Add(appointment);
         await UnitOfWork.SaveChangesAsync();
         var appointmentInfo = await appointmentRepo.GetAppointmentAsync(appointment.Id);
         var template = mailTemplateHelper.GetAppointmentInfoTemplate(appointment);
         var message = new Message(new List<string> {appointment.Patient.User.Email!}, "Thông tin lịch hẹn", template);
-        await emailSender.SendEmailAsync(message);
+        _ = emailSender.SendEmailAsync(message);
         return true;
     }
 

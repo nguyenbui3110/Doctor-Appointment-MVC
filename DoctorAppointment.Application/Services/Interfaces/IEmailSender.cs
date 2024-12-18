@@ -1,4 +1,3 @@
-using System;
 
 namespace DoctorAppointment.Application.Services.Interfaces;
 

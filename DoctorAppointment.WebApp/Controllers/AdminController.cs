@@ -1,7 +1,6 @@
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Enums;
-using MailKit.Search;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

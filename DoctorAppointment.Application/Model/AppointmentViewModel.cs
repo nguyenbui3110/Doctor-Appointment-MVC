@@ -1,4 +1,3 @@
-using System;
 using DoctorAppointment.Domain.Enums;
 
 namespace DoctorAppointment.Application.Model;

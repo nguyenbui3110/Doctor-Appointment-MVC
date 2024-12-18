@@ -4,7 +4,6 @@
     {
         <div class="row">
         @{
-            var count = 0;
             foreach (var timeSlot in Model)
             {
                 <div class="col-4 mb-2">
@@ -12,7 +11,6 @@
                         @timeSlot.ToString("hh\\:mm") - @timeSlot.Add(new TimeSpan(1,0,0)).ToString("hh\\:mm")
                     </button>
                 </div>
-                count++;
             }
         }
         </div>

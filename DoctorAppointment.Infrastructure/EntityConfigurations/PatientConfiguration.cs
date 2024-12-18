@@ -1,9 +1,8 @@
-using System;
 using DoctorAppointment.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
-namespace DoctorAppointment.Infrastructure.Data;
+namespace DoctorAppointment.Infrastructure.EntityConfigurations;
 
 public class PatientConfiguration : IEntityTypeConfiguration<Patient>
 {

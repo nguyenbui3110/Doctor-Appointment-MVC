@@ -1,4 +1,3 @@
-using System;
 using DoctorAppointment.Domain.Entities.Base;
 
 namespace DoctorAppointment.Domain.Entities;

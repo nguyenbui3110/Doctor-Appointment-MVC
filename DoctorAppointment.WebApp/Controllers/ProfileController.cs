@@ -1,6 +1,5 @@
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services;
-using DoctorAppointment.Domain.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,8 +17,8 @@ namespace DoctorAppointment.WebApp.Controllers
 
         public  async Task<ActionResult> Index()
         {
-            var CurrentUser = await _userService.GetCurrentUserAsync();
-            return View(CurrentUser);
+            var currentUser = await _userService.GetCurrentUserAsync();
+            return View(currentUser);
         }
         [HttpPost]
         public async Task<ActionResult> Update(UserViewModel model)

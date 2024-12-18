@@ -1,5 +1,4 @@
 ﻿using DoctorAppointment.Domain.Entities;
-using System;
 using System.Collections.Generic;
 
 namespace DoctorAppointment.Application.Model

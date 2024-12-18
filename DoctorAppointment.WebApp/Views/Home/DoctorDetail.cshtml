@@ -95,7 +95,7 @@
         $(document).ready(function () {
             $('#AppointmentDate').on('change', function () {
                 var selectedDate = $(this).val();
-
+    
                 if (selectedDate) {
                     $.ajax({
                         url: '/Schedule/GetFreeTimeSlots',
@@ -117,7 +117,7 @@
             });
             $('#AppointmentForm').on('submit', function (e) {
                 e.preventDefault(); // Prevent default form submission
-
+    
                 // Validate inputs
                 if (!$('#AppointmentDate').val() || !$('#StartTime').val()) {
                     alert('Vui lòng chọn ngày và giờ.');
@@ -132,7 +132,8 @@
                     success: function (response) {
                         if (response.success) {
                             alert('Đặt lịch thành công!');
-                            window.location.reload(); // Reload or redirect if needed
+                            window.location.href = '/patient'; // Redirect to /patient
+                            //window.location.reload(); // Reload or redirect if needed
                         } else {
                             alert('Đã xảy ra lỗi: ' + response.message);
                         }
