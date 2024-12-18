@@ -5,5 +5,8 @@ namespace DoctorAppointment.Application.Services.Interfaces;
 
 public interface IStatisticsService: IBaseService
 {
-    Task<StatisticsViewModel> GetStatisticsAsync(DateTime startDate, DateTime endDate);
+    Dictionary<int,int> GetDailyAppointmentsCount(DateRangeFilter filter);
+    Task<Dictionary<int,int>> GetMonthlyAppointmentsCountAsync(DateRangeFilter filter);
+    Task<Dictionary<string,int>> GetTopDoctorsAsync(DateRangeFilter filter);
+    Task<(int NewPatient ,int ReturningPatient)> GetPatientCountAsync(DateRangeFilter filter);
 }

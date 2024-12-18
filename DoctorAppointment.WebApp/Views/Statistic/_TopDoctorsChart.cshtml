@@ -1,13 +1,13 @@
-﻿<script>
-    const doctorctx = document.getElementById('topDoctorsChart');
-
-    new Chart(doctorctx, {
+﻿@model Dictionary<string, int>
+<script>
+    var doctorctx = document.getElementById('topDoctorsChart');
+    topDoctorsChart = new Chart(doctorctx, {
         type: 'bar',
         data: {
-            labels: ['Dr. Smith', 'Dr. Johnson', 'Dr. Williams', 'Dr. Brown', 'Dr. Davis'],
+            labels: @Json.Serialize(Model.Keys),
             datasets: [{
                 label: 'Number of Appointments',
-                data: [45, 38, 32, 28, 25],
+                data: @Json.Serialize(Model.Values),
                 backgroundColor: [
                     'rgba(75, 192, 192, 0.6)',
                     'rgba(54, 162, 235, 0.6)',

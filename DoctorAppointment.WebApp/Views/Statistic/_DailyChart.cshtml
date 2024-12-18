@@ -1,13 +1,14 @@
-﻿<script>
-    const dailyctx = document.getElementById('dailyChart');
+﻿@model Dictionary<int, int>
+<script>
+    var dailyctx = document.getElementById('dailyChart');
 
-    new Chart(dailyctx, {
+    dailyChart=new Chart(dailyctx, {
         type: 'line',
         data: {
-            labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+            labels: ['Sun','Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
             datasets: [{
                 label: 'Appointments per Day',
-                data: [45, 59, 65, 55, 48, 35, 25],
+                data: @Json.Serialize(Model.Values),
                 backgroundColor: 'rgba(75, 192, 192, 0.2)',
                 borderColor: 'rgba(75, 192, 192, 1)',
                 borderWidth: 2,

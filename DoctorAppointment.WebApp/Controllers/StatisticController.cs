@@ -1,8 +1,11 @@
+using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DoctorAppointment.WebApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class StatisticController : Controller
     {
         private readonly IStatisticsService _statisticsService;
@@ -11,21 +14,25 @@ namespace DoctorAppointment.WebApp.Controllers
             _statisticsService = statisticsService;
         }
         // GET: StatisticController
-        public ActionResult GetDailyChart()
+        public ActionResult GetDailyChart(DateRangeFilter filter)
         {
-            return PartialView("_DailyChart");
+            var daily =  _statisticsService.GetDailyAppointmentsCount(filter);
+            return PartialView("_DailyChart",daily);
         }
-        public ActionResult GetMonthlyChart()
+        public async Task<ActionResult> GetMonthlyChart(DateRangeFilter filter)
         {
-            return PartialView("_MonthlyChart");
+            var monthly = await _statisticsService.GetMonthlyAppointmentsCountAsync(filter);
+            return PartialView("_MonthlyChart",monthly);
         }
-        public ActionResult GetTopDoctorsChart()
+        public async Task<ActionResult> GetTopDoctorsChart(DateRangeFilter filter)
         {
-            return PartialView("_TopDoctorsChart");
+            var topDoctors = await _statisticsService.GetTopDoctorsAsync(filter);
+            return PartialView("_TopDoctorsChart",topDoctors);
         }
-        public ActionResult GetPatientChart()
+        public async Task<ActionResult> GetPatientChart(DateRangeFilter filter)
         {
-            return PartialView("_PatientChart");
+            var patient = await _statisticsService.GetPatientCountAsync(filter);
+            return PartialView("_PatientChart",patient);
         }
 
     }

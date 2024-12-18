@@ -32,22 +32,6 @@ namespace DoctorAppointment.Infrastructure.Repositories
             }
             return patients;
         }
-        public async Task<int> GetNewPatientsCountAsync(DateTime start, DateTime end)
-        {
-            return await DbSet
-                .Include(p => p.Appointments)  // Include the appointments for each patient
-                .Where(p => p.Appointments.Any(a => a.CreatedAt >= start && a.CreatedAt <= end))  // Appointment within the range
-                .Where(p => !p.Appointments.Any(a => a.CreatedAt < start))  // No previous appointments before the start date
-                .CountAsync();
-        }
-
-        public async Task<int> GetReturningPatientsCountAsync(DateTime start, DateTime end)
-        {
-            return await DbSet.Include(p => p.Appointments)  // Include the appointments for each patient
-                .Where(p => p.Appointments.Any(a => a.CreatedAt >= start && a.CreatedAt <= end))  // Appointment within the range
-                .Where(p => p.Appointments.Any(a => a.CreatedAt < start))  // At least one previous appointment before the start date
-                .CountAsync();
-        }
 
     }
 }

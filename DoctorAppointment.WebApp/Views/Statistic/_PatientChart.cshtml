@@ -1,12 +1,12 @@
-﻿<script>
-    const patientctx = document.getElementById('patientChart');
-
-    new Chart(patientctx, {
+﻿@model (int NewPatient,int ReturningPatient)
+<script>
+    var patientctx = document.getElementById('patientChart');
+    patientChart=new Chart(patientctx, {
         type: 'pie',
         data: {
             labels: ['New Patients', 'Returning Patients'],
             datasets: [{
-                data: [30, 70],
+                data: [@Model.NewPatient, @Model.ReturningPatient],
                 backgroundColor: [
                     'rgb(54, 162, 235)',
                     'rgb(255, 99, 132)'

@@ -10,4 +10,9 @@ public interface IAppointmentRepo: IRepository<Appointment>
     Task<List<Appointment>> GetPatientAppointmentsAsync(int patientId, DateTime? from, DateTime? to, AppointmentStatus? appointmentStatus = null);
     public Task<Appointment?> GetAppointmentAsync(int Id);
     public Task<List<Appointment>> GetAppointmentsByDateAsync(DateTime date);
+    public Task<Dictionary<int,int>> GetTop5DoctorsAsync(DateTime start, DateTime end);
+    public Task<Dictionary<int, int>> GetMonthlyAppointmentsCountAsync(DateTime start, DateTime end);
+    public Dictionary<int, int> GetDailyAppointmentsCount(DateTime start, DateTime end);
+    public Task<int> GetNewPatientsCountAsync(DateTime start, DateTime end);
+    public Task<int> GetReturningPatientsCountAsync(DateTime start, DateTime end);
 }
