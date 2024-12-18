@@ -31,6 +31,23 @@
                 title: {
                     display: true,
                     text: 'Daily Appointment Distribution'
+                },
+                zoom: {
+                    pan: {
+                        enabled: true, // Allow panning
+                        mode: 'x',    // Pan in the x direction
+                    },
+                    zoom: {
+                        wheel: {
+                            enabled: true ,// Allow zooming with the mouse wheel
+                            speed: 0.1
+                        },
+                        drag:{
+                            enabled: true, // Allow dragging to zoom
+                        },
+
+                        mode: 'x', // Zoom in the x direction
+                    }
                 }
             }
         }

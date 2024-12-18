@@ -62,28 +62,16 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
 
         return result;
     }
-    public async Task<Dictionary<int, int>> GetMonthlyAppointmentsCountAsync(DateTime start, DateTime end)
+    public async Task<Dictionary<DateTime, int>> GetMonthlyAppointmentsCountAsync(DateTime start, DateTime end)
     {
-        // Step 1: Get appointments grouped by month
+        // Step 1: Get appointments grouped by month-year
         var appointments = await DbSet
             .IgnoreQueryFilters()
             .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end)
-            .GroupBy(a => a.AppointmentDate.Value.Month)
+            .GroupBy(a => new DateTime(a.AppointmentDate.Value.Year, a.AppointmentDate.Value.Month, 1))
             .ToDictionaryAsync(g => g.Key, g => g.Count());
-
-        // Step 2: Generate all months in the range
-        var allMonths = Enumerable.Range(1, 13);
-
-        // Step 3: Merge and ensure all months are included, then order by month
-        var result = allMonths
-            .ToDictionary(
-                month => month,
-                month => appointments.ContainsKey(month) ? appointments[month] : 0
-            )
-            .OrderBy(kv => kv.Key) // Order by month (key)
-            .ToDictionary(kv => kv.Key, kv => kv.Value);
-
-        return result;
+        return appointments.OrderBy(kv => kv.Key) // Order by month (key)
+            .ToDictionary(kv => kv.Key, kv => kv.Value); // Convert to dictionary
     }
     public async Task<Dictionary<int, int>> GetTop5DoctorsAsync(DateTime start, DateTime end)
     {

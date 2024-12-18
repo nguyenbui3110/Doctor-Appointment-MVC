@@ -16,7 +16,7 @@ public class StatisticsService(IAppointmentRepo appointmentRepo, IDoctorRepo doc
         return appointmentRepo.GetDailyAppointmentsCount(filter.From.Value, filter.To.Value);
     }
 
-    public async Task<Dictionary<int,int>> GetMonthlyAppointmentsCountAsync(DateRangeFilter filter)
+    public async Task<Dictionary<DateTime,int>> GetMonthlyAppointmentsCountAsync(DateRangeFilter filter)
     {
         return await appointmentRepo.GetMonthlyAppointmentsCountAsync(filter.From.Value, filter.To.Value);
     }

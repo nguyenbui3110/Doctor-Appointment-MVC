@@ -134,17 +134,25 @@ public static class SeedData
                 // Ensure unique (AppointmentDate, StartTime) pairs
                 do
                 {
-                    appointmentDate = f.Date.Between(DateTime.Now.AddMonths(-30), DateTime.Now.AddDays(30)).Date;
+                    appointmentDate = f.Date.Between(DateTime.Now.AddMonths(-20), DateTime.Now.AddDays(30)).Date;
                     startTime = TimeSpan.FromHours(f.Random.Int(8, 17));
                 } while (!usedDateTimePairs.Add((appointmentDate, startTime)));
 
                 a.StartTime = startTime; // Assign the unique start time here
+                
                 return appointmentDate;
             })
             .RuleFor(a => a.StartTime, (f, a) => a.StartTime) // Already assigned in AppointmentDate rule
             .RuleFor(a => a.EndTime, (f, a) => a.StartTime?.Add(TimeSpan.FromHours(1)))
-            .RuleFor(a => a.Status, f => f.PickRandom<AppointmentStatus>())
-            .Generate(200);
+            .RuleFor(a => a.Status, (f,a) => 
+            {
+                if(a.AppointmentDate <= DateTime.Now.Date)
+                {
+                    return f.PickRandom<AppointmentStatus>();
+                }
+                return f.PickRandom<AppointmentStatus>(AppointmentStatus.Pending, AppointmentStatus.Confirmed);
+            })
+            .Generate(300);
 
         return appointments;
     }

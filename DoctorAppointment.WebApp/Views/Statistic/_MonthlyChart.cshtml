@@ -1,17 +1,10 @@
-﻿@model Dictionary<int, int>
+﻿@model Dictionary<DateTime, int>
 <script>
     var monthlyctx = document.getElementById('monthlyChart');
-    function getMonthName(monthNumber) {
-            var monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-            return monthNames[monthNumber - 1];
-        }
-    var monthData = @Html.Raw(Json.Serialize(Model.Keys));
-    var labels = Object.keys(monthData).map(index => getMonthName(monthData[index]));
-    console.log(labels);
     monthlyChart=new Chart(monthlyctx, {
         type: 'line',
         data: {
-            labels: labels,
+            labels: @Json.Serialize(Model.Keys),
             datasets: [{
                 label: 'Appointments per Month',
                 data: @Json.Serialize(Model.Values),
@@ -25,6 +18,12 @@
         options: {
             responsive: true,
             scales: {
+                x: {
+                    type: 'time',
+                    time: {
+                        unit: 'month'
+                    }
+                },
                 y: {
                     beginAtZero: true,
                     title: {
@@ -37,6 +36,26 @@
                 title: {
                     display: true,
                     text: 'Monthly Appointment Distribution'
+                },
+                zoom: {
+                    pan: {
+                        enabled: true, // Allow panning
+                        mode: 'x',    // Pan in the x direction
+                    },
+                    zoom: {
+                        pinch: {
+                            enabled: true // Allow pinch zooming
+                        },
+                        wheel: {
+                            enabled: true ,// Allow zooming with the mouse wheel
+                            speed: 0.01
+                        },
+                        drag:{
+                            enabled: true, // Allow dragging to zoom
+                        },
+
+                        mode: 'x', // Zoom in the x direction
+                    }
                 }
             }
         }
