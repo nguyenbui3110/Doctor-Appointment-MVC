@@ -2,7 +2,7 @@
 <script>
     var monthlyctx = document.getElementById('monthlyChart');
     var labels = @Json.Serialize(Model.Keys);
-    monthlyChart=new Chart(monthlyctx, {
+    monthlyChart = new Chart(monthlyctx, {
         type: 'line',
         data: {
             labels: labels,
@@ -42,21 +42,21 @@
                 },
                 zoom: {
                     zoom: {
-                            pinch: {
-                                enabled: true // Allow pinch zooming
-                            },
-                            wheel: {
-                                enabled: true, // Allow zooming with the mouse wheel
-                                speed: 0.01
-                            },
-                            drag: {
-                                enabled: false // Allow dragging to zoom
-                            },
-                            mode: 'x', // Zoom in the x direction
-                        }
+                        pinch: {
+                            enabled: true // Allow pinch zooming
+                        },
+                        wheel: {
+                            enabled: true, // Allow zooming with the mouse wheel
+                            speed: 0.01
+                        },
+                        drag: {
+                            enabled: false // Allow dragging to zoom
+                        },
+                        mode: 'x', // Zoom in the x direction
                     }
                 }
             }
         }
-    });
+    }
+    );
 </script>

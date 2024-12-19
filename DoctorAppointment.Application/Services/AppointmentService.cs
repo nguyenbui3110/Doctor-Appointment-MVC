@@ -79,11 +79,17 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
 
     public async Task<Appointment> CancelAppointmentAsync(int id)
     {
-        var appointment = await appointmentRepo.GetByIdAsync(id);
+        var appointment = await appointmentRepo.QueryGetById(id)
+                                .Include(a=>a.Doctor.User)
+                                .Include(a=>a.Patient.User)
+                                .FirstOrDefaultAsync();
         if (appointment == null)
             return null;
         appointment.Status = AppointmentStatus.Cancelled;
         await UnitOfWork.SaveChangesAsync();
+        var template = mailTemplateHelper.GetCancelAppointmentTemplate(appointment);
+        var message = new Message(new List<string> {appointment.Patient.User.Email!}, "Thông tin hủy lịch hẹn", template);
+        _ = emailSender.SendEmailAsync(message);
         return appointment;
         
     }

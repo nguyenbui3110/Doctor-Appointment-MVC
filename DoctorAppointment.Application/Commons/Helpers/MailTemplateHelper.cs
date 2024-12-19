@@ -7,8 +7,9 @@ public enum TemplateType
 {
     AppointmentInfo,
     RemindAppointment,
-    GuestCancellation,
-    GuestCancellationHostNoti
+    ConfirmedAppointment,
+    RejectAppointment,
+    CancelAppointment
 }
 
 public interface IMailTemplateHelper
@@ -16,6 +17,9 @@ public interface IMailTemplateHelper
     string GetAppointmentInfoTemplate(
         Appointment appointment);
     string GetRemindAppointmentTemplate(Appointment appointment);
+    string GetConfirmedAppointmentTemplate(Appointment appointment);
+    string GetRejectAppointmentTemplate(Appointment appointment);
+    string GetCancelAppointmentTemplate(Appointment appointment);
 
     
 }
@@ -40,6 +44,45 @@ public class MailTemplateHelper : IMailTemplateHelper
 
         return template; 
     }
+
+    public string GetCancelAppointmentTemplate(Appointment appointment)
+    {
+        var template = GetTemplate(TemplateType.CancelAppointment)
+                        .Replace("{{patient_name}}",appointment.Patient.User.FullName)
+                        .Replace("{{appointment_date}}", appointment.AppointmentDate?.ToString("dd/MM/yyyy"))
+                        .Replace("{{doctor_name}}",appointment.Doctor.User.FullName)
+                        .Replace("{{StartTime}}",appointment.StartTime?.ToString(@"hh\:mm"))
+                        .Replace("{{EndTime}}",appointment.EndTime?.ToString(@"hh\:mm"))
+                        .Replace("{{cancel_reason}}","");
+
+        return template; 
+    }
+
+    public string GetConfirmedAppointmentTemplate(Appointment appointment)
+    {
+        var template = GetTemplate(TemplateType.ConfirmedAppointment)
+                        .Replace("{{patient_name}}",appointment.Patient.User.FullName)
+                        .Replace("{{appointment_date}}", appointment.AppointmentDate?.ToString("dd/MM/yyyy"))
+                        .Replace("{{doctor_name}}",appointment.Doctor.User.FullName)
+                        .Replace("{{StartTime}}",appointment.StartTime?.ToString(@"hh\:mm"))
+                        .Replace("{{EndTime}}",appointment.EndTime?.ToString(@"hh\:mm"))
+                        .Replace("{{notes}}","");
+
+        return template; 
+    }
+
+    public string GetRejectAppointmentTemplate(Appointment appointment)
+    {
+        var template = GetTemplate(TemplateType.RejectAppointment)
+                        .Replace("{{patient_name}}",appointment.Patient.User.FullName)
+                        .Replace("{{appointment_date}}", appointment.AppointmentDate?.ToString("dd/MM/yyyy"))
+                        .Replace("{{doctor_name}}",appointment.Doctor.User.FullName)
+                        .Replace("{{StartTime}}",appointment.StartTime?.ToString(@"hh\:mm"))
+                        .Replace("{{EndTime}}",appointment.EndTime?.ToString(@"hh\:mm"))
+                        .Replace("{{reject_reason}}","");
+        return template; 
+    }
+
     public string GetRemindAppointmentTemplate(Appointment appointment){
         var template = GetTemplate(TemplateType.RemindAppointment)
                         .Replace("{{patient_name}}",appointment.Patient.User.FullName)
@@ -53,8 +96,7 @@ public class MailTemplateHelper : IMailTemplateHelper
 
     public string GetTemplate(TemplateType templateName)
     {
-        var pathToFile = GetTemplatePath(templateName.ToString());
-        
+        var pathToFile = GetTemplatePath(templateName.ToString());        
         using var reader = File.OpenText(pathToFile);
         return reader.ReadToEnd();
     }

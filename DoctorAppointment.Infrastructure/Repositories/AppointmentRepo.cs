@@ -13,7 +13,9 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
     }
     public async Task<IEnumerable<Appointment>> GetDoctorAppointmentsAsync(int doctorId, DateTime date)
     {
-        return await DbSet.Where(a => a.DoctorId == doctorId && a.AppointmentDate == date).ToListAsync();
+        return await DbSet.Where(a => a.DoctorId == doctorId && a.AppointmentDate == date
+                                &&a.Status!=AppointmentStatus.Cancelled
+                                &&a.Status!=AppointmentStatus.Rejected).ToListAsync();
     }
 
     public async Task<List<Appointment>> GetPatientAppointmentsAsync(int patientId, DateTime? from, DateTime? to, AppointmentStatus? appointmentStatus = null)
