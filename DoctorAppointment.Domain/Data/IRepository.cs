@@ -5,6 +5,7 @@ public interface IRepository<TEntity>
 {
     IQueryable<TEntity> GetAll();
     public IQueryable<TEntity> QueryGetById(int id);
+    public IQueryable<TEntity> IgnoreQueryFilters(IQueryable<TEntity> queryable);
     Task<TEntity?> GetByIdAsync(int id);
 
     void Add(TEntity entity);

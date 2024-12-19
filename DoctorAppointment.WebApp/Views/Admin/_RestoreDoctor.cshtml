@@ -1,0 +1,23 @@
+﻿<!-- Delete Doctor Modal -->
+@model int
+<div class="modal fade" id="restoreDoctorModal_@Model" tabindex="-1" aria-labelledby="restoreDoctorModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="restoreDoctorModalLabel">phục hồi bác sĩ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn phục hồi bác sĩ này?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">hủy</button>
+                <form asp-action="RestoreDoctor" asp-controller="Admin" method="get">
+                    <input type="hidden" name="id" value="@Model" />
+                    <button type="submit" class="btn btn-success">phục hồi</button>
+                </form>
+                
+            </div>
+        </div>
+    </div>
+</div>

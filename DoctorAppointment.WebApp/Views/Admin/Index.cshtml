@@ -16,13 +16,13 @@
             <option value="" disabled selected>Khoa</option>
         </select>
 
-        <button type="submit" class="btn btn-primary fw-bold">Search</button>
+        <button type="submit" class="btn btn-primary fw-bold"><div class="fa fa-search"></div> Search</button>
     </form>
 
 </ul>
 
 <div class="d-flex justify-content-end mb-2">
-    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addDoctorModal">Tạo mới bác
+    <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addDoctorModal"><div class="fa fa-plus"></div> Tạo mới bác
         sĩ</button>
 </div>
 
@@ -49,18 +49,19 @@
                 <td>
                     @* <a asp-action="UpdateItem" asp-route-id="@item.UserId" class="btn btn-primary">Update</a> *@
                     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#updateDoctorModal"
-                        UpdateId="@item.Id">Update</button>
+                        UpdateId="@item.Id"><div class="fa fa-pencil"></div> Update</button>
                     @if (item.IsDeleted)
                     {
-                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#restoreDoctorModal"
-                            RestoreId="@item.Id">Restore</button>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#restoreDoctorModal_@item.Id"
+                            RestoreId="@item.Id"><div class="fa fa-repeat"></div> phục hồi</button>
+                        <partial name="_RestoreDoctor" model="@item.Id" />
                     }
                     else
                     {
-                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteDoctorModal"
-                            DeleteId="@item.Id">Delete</button>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal" data-bs-target="#deleteDoctorModal_@item.Id"
+                            DeleteId="@item.Id"><div class="fa fa-lock"></div> Khóa</button>
+                        <partial name="_DeleteDoctor" model="@item.Id" />
                     }
-                    <partial name="_DeleteDoctor" model="@item.Id" />
                 </td>
                 
             </tr>

@@ -21,10 +21,16 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
         var doctor = await repository.QueryGetById(id).Include(d=>d.User).FirstOrDefaultAsync();
         return Mapper.Map<DoctorViewModel>(doctor);
     }
+    public async Task<DoctorViewModel>GetByAdminWithIdAsync(int id)
+    {
+        var doctor = await repository.QueryGetById(id).Include(d=>d.User).IgnoreQueryFilters().FirstOrDefaultAsync();
+        return Mapper.Map<DoctorViewModel>(doctor);
+    }
 
     public async Task<PagingItem<DoctorViewModel>> GetPagedAsync(int page, string searchQuery, Specialization specialization, int pageSize = 8)
     {
-        var doctors = repository.GetByNameAndSpecialization(searchQuery, specialization).IgnoreQueryFilters().OrderBy(d=>d.IsDeleted);
+        var query = repository.GetByNameAndSpecialization(searchQuery, specialization);
+        var doctors = repository.IgnoreQueryFilters(query).OrderBy(d=>d.IsDeleted);
         (var data, var count) = await repository.ApplyPaing(doctors, page, pageSize);
         return new PagingItem<DoctorViewModel>
         {
@@ -66,7 +72,8 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
 
     public async Task<bool> UpdateDoctor(DoctorViewModel model)
     {
-        var doctor = await repository.QueryGetById(model.Id).Include(d=>d.User).FirstOrDefaultAsync();
+        var query = repository.QueryGetById(model.Id).Include(d=>d.User);
+        var doctor = await repository.IgnoreQueryFilters(query).FirstOrDefaultAsync();
         if (doctor == null)
             return false;
         Mapper.Map(model, doctor);
@@ -100,5 +107,15 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
     {
         var doctors= await repository.GetAll().Include(d=>d.User).ToListAsync();
         return Mapper.Map<List<DoctorViewModel>>(doctors);
+    }
+
+    public async Task RestoreDoctor(int id)
+    {
+        var query = repository.QueryGetById(id);
+        var doctor = await repository.IgnoreQueryFilters(query).FirstOrDefaultAsync();
+        if (doctor == null)
+            return;
+        doctor.IsDeleted = false;
+        await UnitOfWork.SaveChangesAsync();
     }
 }

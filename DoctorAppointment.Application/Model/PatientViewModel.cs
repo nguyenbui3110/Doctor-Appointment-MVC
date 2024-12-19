@@ -9,5 +9,6 @@ namespace DoctorAppointment.Application.Model
         public int UserId { get; set; }
 
         public UserViewModel User { get; set; }
+        public bool IsDeleted { get; set; }
     }
 }

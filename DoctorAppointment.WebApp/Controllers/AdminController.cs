@@ -45,7 +45,7 @@ namespace DoctorAppointment.WebApp.Controllers
         }
         public async Task<ActionResult> UpdateDoctor(int id)
         {
-            var model = await _doctorService.GetByIdAsync(id);
+            var model = await _doctorService.GetByAdminWithIdAsync(id);
             return PartialView("_UpdateDoctor", model);
         }
         [HttpPost]
@@ -65,6 +65,11 @@ namespace DoctorAppointment.WebApp.Controllers
             await _doctorService.DeleteDoctor(id);
             return RedirectToAction("Index");
         }
+        public async Task<ActionResult> RestoreDoctor(int id)
+        {
+            await _doctorService.RestoreDoctor(id);
+            return RedirectToAction("Index");
+        }
 
         public async Task<ActionResult> PatientPage(int page = 1, string searchQuery = "")
         {
@@ -76,6 +81,11 @@ namespace DoctorAppointment.WebApp.Controllers
         public async Task<ActionResult> DeletePatient(int id)
         {
             var model = await _patientService.DeletePatient(id);
+            return RedirectToAction("PatientPage");
+        }
+        public async Task<ActionResult> RestorePatient(int id)
+        {
+            await _patientService.RestorePatient(id);
             return RedirectToAction("PatientPage");
         }
         public async Task<ActionResult> Statistics()

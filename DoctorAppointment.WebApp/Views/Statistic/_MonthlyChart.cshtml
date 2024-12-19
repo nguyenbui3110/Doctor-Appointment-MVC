@@ -1,10 +1,11 @@
 ﻿@model Dictionary<DateTime, int>
 <script>
     var monthlyctx = document.getElementById('monthlyChart');
+    var labels = @Json.Serialize(Model.Keys);
     monthlyChart=new Chart(monthlyctx, {
         type: 'line',
         data: {
-            labels: @Json.Serialize(Model.Keys),
+            labels: labels,
             datasets: [{
                 label: 'Appointments per Month',
                 data: @Json.Serialize(Model.Values),
@@ -22,7 +23,9 @@
                     type: 'time',
                     time: {
                         unit: 'month'
-                    }
+                    },
+                    min: labels[0], // Set the initial min limit (first date)
+                    max: labels[labels.length - 1], // Set the initial max limit (last date)
                 },
                 y: {
                     beginAtZero: true,
@@ -38,23 +41,19 @@
                     text: 'Monthly Appointment Distribution'
                 },
                 zoom: {
-                    pan: {
-                        enabled: true, // Allow panning
-                        mode: 'x',    // Pan in the x direction
-                    },
                     zoom: {
-                        pinch: {
-                            enabled: true // Allow pinch zooming
-                        },
-                        wheel: {
-                            enabled: true ,// Allow zooming with the mouse wheel
-                            speed: 0.01
-                        },
-                        drag:{
-                            enabled: true, // Allow dragging to zoom
-                        },
-
-                        mode: 'x', // Zoom in the x direction
+                            pinch: {
+                                enabled: true // Allow pinch zooming
+                            },
+                            wheel: {
+                                enabled: true, // Allow zooming with the mouse wheel
+                                speed: 0.01
+                            },
+                            drag: {
+                                enabled: false // Allow dragging to zoom
+                            },
+                            mode: 'x', // Zoom in the x direction
+                        }
                     }
                 }
             }

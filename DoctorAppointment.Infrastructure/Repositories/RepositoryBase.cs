@@ -55,4 +55,9 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Enti
         int totalCount = await queryable.CountAsync();
         return (await queryable.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(), totalCount);
     }
+
+    public IQueryable<TEntity> IgnoreQueryFilters(IQueryable<TEntity> queryable)
+    {
+        return queryable.IgnoreQueryFilters();
+    }
 }
