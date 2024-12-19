@@ -1,8 +1,5 @@
-using System;
-using System.Linq.Expressions;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities.Base;
-using DoctorAppointment.Domain.Specification;
 using DoctorAppointment.Infrastructure.Data;
 using Microsoft.EntityFrameworkCore;
 
@@ -20,56 +17,47 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Enti
         _dbContext = dbContext;
     }
 
-    public async Task<TEntity?> GetByIdAsync(int id, bool isNoTracking = false)
+     public IQueryable<TEntity> GetAll()
     {
-        var query = DbSet.AsQueryable();
-        if (isNoTracking)
-            query = query.AsNoTracking();
-        return await query.FirstOrDefaultAsync(e => e.Id == id); 
+        return  _dbContext.Set<TEntity>();
     }
-    
-    public async Task<IEnumerable<TEntity>> GetAllAsync() => await DbSet.AsNoTracking().ToListAsync(); 
 
-    public void Add(TEntity entity) => DbSet.Add(entity);
+    public IQueryable<TEntity> QueryGetById(int id)
+    {
+        return _dbContext.Set<TEntity>().Where(e => e.Id == id);
+    }
+    public async Task<TEntity?> GetByIdAsync(int id)
+    {
+        return await _dbContext.Set<TEntity>().FindAsync(id);
+    }
 
-    public void Update(TEntity entity) => DbSet.Update(entity);
+    public void Add(TEntity entity)
+    {
+        _dbContext.Set<TEntity>().Add(entity);
+    }
 
-    public void Delete(TEntity entity) => DbSet.Remove(entity);
+    public void Update(TEntity entity)
+    {
+        _dbContext.Set<TEntity>().Update(entity);
+    }
+
+    public void Delete(TEntity entity)
+    {
+        _dbContext.Set<TEntity>().Remove(entity);
+    }
+
     public void RemoveRange(IEnumerable<TEntity> entities)
     {
-        foreach (var entity in entities)
-            entity.IsDeleted = true;
+        _dbContext.Set<TEntity>().RemoveRange(entities);
     }
-
-    public async Task<TEntity?> FindOneAsync(ISpecification<TEntity> spec) 
-        => await GetQuery<TEntity>.From(DbSet, spec).FirstOrDefaultAsync();
-
-    public async Task<IEnumerable<TEntity>> FindListAsync(ISpecification<TEntity> spec)
-        => await GetQuery<TEntity>.From(DbSet, spec).ToListAsync();
-
-    public async Task<int> CountAsync(ISpecification<TEntity> spec)
-        => await GetQuery<TEntity>.From(DbSet, spec).CountAsync();
-
-    public async Task<int> CountAsync(Expression<Func<TEntity, bool>> predicate)
-        => await DbSet.CountAsync(predicate);
-    
-
-    public async Task<double> AverageAsync(ISpecification<TEntity> spec, Expression<Func<TEntity, double>> selector)
-        => await GetQuery<TEntity>.From(DbSet, spec).AverageAsync(selector);
-
-    public async Task<bool> AnyAsync(ISpecification<TEntity> spec)
-        => await GetQuery<TEntity>.From(DbSet, spec).AnyAsync();
-
-    public async Task<bool> AnyAsync(int id)
-        => await DbSet.AnyAsync(e => e.Id == id);
-
-    public async Task<(IEnumerable<TEntity>, int)> FindWithTotalCountAsync(ISpecification<TEntity> specification)
+    public async Task<(IEnumerable<TEntity>,int)> ApplyPaing(IQueryable<TEntity> queryable, int page, int pageSize)
     {
-        var query = GetQuery<TEntity>.From(DbSet, specification);
-        var count = await query.CountAsync();
-        var data = await query.Skip(specification.Skip).Take(specification.Take).ToListAsync();
-        return (data, count);
+        int totalCount = await queryable.CountAsync();
+        return (await queryable.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(), totalCount);
     }
-    public async Task<double> SumAsync(ISpecification<TEntity> spec, Expression<Func<TEntity, double>> selector)
-        => await GetQuery<TEntity>.From(DbSet, spec).SumAsync(selector);
+
+    public IQueryable<TEntity> IgnoreQueryFilters(IQueryable<TEntity> queryable)
+    {
+        return queryable.IgnoreQueryFilters();
+    }
 }

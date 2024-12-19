@@ -5,8 +5,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
   <ItemGroup>
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\DoctorAppointment.Application\DoctorAppointment.Application.csproj" />
     <ProjectReference Include="..\DoctorAppointment.Infrastructure\DoctorAppointment.Infrastructure.csproj" />
     
@@ -17,6 +15,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
+    <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1" />
     <PackageReference Include="Scrutor" Version="5.0.2" />
   </ItemGroup>
 </Project>

@@ -1,0 +1,35 @@
+﻿@using DoctorAppointment.WebApp.Commons.Helpers
+@model List<DoctorViewModel>
+@{
+    Layout = "_Layout";
+}
+
+
+<div class="container d-flex justify-content-center" style="width: 100vh">
+    <h1>Danh sách bác sĩ</h1>
+</div>
+
+<div class="container mt-5">
+    <div class="row">
+        @if (Model != null)
+        {
+            @foreach (var doctor in Model)
+            {
+                <a class="col-md-4 mb-4 text-decoration-none" href="@Url.Action("DoctorDetail", "Home", new { id = doctor.Id })">
+                    <div class="card h-100 shadow-sm">
+                                <img src="@Url.Content((doctor.User.AvatarUrl != null) ? doctor.User.AvatarUrl : "~/img/doctorAvatar.png")" class="card-img-top" alt="@doctor.User.FullName" loading="lazy" />
+                        <div class="card-body">
+                                <h5 class="card-title">Name: @doctor.User.FullName</h5>
+                                <h6 class="card-subtitle mb-2 text-muted"> Khoa: @GetSpecializationDisplayName.Get(doctor.Specialization)</h6>
+                                <p class="card-text">giới thiệu: @doctor.About</p>
+                        </div>
+                    </div>
+                </a>
+            }
+        }
+        else
+        {
+            <p>No doctors available.</p>
+        }
+    </div>
+</div>

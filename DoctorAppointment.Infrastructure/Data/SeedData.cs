@@ -1,4 +1,5 @@
-using System;
+using System.ComponentModel.DataAnnotations;
+using System.Reflection;
 using Bogus;
 using DoctorAppointment.Domain.Constants;
 using DoctorAppointment.Domain.Entities;
@@ -22,21 +23,17 @@ public static class SeedData
             UserId = admin.Id
         });
 
-        var User = GetUser();
-        modelBuilder.Entity<User>().HasData(User);
-        var Doctors = GetDoctors(User);
-        var Patients = GetPatients(User);
+        var user = GetUser();
+        modelBuilder.Entity<User>().HasData(user);
+        var doctors = GetDoctors(user);
+        var patients = GetPatients(user);
 
-        modelBuilder.Entity<Patient>().HasData(Patients);
-        modelBuilder.Entity<Doctor>().HasData(Doctors);
-        modelBuilder.Entity<Appointment>().HasData(GetAppointment(Doctors, Patients));
+        modelBuilder.Entity<Patient>().HasData(patients);
+        modelBuilder.Entity<Doctor>().HasData(doctors);
+        modelBuilder.Entity<Schedule>().HasData(GetSchedules(doctors));
+        modelBuilder.Entity<Appointment>().HasData(GetAppointment(doctors, patients));
 
-        modelBuilder.Entity<IdentityUserRole<int>>().HasData(Doctors.Select(b => new IdentityUserRole<int>
-        {
-            RoleId = roles[2].Id,
-            UserId = b.UserId
-        }));
-        modelBuilder.Entity<IdentityUserRole<int>>().HasData(Patients.Select(b => new IdentityUserRole<int>
+        modelBuilder.Entity<IdentityUserRole<int>>().HasData(doctors.Select(b => new IdentityUserRole<int>
         {
             RoleId = roles[1].Id,
             UserId = b.UserId
@@ -68,16 +65,15 @@ public static class SeedData
         var roles = new List<IdentityRole<int>>
         {
             new() { Id = 1, Name = AppRole.Admin, NormalizedName = AppRole.Admin.ToUpper() },
-            new() { Id = 2, Name = AppRole.Patient, NormalizedName = AppRole.Patient.ToUpper() },
-            new() { Id = 3, Name = AppRole.Doctor, NormalizedName = AppRole.Doctor.ToUpper() }
+            new() { Id = 2, Name = AppRole.Doctor, NormalizedName = AppRole.Doctor.ToUpper() }
         };
         return roles;
     }
     private static List<User> GetUser()
     {
-        return new Faker<User>()
+        return new Faker<User>("vi")
             .RuleFor(u => u.Id, f => f.IndexFaker + 2)
-            .RuleFor(u => u.FullName, f => f.Name.FullName())
+            .RuleFor(u => u.FullName, f => $"{f.Name.LastName()} {f.Name.FirstName()}")
             .RuleFor(u => u.Email, f => f.Internet.Email())
             .RuleFor(u => u.NormalizedEmail, (_,
                 u) => u.Email?.ToUpper())
@@ -90,33 +86,41 @@ public static class SeedData
             .RuleFor(u => u.EmailConfirmed, _ => true)
             .RuleFor(u => u.SecurityStamp, _ => Guid.NewGuid().ToString())
             .RuleFor(u => u.PasswordHash, _ => new PasswordHasher<User>().HashPassword(null!, "User@123"))
-            .Generate(30);
+            .RuleFor(u => u.AvatarUrl, (f, u) => f.Image.PlaceholderUrl(250, 250, u.FullName))
+            .RuleFor(u => u.DateOfBirth, f => f.Date.Past(30).Date)
+            .RuleFor(u => u.Gender, f => f.PickRandom<Gender>())
+            .Generate(100);
     }
     private static List<Doctor> GetDoctors(List<User> users)
     {
         //first 10 users are doctors
 
-        var doctors = users.Take(10).ToList();
-        users.RemoveRange(0, 10);
-        return new Faker<Doctor>()
+        var doctors = users.Take(20).ToList();
+        return new Faker<Doctor>("vi")
             .RuleFor(d => d.Id, f => f.IndexFaker + 1)
             .RuleFor(d => d.UserId, f => doctors[f.IndexFaker].Id)
             .RuleFor(d => d.Specialization, f => f.PickRandom<Specialization>())
-            .RuleFor(d => d.About, f => f.Lorem.Sentence())
-            .RuleFor(d => d.YearsOfExperience, f => f.Random.Number(1, 20))
-            .Generate(10);
+            .RuleFor(d => d.YearsOfExperience, f => f.Random.Number(1, 10))
+            .RuleFor(d => d.About, (f, d) =>
+            {
+                var memberInfo = typeof(Specialization).GetMember(d.Specialization.ToString())[0];
+                var displayAttribute = memberInfo.GetCustomAttribute<DisplayAttribute>();
+                var displayName = displayAttribute?.Name ?? d.Specialization.ToString();
+                return $"Bác sĩ có hơn {d.YearsOfExperience} năm trong lĩnh vực {displayName}";
+            })
+            .Generate(20);
 
     }
     private static List<Patient> GetPatients(List<User> users)
     {
         return new Faker<Patient>()
             .RuleFor(p => p.Id, f => f.IndexFaker + 1)
-            .RuleFor(p => p.UserId, f => users[f.IndexFaker].Id)
-            .Generate(20);
+            .RuleFor(p => p.UserId, f => f.IndexFaker + 1)
+            .Generate(users.Count + 1);
     }
     private static List<Appointment> GetAppointment(List<Doctor> doctors, List<Patient> patients)
     {
-        var usedDates = new HashSet<DateTime>();
+        var usedDateTimePairs = new HashSet<(DateTime, TimeSpan)>();
 
         var appointments = new Faker<Appointment>()
             .RuleFor(a => a.Id, f => f.IndexFaker + 1)
@@ -124,26 +128,56 @@ public static class SeedData
             .RuleFor(a => a.PatientId, f => f.PickRandom(patients).Id)
             .RuleFor(a => a.AppointmentDate, (f, a) =>
             {
-                DateTime uniqueDate;
-                // Ensure the AppointmentDate is unique and within work hours (9 AM - 5 PM)
+                DateTime appointmentDate;
+                TimeSpan startTime;
+
+                // Ensure unique (AppointmentDate, StartTime) pairs
                 do
                 {
-                    // Generate a random date within the past 30 days (adjust as needed)
-                    var date = f.Date.Past(30);
+                    appointmentDate = f.Date.Between(DateTime.Now.AddMonths(-20), DateTime.Now.AddDays(30)).Date;
+                    startTime = TimeSpan.FromHours(f.Random.Int(8, 17));
+                } while (!usedDateTimePairs.Add((appointmentDate, startTime)));
 
-                    // Generate a random time between 9 AM and 5 PM
-                    var randomHour = f.Random.Number(9, 17); // 9 to 17 (5 PM)
-                    var randomMinute = f.Random.Number(0, 59); // 0 to 59 minutes
-
-                    // Combine date and time to form a complete DateTime
-                    uniqueDate = date.AddHours(randomHour).AddMinutes(randomMinute);
-
-                } while (!usedDates.Add(uniqueDate)); // Add returns false if the date already exists
-
-                return uniqueDate;
+                a.StartTime = startTime; // Assign the unique start time here
+                
+                return appointmentDate;
             })
-            .RuleFor(a => a.Status, f => f.PickRandom<AppointmentStatus>())
-            .Generate(40);
+            .RuleFor(a => a.StartTime, (f, a) => a.StartTime) // Already assigned in AppointmentDate rule
+            .RuleFor(a => a.EndTime, (f, a) => a.StartTime?.Add(TimeSpan.FromHours(1)))
+            .RuleFor(a => a.Status, (f,a) => 
+            {
+                if(a.AppointmentDate <= DateTime.Now.Date)
+                {
+                    return f.PickRandom<AppointmentStatus>();
+                }
+                return f.PickRandom<AppointmentStatus>(AppointmentStatus.Pending, AppointmentStatus.Confirmed);
+            })
+            .Generate(300);
+
         return appointments;
+    }
+    private static List<Schedule> GetSchedules(List<Doctor> doctors)
+    {
+        // for each doctor generate schedule each day of the week
+
+        var schedules = new List<Schedule>();
+        var id = 1;
+        foreach (var doctor in doctors)
+        {
+
+            for (var i = 1; i < 7; i++)
+            {
+                schedules.Add(new Schedule
+                {
+                    Id = id++,
+                    DoctorId = doctor.Id,
+                    DayOfWeek = (DayOfWeek)i,
+                    StartTime = TimeSpan.FromHours(8),
+                    EndTime = TimeSpan.FromHours(17)
+                });
+            }
+        }
+
+        return schedules;
     }
 }

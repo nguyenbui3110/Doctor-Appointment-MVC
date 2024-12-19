@@ -1,0 +1,26 @@
+﻿@model (int NewPatient,int ReturningPatient)
+<script>
+    var patientctx = document.getElementById('patientChart');
+    patientChart=new Chart(patientctx, {
+        type: 'pie',
+        data: {
+            labels: ['New Patients', 'Returning Patients'],
+            datasets: [{
+                data: [@Model.NewPatient, @Model.ReturningPatient],
+                backgroundColor: [
+                    'rgb(54, 162, 235)',
+                    'rgb(255, 99, 132)'
+                ]
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Patient Distribution'
+                }
+            }
+        }
+    });
+</script>

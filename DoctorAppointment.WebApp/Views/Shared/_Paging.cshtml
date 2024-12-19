@@ -1,11 +1,11 @@
-﻿@* 
+﻿@*
     Model:
       - currentPage:int - Trang hiện tại
       - countPages:int - tổng số trang
       - generateUrl:delegate Func<int?, string> trả về URL tương ứng với trang p (1,2,3 ...)
 *@
 
-@* @model IPagingItem
+@model IPagingItem
 @{
     var currentPage = Model.CurrentPage;
     var countPages = Model.CountPages;
@@ -78,7 +78,6 @@
 }
 
 @* PHÁT SINH HTML*@
-@*
 
 <ul class="pagination justify-content-center">
     <!-- Previous page link -->
@@ -130,4 +129,4 @@
             <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Trang sau</a>
         </li>
     }
-</ul> *@
+</ul>

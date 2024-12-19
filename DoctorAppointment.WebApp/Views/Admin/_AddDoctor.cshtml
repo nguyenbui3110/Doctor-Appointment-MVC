@@ -1,0 +1,63 @@
+﻿@model DoctorPostModel
+@using DoctorAppointment.Domain.Enums
+<div class="modal fade" id="addDoctorModal" tabindex="-1" role="dialog" aria-labelledby="addDoctorModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addDoctorModalLabel">Add Doctor</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form asp-action="AddDoctor" method="post" id="AddDoctorForm">
+                    @Html.AntiForgeryToken()
+
+                    <div class="form-group">
+                        <label asp-for="RegisterModel.FullName" class="control-label"></label>
+                        <input asp-for="RegisterModel.FullName" class="form-control" />
+                        <span asp-validation-for="RegisterModel.FullName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Specialization" class="control-label"></label>
+                        <select asp-for="Specialization" class="form-control" asp-items="Html.GetEnumSelectList<Specialization>()">
+                            <option value="" disabled selected>Select Specialization</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="YearsOfExperience" class="control-label"></label>
+                        <input asp-for="YearsOfExperience" class="form-control" />
+                        <span asp-validation-for="YearsOfExperience" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="RegisterModel.Email" class="control-label"></label>
+                        <input asp-for="RegisterModel.Email" class="form-control" />
+                        <span asp-validation-for="RegisterModel.Email" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="RegisterModel.UserName" class="control-label"></label>
+                        <input asp-for="RegisterModel.UserName" class="form-control" />
+                        <span asp-validation-for="RegisterModel.UserName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="RegisterModel.Password" class="control-label"></label>
+                        <input asp-for="RegisterModel.Password" class="form-control" />
+                        <span asp-validation-for="RegisterModel.Password" class="text-danger"></span>                    
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="RegisterModel.ConfirmPassword" class="control-label"></label>
+                        <input asp-for="RegisterModel.ConfirmPassword" class="form-control" />
+                        <span asp-validation-for="RegisterModel.ConfirmPassword" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Save changes</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

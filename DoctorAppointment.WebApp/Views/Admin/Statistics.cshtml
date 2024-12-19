@@ -1,0 +1,104 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+    Layout = "_AdminLayout";
+    ViewBag.Title = "Statistics";
+}
+@model DateRangeFilter
+<div class="container">
+    <!-- Filter Form Section -->
+    <form id="filterForm" class="mb-4">
+        <div class="row g-3 align-items-end">
+            <div class="col-md-3">
+                <label class="form-label">From Date</label>
+                <input type="date" asp-for="From" class="form-control">
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">To Date</label>
+                <input type="date" asp-for="To" class="form-control">
+            </div>
+            <div class="col-md-2">
+                <button class="btn btn-secondary w-100" type="submit" id="submitBtn">Apply Filters</button>
+            </div>
+        </div>
+    </form>
+
+    <!-- Charts Section -->
+    <div class="row g-5 ">
+        <div class="col-md-6 mb-5">
+            <div class="chart-container">
+                <h6 class="text-center"><strong>Daily Chart</strong></h6>
+                <canvas id="dailyChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6 mb-5">
+            <div class="chart-container">
+                <h6 class="text-center"><strong> Monthly Chart</strong></h6>
+                <canvas id="monthlyChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        <div class="col-md-4 mb-5 ">
+            <div class="chart-container">
+                <h6 class="text-center"><strong>New Patient vs Returning Chart</strong></h6>
+                <canvas id="patientChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+        <div class="col-md-8 mb-5">
+            <div class="chart-container">
+                <h6 class="text-center"><strong>Top Doctors Chart</strong></h6>
+                <canvas id="topDoctorsChart" width="400" height="200"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+@section Scripts {
+    <script id="doctorsChartScript"></script>
+    <script id="PatientChartScript"></script>
+    <script id="dailyChartScript"></script>
+    <script id="monthlyChartScript"></script>
+    <script>
+        let dailyChart, monthlyChart, patientChart, topDoctorsChart;
+        $(document).ready(function () {
+            // Function to fetch chart data
+            async function fetchChartData(url, scriptId) {
+                try {
+                    const response = await $.ajax({
+                        url: url,
+                        type: 'GET'
+                    });
+                    $(`#${scriptId}`).html(response);
+                    eval(response);
+                } catch (error) {
+                    console.log(error);
+                }
+            }
+
+            // Execute all chart fetches in parallel
+            Promise.all([
+                fetchChartData('/Statistic/GetTopDoctorsChart', 'doctorsChartScript'),
+                fetchChartData('/Statistic/GetPatientChart', 'PatientChartScript'),
+                fetchChartData('/Statistic/GetDailyChart', 'dailyChartScript'),
+                fetchChartData('/Statistic/GetMonthlyChart', 'monthlyChartScript')
+            ]);
+
+            $('#filterForm').submit(function (e) {
+                dailyChart.destroy();
+                monthlyChart.destroy();
+                patientChart.destroy();
+                topDoctorsChart.destroy();
+                e.preventDefault();
+                const formData = $(this).serialize();
+                Promise.all([
+                    fetchChartData('/Statistic/GetTopDoctorsChart?' + formData, 'doctorsChartScript'),
+                    fetchChartData('/Statistic/GetPatientChart?' + formData, 'PatientChartScript'),
+                    fetchChartData('/Statistic/GetDailyChart?' + formData, 'dailyChartScript'),
+                    fetchChartData('/Statistic/GetMonthlyChart?' + formData, 'monthlyChartScript')
+                ]);
+            });
+        });
+    </script>
+}

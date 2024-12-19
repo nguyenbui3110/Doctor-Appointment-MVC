@@ -1,18 +1,17 @@
-using System;
 
 namespace DoctorAppointment.Application.Services;
 
 using AutoMapper;
 using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Application.Model;
-using DoctorAppointment.Domain.Constants;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 
-public class AuthService(SignInManager<User> signInManager, UserManager<User> userManager,IUnitOfWork unitOfWork,
-    IMapper mapper,
-    ICurrentUser currentUser) : BaseService(unitOfWork, mapper, currentUser)
+public class AuthService(SignInManager<User> signInManager, UserManager<User> userManager,
+                        IUnitOfWork unitOfWork,IMapper mapper,
+                        ICurrentUser currentUser,IRepository<Patient> patientRepo)
+                        : BaseService(unitOfWork, mapper, currentUser)
 {
 
 
@@ -27,8 +26,10 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
         if (user == null) return false;
         var result = await signInManager.PasswordSignInAsync(user, model.Password, model.RememberMe, false);
         if (!result.Succeeded)
+        {
             // throw new Exception("Invalid login attempt");
             return false;
+        }
         return true;
     }
 
@@ -51,9 +52,8 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
         {
             user = await userManager.FindByNameAsync(model.UserName);
             user.EmailConfirmed = true;
-            var addRoleResult = await userManager.AddToRoleAsync(user, AppRole.Patient);
-            if (!addRoleResult.Succeeded)
-                return false;
+            patientRepo.Add( new Patient{UserId=user.Id});
+            await UnitOfWork.SaveChangesAsync();
             await signInManager.SignInAsync(user, false);
             return true;
         }

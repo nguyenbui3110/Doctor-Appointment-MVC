@@ -1,4 +1,3 @@
-using System;
 using DoctorAppointment.Domain.Entities.Base;
 using DoctorAppointment.Domain.Enums;
 
@@ -13,5 +12,7 @@ public class Appointment: EntityBase
     public Patient? Patient { get; set; }
 
     public DateTime? AppointmentDate { get; set; }
-    public AppointmentStatus? Status { get; set; } // Enum property
+    public TimeSpan? StartTime { get; set; }
+    public TimeSpan? EndTime { get; set; }
+    public AppointmentStatus? Status { get; set; } = AppointmentStatus.Pending; // Enum property
 }

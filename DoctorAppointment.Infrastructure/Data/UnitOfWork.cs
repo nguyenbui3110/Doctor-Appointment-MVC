@@ -1,4 +1,3 @@
-using System;
 using DoctorAppointment.Domain.Data;
 
 namespace DoctorAppointment.Infrastructure.Data;

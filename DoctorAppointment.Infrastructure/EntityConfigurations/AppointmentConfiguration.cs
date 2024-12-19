@@ -1,4 +1,3 @@
-using System;
 using DoctorAppointment.Domain.Entities;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
@@ -18,6 +17,8 @@ public class AppointmentConfiguration : IEntityTypeConfiguration<Appointment>
             .WithMany(p => p.Appointments)
             .HasForeignKey(a => a.PatientId)
             .OnDelete(DeleteBehavior.NoAction);
+        builder.Property(a=>a.StartTime).IsRequired().HasColumnType("time");
+        builder.Property(a=>a.EndTime).IsRequired().HasColumnType("time");
         
     }
 }

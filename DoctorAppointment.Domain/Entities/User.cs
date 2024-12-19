@@ -1,4 +1,3 @@
-using System;
 using DoctorAppointment.Domain.Enums;
 using Microsoft.AspNetCore.Identity;
 

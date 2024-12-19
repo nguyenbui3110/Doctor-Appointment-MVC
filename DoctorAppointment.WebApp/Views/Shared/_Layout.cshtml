@@ -1,21 +1,24 @@
 ﻿@using DoctorAppointment.Domain.Enums
+
 <!DOCTYPE html>
 <html lang="en">
+
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Doctor Appointment</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <title>@((ViewData["Title"]!=null)?@ViewData["Title"]:"DoctorABC")</title>
+    <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet" />
 </head>
+
 
 <body>
 
     <!-- Navbar -->
     <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom">
         <div class="container">
-            <a class="navbar-brand fw-bold text-primary" href="#">BookingCare</a>
+            <a class="navbar-brand fw-bold text-primary" asp-action ="index" asp-controller="Home"  >DoctorABC</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
                 aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
@@ -23,11 +26,11 @@
 
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
-                    <form class="nav-item fw-bold" id="searchForm"  asp-controller="Doctor" asp-action="Search" method="post">
+                    <form class="nav-item fw-bold" id="searchForm"  asp-controller="Home" asp-action="SearchDoctors" method="post">
                         <input class="nav-item fw-bold" type="text" name="searchQuery" placeholder="Bác Sĩ..."
                             class="form-control" aria-label="Search Doctor" />
 
-                        <select class="nav-item form-select-sm fw-bold" name="Specialization"
+                        <select class="nav-item form-select-sm fw-bold" name="specialization"
                             asp-items="Html.GetEnumSelectList<Specialization>()">
                             <option value="" disabled selected>Khoa</option>
                         </select>
@@ -40,7 +43,19 @@
                     <li class="nav-item"><a class="nav-link" href="#">VN</a></li>
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li class="nav-item"><a class="nav-link text-primary fw-bold" href="#">Xin chào,
+                        @if (User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="Admin" asp-action="Index">Quản lý</a></li>
+                        }
+                        @if(User.IsInRole("Doctor"))
+                        {
+                            @* <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="PatientAppointment" asp-action="Index">Lịch hẹn</a></li> *@
+                        }
+                        else
+                        {
+                            <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="Appointment" asp-action="PatientAppointments">Lịch hẹn</a></li>
+                        }
+                        <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="profile" asp-action="index">Xin chào,
                                 @User.Identity.Name</a></li>
                         <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-action="Logout" asp-controller="Auth"><i class="fa fa-sign-out" aria-hidden="true"></i></a> </li>
                     }
@@ -56,57 +71,24 @@
             </div>
         </div>
     </nav>
+
     <div class="min-vh-100">
-        @RenderBody()
-
-
-        <!-- Popular Specialties Section -->
-        <div class="container my-5">
-            <h2 class="mb-4">Chuyên khoa phổ biến</h2>
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="card">
-                        <img src="~/img/da-khoa.png" class="card-img-top" alt="Specialty">
-                        <div class="card-body text-center">
-                            <p class="card-text">Đa khoa</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <img src="~/img/tim-mach.png" class="card-img-top" alt="Specialty">
-                        <div class="card-body text-center">
-                            <p class="card-text">Tim mạch</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <img src="~/img/da-lieu.png" class="card-img-top" alt="Specialty">
-                        <div class="card-body text-center">
-                            <p class="card-text">Da liễu</p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="card">
-                        <img src="~/img/than-kinh.png" class="card-img-top" alt="Specialty">
-                        <div class="card-body text-center">
-                            <p class="card-text">Thần kinh</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="content">
+            @RenderBody()
         </div>
     </div>
+
     <!-- Footer -->
     <footer class="bg-light py-3">
         <div class="container text-center">
-            <p class="mb-0">© 2024 BookingCare</p>
+            <p class="mb-0">© 2024 DoctorABC</p>
         </div>
     </footer>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/microsoft-signalr/signalr.js"></script>
 </body>
-
+@RenderSection("Scripts", required: false)
 </html>
+

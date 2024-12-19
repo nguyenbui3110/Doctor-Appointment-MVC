@@ -1,0 +1,22 @@
+﻿<!-- Modal Xóa Bệnh Nhân -->
+@model int
+<div class="modal fade" id="deletePatientModal_@Model" tabindex="-1" aria-labelledby="deletePatientModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deletePatientModalLabel">Xóa Bệnh Nhân</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Bạn có chắc chắn muốn xóa bệnh nhân này không?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                <form asp-action="DeletePatient" asp-controller="Admin" method="get">
+                    <input type="hidden" name="id" value="@Model" />
+                    <button type="submit" class="btn btn-danger">Xóa</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,40 @@
+﻿@model IEnumerable<TimeSpan>
+<div class="time-slots">
+    @if (Model.Any())
+    {
+        <div class="row">
+        @{
+            foreach (var timeSlot in Model)
+            {
+                <div class="col-4 mb-2">
+                    <button class="btn btn-outline-primary w-100" type="button" onclick="selectTimeSlot('@timeSlot')">
+                        @timeSlot.ToString("hh\\:mm") - @timeSlot.Add(new TimeSpan(1,0,0)).ToString("hh\\:mm")
+                    </button>
+                </div>
+            }
+        }
+        </div>
+    }
+    else
+    {
+        <p class="text-muted">Không có giờ nào khả dụng cho ngày này.</p>
+    }
+</div>
+
+<script>
+    function selectTimeSlot(time) {
+        // Remove active class from all buttons
+        document.querySelectorAll('.time-slots button').forEach(btn => {
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-outline-primary');
+        });
+
+        // Add active class to selected button
+        event.target.classList.remove('btn-outline-primary');
+        event.target.classList.add('btn-primary');
+
+        // Update hidden input with selected time
+        document.getElementById('StartTime').value = time;
+        document.getElementById('EndTime').value = time;
+    }
+</script>

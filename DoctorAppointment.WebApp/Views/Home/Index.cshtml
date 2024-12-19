@@ -1,5 +1,118 @@
-﻿@{
-    Layout="_layout";
-    ViewData["Title"] = "Home Page";
+﻿@using DoctorAppointment.Domain.Enums
+@using System.ComponentModel.DataAnnotations
+@{
+    Layout = "_Layout";
 }
+@model List<DoctorViewModel>
+<div class="container my-5">
+    <!-- Popular Doctors Section -->
+    <h2 class="my-4">Bác sĩ phổ biến</h2>
+    <div class="row">
+        @{
+            var itemsPerSlide = 5; // Number of items per carousel slide
+            var totalSlides = (int)Math.Ceiling((double)Model.Count / itemsPerSlide);
+        }
 
+        <div id="doctorCarousel" class="carousel carousel-dark slide" data-bs-ride="true">
+            <div class="carousel-inner">
+                @for (var i = 0; i < totalSlides; i++)
+                {
+                    var startIndex = i * itemsPerSlide;
+                    var items = Model.Skip(startIndex).Take(itemsPerSlide).ToList();
+
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="row justify-content-center">
+                            @foreach (var item in items)
+                            {
+                                <partial name="_DoctorCard" model="item" />
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#doctorCarousel"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#doctorCarousel"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+    </div>
+    <!-- Popular Specialties Section -->
+    <h2 class="my-4">Chuyên khoa phổ biến</h2>
+    <div class="row">
+        @{
+            var specializations = Enum.GetValues(typeof(Specialization)).Cast<Specialization>().ToList();
+            itemsPerSlide = 3; // Number of items per carousel slide
+            totalSlides = (int)Math.Ceiling((double)specializations.Count / itemsPerSlide);
+        }
+
+        <div id="specializationsCarousel" class="carousel carousel-dark slide" data-bs-ride="carousel">
+            <div class="carousel-inner">
+                @for (var i = 0; i < totalSlides; i++)
+                {
+                    var startIndex = i * itemsPerSlide;
+                    var items = specializations.Skip(startIndex).Take(itemsPerSlide).ToList();
+
+                    <div class="carousel-item @(i == 0 ? "active" : "")">
+                        <div class="row justify-content-center">
+                            @foreach (var specialization in items)
+                            {
+                                var displayName = GetEnumDisplayName(specialization);
+                                var image = GetImageUrl(specialization);
+
+                                <div class="col-md-3 mb-3">
+                                    <a class="card text-decoration-none" style="cursor: pointer;"
+                                        href="@Url.Action("Doctors", "Home", new { specialization = specialization })">
+                                        <img src="@Url.Content(image)" class="card-img-top" alt="@displayName">
+                                        <div class="card-body text-center">
+                                            <p class="text-decoration-none">@displayName</p>
+                                        </div>
+                                    </a>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                }
+            </div>
+            <button class="carousel-control-prev" type="button" data-bs-target="#specializationsCarousel"
+                data-bs-slide="prev">
+                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Previous</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#specializationsCarousel"
+                data-bs-slide="next">
+                <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                <span class="visually-hidden">Next</span>
+            </button>
+        </div>
+
+    </div>
+</div>
+
+@functions {
+    private string GetEnumDisplayName(Specialization specialization)
+    {
+        var fieldInfo = specialization.GetType().GetField(specialization.ToString());
+        var attribute = (DisplayAttribute)Attribute.GetCustomAttribute(fieldInfo, typeof(DisplayAttribute));
+        return attribute?.Name ?? specialization.ToString();
+    }
+
+    private string GetImageUrl(Specialization specialization)
+    {
+        return specialization switch
+        {
+            Specialization.GeneralPractitioner => "~/img/da-khoa.png",
+            Specialization.Cardiologist => "~/img/tim-mach.png",
+            Specialization.Dermatologist => "~/img/da-lieu.png",
+            Specialization.Neurologist => "~/img/than-kinh.png",
+            Specialization.Pediatrician => "~/img/nhi-khoa.png",
+            _ => "~/img/default.png"
+        };
+    }
+}

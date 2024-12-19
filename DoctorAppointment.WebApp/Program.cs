@@ -1,4 +1,5 @@
 using DoctorAppointment.WebApp.Extentions;
+using DoctorAppointment.WebApp.Hub;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +14,11 @@ builder.Services.AddServices()
     .AddRepositorys()
     .AddDbContext(builder.Configuration)
     .ConfigureIdentity()
-    .AddCurrentUser();
+    .AddCurrentUser()
+    .ConfigureConfigurations(builder.Configuration)
+    .AddEmailSender()
+    .AddQuartz()
+    .AddSignalR();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddControllersWithViews();
 
@@ -38,6 +43,6 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-
+app.MapHub<AppointmentHub>("/appointmentHub");
 
 app.Run();
