@@ -43,9 +43,10 @@ namespace DoctorAppointment.WebApp.Controllers
         {
             return View();
         }
-        public async Task<IActionResult> PatientAppointmentsFilter(AppointmentSearchModel model)
+        [Route("appointments/patient")]
+        public async Task<IActionResult> PatientAppointmentsFilter(AppointmentSearchModel model, int page = 1, int pageSize = 5)
         {
-            var appointments = await _appointmentService.GetPatientAppointmentsAsync(model);
+            var appointments = await _appointmentService.GetPatientAppointmentsAsync(model,page,pageSize);
             return PartialView("_AppointmentTable", appointments);
         }
         public async Task<IActionResult> PatientAppointmentCancel(int id)

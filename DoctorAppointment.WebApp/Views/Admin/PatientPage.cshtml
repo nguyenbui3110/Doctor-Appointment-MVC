@@ -5,11 +5,11 @@
 }
 @model PagingItem<PatientViewModel>
 
-<ul class="navbar-nav me-auto" style="margin-bottom: 10px;">
-    <form class="nav-item fw-bold" id="searchForm" asp-controller="Admin" asp-action="PatientPage" method="post">
-        <input class="nav-item fw-bold" type="text" name="searchQuery" placeholder="Tên bệnh nhân..."
+<ul class="navbar-nav me-auto col-md-4" style="margin-bottom: 10px;">
+    <form class="d-flex align-items-center h-100" id="searchForm" asp-controller="Admin" asp-action="PatientPage" method="post">
+        <input type="text" name="searchQuery" placeholder="Tên bệnh nhân..."
             class="form-control" aria-label="Search Doctor" value="@ViewBag.SearchQuery" />
-        <button type="submit" class="btn btn-primary fw-bold">Search</button>
+        <button type="submit" class="btn btn-primary fw-bold"><i class="fa fa-search"></i></button>
     </form>
 
 </ul>
@@ -47,7 +47,7 @@
                     <td>
                         <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                             data-bs-target="#deletePatientModal_@item.Id" DeleteId="@item.Id">
-                            <div class="fa fa-trash"></div> Khóa
+                            <div class="fa fa-lock"></div> Khóa
                         </button>
                         <partial name="_DeletePatient" model="@item.Id" />
                     </td>

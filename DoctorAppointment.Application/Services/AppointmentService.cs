@@ -21,14 +21,23 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         throw new NotImplementedException();
     }
 
-    public async Task<List<AppointmentViewModel>> GetPatientAppointmentsAsync(AppointmentSearchModel model)
+    public async Task<PagingItem<AppointmentViewModel>> GetPatientAppointmentsAsync(AppointmentSearchModel model, int page, int pageSize)
     {
         var currentUserId = int.Parse(CurrentUser.Id);
         var patient = await patientRepo.GetPatientByUserIdAsync(currentUserId);
         if (patient == null)
             throw new Exception("Patient not found");
-        var appointments = await appointmentRepo.GetPatientAppointmentsAsync(patient.Id, model.From, model.To, model.Status);
-        return Mapper.Map<List<AppointmentViewModel>>(appointments);
+        var query = appointmentRepo.GetPatientAppointmentsQuery(patient.Id, model.From, model.To, model.Status);
+        (var appointments, var count) = await appointmentRepo.ApplyPaing(query, page, pageSize);
+        return new PagingItem<AppointmentViewModel>
+        {
+            Items = Mapper.Map<List<AppointmentViewModel>>(appointments),
+            CountPages = (int)Math.Ceiling(count / (double)pageSize),
+            CurrentPage = page,
+            PageSize = pageSize,
+            PageUrl = i => $"/appointments/patient?page={i}&from={model.From}&to={model.To}&status={model.Status}"
+        };
+        // return Mapper.Map<List<AppointmentViewModel>>(appointments);
         // throw new NotImplementedException();
     }
 

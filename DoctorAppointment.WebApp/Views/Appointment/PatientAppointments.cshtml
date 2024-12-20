@@ -44,7 +44,7 @@
     <!-- Appointment List Section -->
     <div class="card">
         <div class="card-header">Appointments</div>
-        <div class="card-body" id="appointmentList">
+        <div class="card-body" id="appointmentTable">
             <!-- Appointments will be loaded here -->
         </div>
     </div>
@@ -58,10 +58,10 @@
         $(document).ready(function () {
             // Load the appointments
             $.ajax({
-                url: "/Appointment/PatientAppointmentsFilter",
+                url: "appointments/patient",
                 type: "GET",
                 success: function (response) {
-                    $("#appointmentList").html(response);
+                    $("#appointmentTable").html(response);
                 }
             });
         });
@@ -73,16 +73,26 @@
             const formData = new URLSearchParams(new FormData(form)).toString();
             // Get the selected values
             $.ajax({
-                url: `/Appointment/PatientAppointmentsFilter?${formData}`,
+                url: `appointments/patient?${formData}`,
                 type: "GET",
                 success: function (response) {
-                    $("#appointmentList").html(response);
+                    $("#appointmentTable").html(response);
                 }
             });
 
             // Redirect to the new URL
         });
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (response) {
+                    $("#appointmentTable").html(response);
+                }
+            });
+        });
     </script>
-    <partial name="_ValidationScriptsPartial"/>
 }
 

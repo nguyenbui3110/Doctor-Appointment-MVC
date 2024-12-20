@@ -28,7 +28,7 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
         return Mapper.Map<DoctorViewModel>(doctor);
     }
 
-    public async Task<PagingItem<DoctorViewModel>> GetPagedAsync(int page, string searchQuery, Specialization specialization, int pageSize = 8)
+    public async Task<PagingItem<DoctorViewModel>> GetPagedAsync(int page, string searchQuery, Specialization specialization, int pageSize = 7)
     {
         var query = repository.GetByNameAndSpecialization(searchQuery, specialization);
         var doctors = repository.IgnoreQueryFilters(query).OrderBy(d => d.IsDeleted);

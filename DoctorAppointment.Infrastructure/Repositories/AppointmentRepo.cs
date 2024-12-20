@@ -18,7 +18,7 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
                                 &&a.Status!=AppointmentStatus.Rejected).ToListAsync();
     }
 
-    public async Task<List<Appointment>> GetPatientAppointmentsAsync(int patientId, DateTime? from, DateTime? to, AppointmentStatus? appointmentStatus = null)
+    public IQueryable<Appointment> GetPatientAppointmentsQuery(int patientId, DateTime? from, DateTime? to, AppointmentStatus? appointmentStatus = null)
     {
         var query = DbSet
                     .IgnoreQueryFilters()
@@ -33,7 +33,7 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
         {
             query = query.Where(a => a.AppointmentDate >= from && a.AppointmentDate <= to);
         }
-        return await query.ToListAsync();
+        return query;
     }
     public async Task<Appointment?> GetAppointmentAsync(int id)
     {
