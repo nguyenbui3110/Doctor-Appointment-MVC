@@ -12,7 +12,6 @@ namespace DoctorAppointment.Application.MappingProfiles
             CreateMap<Patient, PatientViewModel>()
                 .ForMember(dest => dest.UserId, opt => opt.MapFrom(src => src.UserId))
                 .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User)).ReverseMap();
-            CreateMap<DoctorPostModel, Doctor>();
         }
     }
 }

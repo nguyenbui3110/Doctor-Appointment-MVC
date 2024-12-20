@@ -6,6 +6,7 @@ using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
+using DoctorAppointment.Domain.exceptions;
 using Microsoft.AspNetCore.Identity;
 
 public class AuthService(SignInManager<User> signInManager, UserManager<User> userManager,
@@ -41,6 +42,14 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
 
     public async Task<bool> RegisterAsync(RegisterModel model)
     {
+        if (await userManager.FindByNameAsync(model.UserName) != null)
+        {
+            throw new UserNameExistException("Username already exists");
+        }
+        if (await userManager.FindByEmailAsync(model.Email) != null)
+        {
+            throw new EmailExistException("Email already exists");
+        }
         var user = new User
         {
             UserName = model.UserName,

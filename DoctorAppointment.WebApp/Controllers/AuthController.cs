@@ -1,5 +1,6 @@
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services;
+using DoctorAppointment.Domain.exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -45,11 +46,22 @@ namespace DoctorAppointment.WebApp.Controllers
         [HttpPost]
         public async Task<ActionResult> Register(RegisterModel model)
         {
-            if(!await _authService.RegisterAsync(model))
+            if(!ModelState.IsValid) return View(model);
+            try
             {
-                ModelState.AddModelError("","Tài khoản đã tồn tại");
+                await _authService.RegisterAsync(model);
+            }
+            catch (UserNameExistException)
+            {
+                ModelState.AddModelError("UserName","Tài khoản đã tồn tại");
                 return View(model);
             }
+            catch (EmailExistException)
+            {
+                ModelState.AddModelError("Email","Email đã tồn tại");
+                return View(model);
+            }
+
 
             return RedirectToAction("Index", "Home");
         }

@@ -6,6 +6,7 @@ using DoctorAppointment.Domain.Constants;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Domain.Enums;
+using DoctorAppointment.Domain.exceptions;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -18,19 +19,19 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
 {
     public async Task<DoctorViewModel> GetByIdAsync(int id)
     {
-        var doctor = await repository.QueryGetById(id).Include(d=>d.User).FirstOrDefaultAsync();
+        var doctor = await repository.QueryGetById(id).Include(d => d.User).FirstOrDefaultAsync();
         return Mapper.Map<DoctorViewModel>(doctor);
     }
-    public async Task<DoctorViewModel>GetByAdminWithIdAsync(int id)
+    public async Task<DoctorViewModel> GetByAdminWithIdAsync(int id)
     {
-        var doctor = await repository.QueryGetById(id).Include(d=>d.User).IgnoreQueryFilters().FirstOrDefaultAsync();
+        var doctor = await repository.QueryGetById(id).Include(d => d.User).IgnoreQueryFilters().FirstOrDefaultAsync();
         return Mapper.Map<DoctorViewModel>(doctor);
     }
 
     public async Task<PagingItem<DoctorViewModel>> GetPagedAsync(int page, string searchQuery, Specialization specialization, int pageSize = 8)
     {
         var query = repository.GetByNameAndSpecialization(searchQuery, specialization);
-        var doctors = repository.IgnoreQueryFilters(query).OrderBy(d=>d.IsDeleted);
+        var doctors = repository.IgnoreQueryFilters(query).OrderBy(d => d.IsDeleted);
         (var data, var count) = await repository.ApplyPaing(doctors, page, pageSize);
         return new PagingItem<DoctorViewModel>
         {
@@ -44,6 +45,15 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
     public async Task<bool> AddDoctor(DoctorPostModel model)
     {
         var doctor = Mapper.Map<Doctor>(model);
+        if (await userManager.FindByNameAsync(model.RegisterModel.UserName) != null)
+        {
+            throw new UserNameExistException("Username already exists");
+
+        }
+        if (await userManager.FindByEmailAsync(model.RegisterModel.Email) != null)
+        {
+            throw new EmailExistException("Email already exists");
+        }
         var user = new User
         {
             UserName = model.RegisterModel.UserName,
@@ -57,10 +67,10 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
             user.EmailConfirmed = true;
             var addRoleResult = await userManager.AddToRoleAsync(user, AppRole.Doctor);
             if (!addRoleResult.Succeeded)
-                {
-                    throw new Exception("Error while adding role");
-                    
-                }
+            {
+                throw new Exception("Error while adding role");
+
+            }
             doctor.UserId = user.Id;
             repository.Add(doctor);
             await UnitOfWork.SaveChangesAsync();
@@ -72,7 +82,7 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
 
     public async Task<bool> UpdateDoctor(DoctorViewModel model)
     {
-        var query = repository.QueryGetById(model.Id).Include(d=>d.User);
+        var query = repository.QueryGetById(model.Id).Include(d => d.User);
         var doctor = await repository.IgnoreQueryFilters(query).FirstOrDefaultAsync();
         if (doctor == null)
             return false;
@@ -105,7 +115,7 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
 
     public async Task<List<DoctorViewModel>> GetAll()
     {
-        var doctors= await repository.GetAll().Include(d=>d.User).ToListAsync();
+        var doctors = await repository.GetAll().Include(d => d.User).ToListAsync();
         return Mapper.Map<List<DoctorViewModel>>(doctors);
     }
 

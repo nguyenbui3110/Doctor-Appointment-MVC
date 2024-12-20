@@ -16,6 +16,7 @@ namespace DoctorAppointment.WebApp.Controllers
         // GET: StatisticController
         public ActionResult GetDailyChart(DateRangeFilter filter)
         {
+            
             var daily =  _statisticsService.GetDailyAppointmentsCount(filter);
             return PartialView("_DailyChart",daily);
         }

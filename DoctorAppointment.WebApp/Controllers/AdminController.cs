@@ -1,6 +1,7 @@
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Enums;
+using DoctorAppointment.Domain.exceptions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,7 +20,7 @@ namespace DoctorAppointment.WebApp.Controllers
         }
 
         // GET: AdminController
-        public async Task<ActionResult> Index(int page = 1, string  searchQuery = "", Specialization specialization = 0)
+        public async Task<ActionResult> Index(int page = 1, string searchQuery = "", Specialization specialization = 0)
         {
             var model = await _doctorService.GetPagedAsync(page, searchQuery, specialization);
             ViewBag.SearchQuery = searchQuery;
@@ -34,11 +35,25 @@ namespace DoctorAppointment.WebApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<ActionResult> AddDoctor(DoctorPostModel model)
         {
-            if(!ModelState.IsValid)
+            if (!ModelState.IsValid)
                 return PartialView("_AddDoctor", model);
-            if(await _doctorService.AddDoctor(model))
+            try
             {
-                return Json(new { success = true });    
+                if (await _doctorService.AddDoctor(model))
+                {
+                    return Json(new { success = true });
+                }
+
+            }
+            catch (UserNameExistException)
+            {
+                ModelState.AddModelError("RegisterModel.UserName", "Username already exists");
+                return PartialView("_AddDoctor", model);
+            }
+            catch (EmailExistException)
+            {
+                ModelState.AddModelError("RegisterModel.Email", "Email already exists");
+                return PartialView("_AddDoctor", model);
             }
             ModelState.AddModelError("", "Error while adding doctor");
             return PartialView("_AddDoctor", model);
@@ -53,9 +68,9 @@ namespace DoctorAppointment.WebApp.Controllers
         {
             // if(!ModelState.IsValid)
             //     return PartialView("_UpdateDoctor", model);
-            if(await _doctorService.UpdateDoctor(model))
+            if (await _doctorService.UpdateDoctor(model))
             {
-                return Json(new { success = true });    
+                return Json(new { success = true });
             }
             ModelState.AddModelError("", "Error while updating doctor");
             return PartialView("_UpdateDoctor", model);
