@@ -39,15 +39,16 @@ public class StatisticsService(IAppointmentRepo appointmentRepo, IDoctorRepo doc
         return (newPatients,returningPatients);
     }
 
-    public async Task<Dictionary<string, int>> GetTopDoctorsAsync(DateRangeFilter filter)
+    public async Task<List<KeyValuePair<string, int>>> GetTopDoctorsAsync(DateRangeFilter filter)
     {    
         ValidateDateRange(filter);        
         var topDoctors = await appointmentRepo.GetTop5DoctorsAsync(filter.From.Value, filter.To.Value);
-        var result = new Dictionary<string, int>();
+        var result = new List<KeyValuePair<string, int>>();
         foreach (var doctor in topDoctors)
         {
             var name = await doctorRepo.GetDoctorNameAsync(doctor.Key);
-            result.Add(name, doctor.Value);
+            result.Add(new KeyValuePair<string, int>( name, doctor.Value));
+
         }
         return result;
     }

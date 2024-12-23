@@ -80,7 +80,7 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
         //get top 5 doctors who have the most appointments
         var doctors = await DbSet
             .IgnoreQueryFilters()
-            .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end)
+            .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end && a.Status == AppointmentStatus.Completed)  // Appointments in the date range
             .GroupBy(a => a.DoctorId)
             .Select(g => new { DoctorId = g.Key, Count = g.Count() })
             .OrderByDescending(a => a.Count)

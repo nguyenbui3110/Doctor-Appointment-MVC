@@ -1,5 +1,6 @@
 ﻿@using DoctorAppointment.Domain.Enums
 @using System.ComponentModel.DataAnnotations
+@using DoctorAppointment.WebApp.Commons.Helpers
 @{
     Layout = "_Layout";
 }
@@ -63,7 +64,7 @@
                         <div class="row justify-content-center">
                             @foreach (var specialization in items)
                             {
-                                var displayName = GetEnumDisplayName(specialization);
+                                var displayName = DisplayName.GetSpecialization(specialization);
                                 var image = GetImageUrl(specialization);
 
                                 <div class="col-md-3 mb-3">
@@ -96,13 +97,6 @@
 </div>
 
 @functions {
-    private string GetEnumDisplayName(Specialization specialization)
-    {
-        var fieldInfo = specialization.GetType().GetField(specialization.ToString());
-        var attribute = (DisplayAttribute)Attribute.GetCustomAttribute(fieldInfo, typeof(DisplayAttribute));
-        return attribute?.Name ?? specialization.ToString();
-    }
-
     private string GetImageUrl(Specialization specialization)
     {
         return specialization switch

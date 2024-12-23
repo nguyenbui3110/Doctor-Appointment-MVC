@@ -21,7 +21,7 @@
             <h2>@Model.User.FullName</h2>
             <p><strong>Năm kinh nghiệm: </strong>@Model.YearsOfExperience năm</p>
             <p><strong>Khoa:</strong>
-                @GetSpecializationDisplayName.Get(Model.Specialization)
+                @DisplayName.GetSpecialization(Model.Specialization)
             </p>
             <p><strong>Mô tả:</strong> @Model.About</p>
             <p><strong>Số điện thoại:</strong> @Model.User.PhoneNumber</p>

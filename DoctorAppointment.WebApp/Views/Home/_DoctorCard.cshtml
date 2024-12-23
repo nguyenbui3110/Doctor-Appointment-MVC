@@ -9,7 +9,7 @@
             class="card-img-top" alt="@Model.User.FullName" loading="lazy" />
         <div class="card-body">
             <h5 class="card-title">@Model.User.FullName</h5>
-            <h6 class="card-subtitle mb-2 text-muted"> Khoa: @GetSpecializationDisplayName.Get(Model.Specialization)
+            <h6 class="card-subtitle mb-2 text-muted"> Khoa: @DisplayName.GetSpecialization(Model.Specialization)
             </h6>
             <p class="card-text">@Model.About</p>
         </div>

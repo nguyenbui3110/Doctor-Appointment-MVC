@@ -1,4 +1,5 @@
 ﻿@using DoctorAppointment.Domain.Enums
+@using DoctorAppointment.WebApp.Commons.Helpers
 @*
     For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
 *@
@@ -26,11 +27,25 @@
                     <td>@Appointment?.DoctorName</td>
                     <td>@Appointment?.AppointmentDate?.ToString("dd/MM/yyyy")</td>
                     <td>@Appointment?.StartTime</td>
-                    <td>@Appointment?.Status</td>
                     <td>
-                        @if(Appointment.Status == AppointmentStatus.Pending || Appointment.Status == AppointmentStatus.Confirmed)
+                        @{
+                            string statusClass = Appointment.Status switch
+                            {
+                                AppointmentStatus.Pending => "text-warning",
+                                AppointmentStatus.Confirmed => "text-primary",
+                                AppointmentStatus.Completed => "text-success",
+                                AppointmentStatus.Cancelled => "text-danger",
+                                _ => ""
+                            };
+                        }
+                        <span class="@statusClass">@DisplayName.GetAppointmentStatus(Appointment!.Status!.Value)</span>
+                    </td>
+                    <td>
+                        @if (Appointment.Status == AppointmentStatus.Pending || Appointment.Status ==
+                       AppointmentStatus.Confirmed)
                         {
-                            <a asp-controller="Appointment" asp-action="PatientAppointmentCancel" asp-route-id="@Appointment.Id" class="btn btn-danger">Cancel</a>
+                            <a asp-controller="Appointment" asp-action="PatientAppointmentCancel" asp-route-id="@Appointment.Id"
+                                class="btn btn-danger">Cancel</a>
                         }
                     </td>
                 </tr>
@@ -39,4 +54,4 @@
         </tbody>
     </table>
 </div>
-<partial name="_Paging" model="Model"/>
+<partial name="_Paging" model="Model" />
