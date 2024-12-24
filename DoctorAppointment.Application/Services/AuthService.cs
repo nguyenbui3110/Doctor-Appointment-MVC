@@ -4,6 +4,7 @@ namespace DoctorAppointment.Application.Services;
 using AutoMapper;
 using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Application.Model;
+using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Domain.exceptions;
@@ -11,7 +12,8 @@ using Microsoft.AspNetCore.Identity;
 
 public class AuthService(SignInManager<User> signInManager, UserManager<User> userManager,
                         IUnitOfWork unitOfWork,IMapper mapper,
-                        ICurrentUser currentUser,IRepository<Patient> patientRepo)
+                        ICurrentUser currentUser,IRepository<Patient> patientRepo,
+                        IEmailSender emailSender)
                         : BaseService(unitOfWork, mapper, currentUser)
 {
 
@@ -68,5 +70,18 @@ public class AuthService(SignInManager<User> signInManager, UserManager<User> us
         }
 
         return false;
+    }
+    public async Task<string> ForgetPasswordAsync(string email)
+    {
+        var user = await userManager.FindByEmailAsync(email);
+        if (user == null) throw new EmailNotExistException("Email not exist");
+        return await userManager.GeneratePasswordResetTokenAsync(user);       
+    }
+    public async Task<bool> ResetPasswordAsync(ResetPasswordModel model)
+    {
+        var user = await userManager.FindByEmailAsync(model.Email);
+        if (user == null) throw new EmailNotExistException("Email not exist");
+        var result = await userManager.ResetPasswordAsync(user, model.Token, model.NewPassword);
+        return result.Succeeded;
     }
 }

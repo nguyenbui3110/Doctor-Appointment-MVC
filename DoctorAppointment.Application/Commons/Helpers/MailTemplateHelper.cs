@@ -9,7 +9,8 @@ public enum TemplateType
     RemindAppointment,
     ConfirmedAppointment,
     RejectAppointment,
-    CancelAppointment
+    CancelAppointment,
+    ResetPassword
 }
 
 public interface IMailTemplateHelper
@@ -20,6 +21,8 @@ public interface IMailTemplateHelper
     string GetConfirmedAppointmentTemplate(Appointment appointment);
     string GetRejectAppointmentTemplate(Appointment appointment);
     string GetCancelAppointmentTemplate(Appointment appointment);
+
+    string ResetPasswordTemplate(string resetLink);
 
     
 }
@@ -99,6 +102,13 @@ public class MailTemplateHelper : IMailTemplateHelper
         var pathToFile = GetTemplatePath(templateName.ToString());        
         using var reader = File.OpenText(pathToFile);
         return reader.ReadToEnd();
+    }
+
+    public string ResetPasswordTemplate(string resetLink)
+    {
+        var template = GetTemplate(TemplateType.ResetPassword)
+                        .Replace("{{reset_link}}",resetLink);
+        return template;
     }
 
     private string GetTemplatePath(string templateName)
