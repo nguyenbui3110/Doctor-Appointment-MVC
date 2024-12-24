@@ -48,7 +48,7 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
     {
         var appointments = DbSet
             .IgnoreQueryFilters()
-            .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end)
+            .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end && a.Status == AppointmentStatus.Completed)  // Appointments in the date range
             .AsEnumerable()
             .GroupBy(a => (int)a.AppointmentDate.Value.DayOfWeek) // Project as integer
             .ToDictionary(g => g.Key, g => g.Count());
@@ -66,10 +66,9 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
     }
     public async Task<Dictionary<DateTime, int>> GetMonthlyAppointmentsCountAsync(DateTime start, DateTime end)
     {
-        // Step 1: Get appointments grouped by month-year
         var appointments = await DbSet
             .IgnoreQueryFilters()
-            .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end)
+            .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end && a.Status == AppointmentStatus.Completed)  // Appointments in the date range
             .GroupBy(a => new DateTime(a.AppointmentDate.Value.Year, a.AppointmentDate.Value.Month, 1))
             .ToDictionaryAsync(g => g.Key, g => g.Count());
         return appointments.OrderBy(kv => kv.Key) // Order by month (key)
@@ -115,5 +114,12 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
                 DbSet.Any(b => b.PatientId == g.Key && b.AppointmentDate < start && b.Status == AppointmentStatus.Completed) // Or has prior appointments
             )
             .CountAsync();  // Count the number of such patients
+    }
+    public async Task<List<Appointment>> GetAppointmentByStatusAsync(AppointmentStatus status)
+    {
+        return await DbSet
+        // .Include(a => a.Doctor.User)
+        // .Include(a => a.Patient.User)
+        .Where(a => a.Status == status).ToListAsync();
     }
 }

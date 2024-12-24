@@ -14,4 +14,5 @@ public interface IAppointmentRepo: IRepository<Appointment>
     public Dictionary<int, int> GetDailyAppointmentsCount(DateTime start, DateTime end);
     public Task<int> GetNewPatientsCountAsync(DateTime start, DateTime end);
     public Task<int> GetReturningPatientsCountAsync(DateTime start, DateTime end);
+    public Task<List<Appointment>> GetAppointmentByStatusAsync(AppointmentStatus status);
 }

@@ -99,16 +99,12 @@ public static class ServiceExtentions
             options.AddJob<RemindAppointmentJob>(jobKey)
                    .AddTrigger(trigger =>
                         trigger.ForJob(jobKey)
-                            .WithSimpleSchedule(schedule =>
-                                schedule.WithIntervalInHours(24)
-                                        .RepeatForever()));
-            
-            // // Run at 12:00 PM every day
-            // var jobKey2 = new JobKey("MarkCheckoutDateBookingJob");
-            // options.AddJob<MarkCheckOutJob>(jobKey2)
-            //        .AddTrigger(trigger =>
-            //             trigger.ForJob(jobKey2)
-            //                 .WithCronSchedule("0 0 12 * * ? *"));
+                            .WithCronSchedule("0 0 0 * * ?"));
+            var jobKey2 = new JobKey("CheckCompleteAppointmentJob");
+            options.AddJob<CheckCompleteAppointmentJob>(jobKey2)
+                   .AddTrigger(trigger =>
+                        trigger.ForJob(jobKey2)
+                            .WithCronSchedule("0 0 0 * * ?"));
         });
 
         services.AddQuartzHostedService(options =>
