@@ -1,4 +1,4 @@
-using DoctorAppointment.Application.Model;
+﻿using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;

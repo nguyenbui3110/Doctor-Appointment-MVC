@@ -1,0 +1,73 @@
+﻿@model List<DoctorAppointment.Domain.Entities.Schedule>
+
+<div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form id="scheduleForm" action="/Schedule/UpdateDoctorAllSchedule" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scheduleModalLabel">Chọn giờ hẹn trong tuần</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger fw-bold">
+                        Lưu ý: **
+                    </p>
+                    <div id="availableSlotsContainer">
+                        <!-- Các khung giờ khả dụng sẽ được hiển thị tại đây -->
+                    </div>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                            <tr>
+                                <th>Thời gian</th>
+                                <th>Giờ bắt đầu</th>
+                                <th>Giờ kết thúc</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th>Thứ 2</th>
+                                <th><input type="time" class="form-control" name="[0].StartTime" value="@Model[0].StartTime"></th>
+                                <th><input type="time" class="form-control" name="[0].EndTime" value="@Model[0].EndTime"></th>
+                            </tr>
+                            <tr>
+                                <th>Thứ 3</th>
+                                <th><input type="time" class="form-control" name="[1].StartTime" value="@Model[1].StartTime"></th>
+                                <th><input type="time" class="form-control" name="[1].EndTime" value="@Model[1].EndTime"></th>
+                            </tr>
+                            <tr>
+                                <th>Thứ 4</th>
+                                <th><input type="time" class="form-control" name="[2].StartTime" value="@Model[2].StartTime"></th>
+                                <th><input type="time" class="form-control" name="[2].EndTime" value="@Model[2].EndTime"></th>
+                            </tr>
+                            <tr>
+                                <th>Thứ 5</th>
+                                <th><input type="time" class="form-control" name="[3].StartTime" value="@Model[3].StartTime"></th>
+                                <th><input type="time" class="form-control" name="[3].EndTime" value="@Model[3].EndTime"></th>
+                            </tr>
+                            <tr>
+                                <th>Thứ 6</th>
+                                <th><input type="time" class="form-control" name="[4].StartTime" value="@Model[4].StartTime"></th>
+                                <th><input type="time" class="form-control" name="[4].EndTime" value="@Model[4].EndTime"></th>
+                            </tr>
+                            <tr>
+                                <th>Thứ 7</th>
+                                <th><input type="time" class="form-control" name="[5].StartTime" value="@Model[5].StartTime"></th>
+                                <th><input type="time" class="form-control" name="[5].EndTime" value="@Model[5].EndTime"></th>
+                            </tr>
+                            <tr>
+                                <th>Chủ nhật</th>
+                                <th><input type="time" class="form-control" name="[6].StartTime" value="@Model[6].StartTime"></th>
+                                <th><input type="time" class="form-control" name="[6].EndTime" value="@Model[6].EndTime"></th>
+                            </tr>
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-success">Lưu</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

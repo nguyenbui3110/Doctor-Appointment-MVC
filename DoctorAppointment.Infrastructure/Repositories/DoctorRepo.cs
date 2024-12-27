@@ -13,6 +13,13 @@ namespace DoctorAppointment.Infrastructure.Repositories
             
         }
 
+        public async Task<Doctor?> GetDoctorByUserIdAsync(int id)
+        {
+            return await DbSet.Where(x => x.UserId == id)
+                .Include(x => x.Schedules)
+                .FirstOrDefaultAsync();
+        }
+
         public IQueryable<Doctor> GetByNameAndSpecialization(string name, Specialization specialization)
         {
             var query = DbSet.Include(dr => dr.User).AsQueryable();
@@ -37,6 +44,24 @@ namespace DoctorAppointment.Infrastructure.Repositories
                     .Where(dr => dr.Specialization == specialization);
         }
 
+        public void CreateDefaultScheduleForDoctor(int doctorId)
+        {
+            var schedules = new List<Schedule>();
+            var id = 1; 
+
+            for (var i = 1; i <= 7; i++)
+            {
+                schedules.Add(new Schedule
+                {
+                    Id = id++,
+                    DoctorId = doctorId,
+                    DayOfWeek = (DayOfWeek)i,
+                    StartTime = TimeSpan.FromHours(8),
+                    EndTime = TimeSpan.FromHours(17)
+                });
+            }
+        }
+
         public async Task<string?> GetDoctorNameAsync(int doctorId)
         {
             return await DbSet
@@ -46,5 +71,18 @@ namespace DoctorAppointment.Infrastructure.Repositories
                 .Select(dr => dr.User.FullName)
                 .FirstOrDefaultAsync();
         }
+
+        public async Task<Doctor> UpdateDoctorAllScheduleAsync(Doctor doctor, List<Schedule> schedule)
+        {
+            int index = 0;
+            foreach (var currentSchedule in doctor.Schedules)
+            {
+                currentSchedule.StartTime = schedule[index].StartTime;
+                currentSchedule.EndTime = schedule[index].EndTime;
+                index++;
+            }
+            return doctor;
+        }
+
     }
 }

@@ -39,38 +39,34 @@
                             <button type="submit" class="btn btn-primary fw-bold">Search</button>
                         </form>
 
-                    </ul>
-                    <ul class="navbar-nav">
-                        <li class="nav-item"><a class="nav-link" href="#">VN</a></li>
-                        @if (User.Identity.IsAuthenticated)
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item"><a class="nav-link" href="#">VN</a></li>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        @if (User.IsInRole("Admin"))
                         {
-                            @if (User.IsInRole("Admin"))
-                            {
-                                <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="Admin"
-                                        asp-action="Index">Quản lý</a></li>
-                            }
-                            @if (User.IsInRole("Doctor"))
-                            {
-                                @* <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="PatientAppointment" asp-action="Index">Lịch hẹn</a></li> *@
-                            }
-                            else
-                            {
-                                <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="Appointment"
-                                        asp-action="PatientAppointments">Lịch hẹn</a></li>
-                            }
-                            <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="profile"
-                                    asp-action="index">Xin chào,
-                                    @User.Identity.Name</a></li>
-                            <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-action="Logout"
-                                    asp-controller="Auth"><i class="fa fa-sign-out" aria-hidden="true"></i></a> </li>
+                            <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="Admin" asp-action="Index">Quản lý</a></li>
+                        }
+                        @if(User.IsInRole("Doctor"))
+                        {
+                            <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="Appointment" asp-action="DoctorAppointments">Quản lý</a></li>
                         }
                         else
                         {
-                            <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-action="Register"
-                                    asp-controller="Auth">Đăng ký</a></li>
-                            <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-action="login"
-                                    asp-controller="Auth">Đăng nhập</a></li>
+                            <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="Appointment" asp-action="PatientAppointments">Lịch hẹn</a></li>
                         }
+                        <li class="nav-item"><a class="nav-link text-primary fw-bold" href="/profile">Xin chào,
+                                @User.Identity.Name</a></li>
+                        <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-action="Logout" asp-controller="Auth"><i class="fa fa-sign-out" aria-hidden="true"></i></a> </li>
+                    }
+                    else
+                    {
+                        <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-action="Register"
+                                asp-controller="Auth">Đăng ký</a></li>
+                        <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-action="login"
+                                asp-controller="Auth">Đăng nhập</a></li>
+                    }
 
                     </ul>
                 </div>

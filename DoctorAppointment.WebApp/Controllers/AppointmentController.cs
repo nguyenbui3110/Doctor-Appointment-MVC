@@ -61,6 +61,40 @@ namespace DoctorAppointment.WebApp.Controllers
             return RedirectToAction("PatientAppointments");
         }
 
+        public IActionResult DoctorAppointments()
+        {
+            return View();
+        }
+
+        [Route("appointments/doctor")]
+        public async Task<IActionResult> DoctorAppointmentsFilter(AppointmentSearchModel model, int page = 1, int pageSize = 5)
+        {
+            var appointments = await _appointmentService.GetDoctorAppointmentsAsync(model, page, pageSize);
+            return PartialView("_DoctorAppointmentTable", appointments);
+        }
+        public async Task<IActionResult> DoctorAppointmentCancel(int id)
+        {
+            var appointment = await _appointmentService.CancelAppointmentAsync(id);
+            if (appointment != null)
+            {
+                await _context.Clients.All.SendAsync("UpdateTimeSlots", appointment.DoctorId?.ToString(), appointment.AppointmentDate?.ToString("yyyy-MM-dd"));
+                return RedirectToAction("DoctorAppointments");
+            }
+            ModelState.AddModelError("", "Error while cancel appointment");
+            return RedirectToAction("DoctorAppointments");
+        }
+
+        public async Task<IActionResult> DoctorAppointmentConfirm(int id)
+        {
+            var appointment = await _appointmentService.ConfirmAppointmentAsync(id);
+            if (appointment != null)
+            {
+                await _context.Clients.All.SendAsync("UpdateTimeSlots", appointment.DoctorId?.ToString(), appointment.AppointmentDate?.ToString("yyyy-MM-dd"));
+                return RedirectToAction("DoctorAppointments");
+            }
+            ModelState.AddModelError("", "Error while cancel appointment");
+            return RedirectToAction("DoctorAppointments");
+        }
     }
 
 }
