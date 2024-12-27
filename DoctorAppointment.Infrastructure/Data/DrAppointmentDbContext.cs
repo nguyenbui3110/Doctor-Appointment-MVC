@@ -75,6 +75,8 @@ public class DrAppointmentDbContext : IdentityDbContext<User, IdentityRole<int>,
                 case EntityState.Added:
                     entry.Entity.CreatedBy = userId;
                     entry.Entity.CreatedAt = DateTime.UtcNow;
+                    entry.Entity.LastModifiedBy = userId;
+                    entry.Entity.LastModifiedAt = DateTime.UtcNow;
                     break;
 
                 case EntityState.Modified:

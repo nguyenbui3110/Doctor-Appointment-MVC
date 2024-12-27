@@ -29,10 +29,11 @@ namespace DoctorAppointment.WebApp.Controllers
             {
                 return Json(new { success = false, message="invalid model" });
             }
-            if(await _appointmentService.CreateAppointmentAsync(appointment))
+            var result= await _appointmentService.CreateAppointmentAsync(appointment);
+            if( result!= null )
             {
                 await _context.Clients.All.SendAsync("UpdateTimeSlots", appointment.DoctorId?.ToString(), appointment.AppointmentDate?.ToString("yyyy-MM-dd"));
-                //await _context.Clients.All.SendAsync("UpdateAppointmentStatus", appointment.Doctor?.User.Id, appointment.Patient?.User.Id);
+                await _context.Clients.All.SendAsync("UpdateAppointmentStatus", result.Doctor?.User.Id, result.Patient?.User.Id);
                 return Json(new { success = true});
 
             }

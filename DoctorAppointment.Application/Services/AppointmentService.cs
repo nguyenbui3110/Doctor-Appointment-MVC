@@ -24,7 +24,7 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         var patient = await patientRepo.GetPatientByUserIdAsync(currentUserId);
         if (patient == null)
             throw new Exception("Patient not found");
-        var query = appointmentRepo.GetPatientAppointmentsQuery(patient.Id, model.From, model.To, model.Status);
+        var query = appointmentRepo.GetPatientAppointmentsQuery(patient.Id, model.From, model.To, model.Status).OrderByDescending(x=>x.LastModifiedAt);
         (var appointments, var count) = await appointmentRepo.ApplyPaing(query, page, pageSize);
         return new PagingItem<AppointmentViewModel>
         {
@@ -44,7 +44,7 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         var doctor = await doctorRepo.GetDoctorByUserIdAsync(currentUserId);
         if (doctor == null)
             throw new Exception("Doctor not found");
-        var query = appointmentRepo.GetDoctorAppointmentsQuery(doctor.Id, model.From, model.To, model.Status);
+        var query = appointmentRepo.GetDoctorAppointmentsQuery(doctor.Id, model.From, model.To, model.Status).OrderByDescending(x=>x.LastModifiedAt);
         (var appointments, var count) = await appointmentRepo.ApplyPaing(query, page, pageSize);
         return new PagingItem<AppointmentViewModel>
         {
@@ -81,13 +81,13 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         }
         return timeSlots;
     }
-    public async Task<bool> CreateAppointmentAsync(AppointmentPostModel model)
+    public async Task<Appointment> CreateAppointmentAsync(AppointmentPostModel model)
     {
         var appointment = Mapper.Map<Appointment>(model);
         var doctor = await doctorRepo.GetByIdAsync(appointment.DoctorId.Value);
         if(doctor?.UserId == int.Parse(CurrentUser.Id))
         {
-            return false;
+            return null;
         }
         appointment.EndTime = appointment.StartTime?.Add(new TimeSpan(1,0,0));
         var patient = await patientRepo.GetPatientByUserIdAsync(int.Parse(CurrentUser.Id));
@@ -98,7 +98,7 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         var template = mailTemplateHelper.GetAppointmentInfoTemplate(appointment);
         var message = new Message(new List<string> {appointment.Patient.User.Email!}, "Thông tin lịch hẹn", template);
         _ = emailSender.SendEmailAsync(message);
-        return true;
+        return appointmentInfo;
     }
 
     public async Task<Appointment> CancelAppointmentAsync(int id)
