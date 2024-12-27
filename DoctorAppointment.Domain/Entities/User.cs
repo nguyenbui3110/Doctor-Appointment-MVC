@@ -15,5 +15,4 @@ public class User : IdentityUser<int>
     public Gender? Gender { get; set; }
     public Doctor? Doctor { get; set; }
     public Patient? Patient { get; set; }
-    
 }

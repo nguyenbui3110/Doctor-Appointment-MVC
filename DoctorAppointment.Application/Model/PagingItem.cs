@@ -1,4 +1,3 @@
-
 namespace DoctorAppointment.Application.Model;
 
 public class PagingItem<T> : IPagingItem
@@ -10,6 +9,4 @@ public class PagingItem<T> : IPagingItem
     // public SearchModel SearchModel { get; set; }
 
     public Func<int, string> PageUrl { get; set; } = i => $"?page={i}";
-
-
 }

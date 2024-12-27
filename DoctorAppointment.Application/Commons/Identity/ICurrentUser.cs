@@ -1,4 +1,3 @@
-
 namespace DoctorAppointment.Application.Commons.Identity;
 
 public interface ICurrentUser

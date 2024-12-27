@@ -4,7 +4,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="updateDoctorModalLabel">Add Doctor</h5>
+                <h5 class="modal-title" id="updateDoctorModalLabel">update Doctor</h5>
                 <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -13,18 +13,18 @@
                 <form asp-action="UpdateDoctor" method="post" id="UpdateDoctorForm">
                     @Html.AntiForgeryToken()
                     <div class="form-group">
-                        <input asp-for="UserId" type="hidden" />
+                        <input asp-for="UserId" type="hidden"/>
                     </div>
                     <div class="form-group">
-                        <input asp-for="Id" type="hidden" />
+                        <input asp-for="Id" type="hidden"/>
                     </div>
                     <div class="form-group">
-                        <input asp-for="User.Id" type="hidden" />
+                        <input asp-for="User.Id" type="hidden"/>
                     </div>
 
                     <div class="form-group">
                         <label asp-for="User.FullName" class="control-label"></label>
-                        <input asp-for="User.FullName" class="form-control" />
+                        <input asp-for="User.FullName" class="form-control"/>
                         <span asp-validation-for="User.FullName" class="text-danger"></span>
                     </div>
                     <div class="form-group">
@@ -35,22 +35,22 @@
                     </div>
                     <div class="form-group">
                         <label asp-for="YearsOfExperience" class="control-label"></label>
-                        <input asp-for="YearsOfExperience" class="form-control" />
+                        <input asp-for="YearsOfExperience" class="form-control"/>
                         <span asp-validation-for="YearsOfExperience" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="User.DateOfBirth" class="control-label"></label>
-                        <input asp-for="User.DateOfBirth" class="form-control" />
+                        <input asp-for="User.DateOfBirth" class="form-control"/>
                         <span asp-validation-for="User.DateOfBirth" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="User.Address" class="control-label"></label>
-                        <input asp-for="User.Address" class="form-control" />
+                        <input asp-for="User.Address" class="form-control"/>
                         <span asp-validation-for="User.Address" class="text-danger"></span>
                     </div>
                     <div class="form-group">
                         <label asp-for="User.PhoneNumber" class="control-label"></label>
-                        <input asp-for="User.PhoneNumber" class="form-control" />
+                        <input asp-for="User.PhoneNumber" class="form-control"/>
                         <span asp-validation-for="User.PhoneNumber" class="text-danger"></span>
                     </div>
                     <div class="form-group">

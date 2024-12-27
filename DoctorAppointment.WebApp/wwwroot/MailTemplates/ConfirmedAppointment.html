@@ -1,0 +1,130 @@
+<!DOCTYPE html
+        PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta name="x-apple-disable-message-reformatting"/>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <meta name="color-scheme" content="light dark"/>
+    <meta name="supported-color-schemes" content="light dark"/>
+    <title>Xác nhận lịch hẹn</title>
+    <style type="text/css" rel="stylesheet" media="all">
+        /* [Same CSS styles as your original template] */
+        @import url("https://fonts.googleapis.com/css?family=Nunito+Sans:400,650&display=swap");
+
+        body {
+            width: 100% !important;
+            height: 100%;
+            margin: 0;
+            -webkit-text-size-adjust: none;
+        }
+
+        /* [Keep all the same CSS rules as in your original template] */
+        .email-wrapper {
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            background-color: #F2F4F6;
+        }
+
+        /* [Rest of your CSS remains the same] */
+    </style>
+</head>
+
+<body>
+<span class="preheader">Thông báo: Lịch hẹn của bạn đã được xác nhận.</span>
+<table class="email-wrapper" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+    <tr>
+        <td align="center">
+            <table class="email-content" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+                <tr>
+                    <td class="email-masthead">
+                        <a href="https://doctorportal.example.com" class="f-fallback email-masthead_name">
+                            Doctor ABC
+                        </a>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="email-body" width="570" cellpadding="0" cellspacing="0">
+                        <table class="email-body_inner" align="center" width="570" cellpadding="0" cellspacing="0"
+                               role="presentation">
+                            <tr>
+                                <td class="content-cell">
+                                    <div class="f-fallback">
+                                        <h1>Xin chào {{patient_name}},</h1>
+                                        <p>Chúng tôi xin xác nhận lịch hẹn khám bệnh của bạn đã được đặt thành công.
+                                            Dưới đây là thông tin chi tiết về lịch hẹn:</p>
+                                        <table class="purchase" width="100%" cellpadding="0" cellspacing="0"
+                                               role="presentation">
+                                            <tr>
+                                                <td colspan="2">
+                                                    <table class="purchase_content" width="100%" cellpadding="0"
+                                                           cellspacing="0">
+                                                        <tr>
+                                                            <td width="35%" class="purchase_item"><span
+                                                                    class="f-fallback">Bác sĩ:</span></td>
+                                                            <td class="align-right" width="65%"
+                                                                class="purchase_item"><span
+                                                                    class="f-fallback">{{doctor_name}}</span></td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="35%" class="purchase_item"><span
+                                                                    class="f-fallback">Ngày khám:</span></td>
+                                                            <td class="align-right" width="65%"
+                                                                class="purchase_item"><span
+                                                                    class="f-fallback">{{appointment_date}}</span>
+                                                            </td>
+                                                        </tr>
+                                                        <tr>
+                                                            <td width="35%" class="purchase_item"><span
+                                                                    class="f-fallback">Thời gian:</span></td>
+                                                            <td class="align-right" width="65%"
+                                                                class="purchase_item"><span
+                                                                    class="f-fallback">{{StartTime}} -
+                                                                        {{EndTime}}</span></td>
+                                                        </tr>
+                                                    </table>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                        <p>Lưu ý quan trọng:</p>
+                                        <ul>
+                                            <li>Vui lòng đến trước giờ hẹn 15 phút để làm thủ tục</li>
+                                            <li>Mang theo CMND/CCCD và các giấy tờ y tế liên quan (nếu có)</li>
+                                            <li>Nếu không thể đến khám theo lịch hẹn, vui lòng thông báo trước 24
+                                                giờ
+                                            </li>
+                                        </ul>
+                                        <p>Nếu bạn cần thay đổi lịch hẹn hoặc có bất kỳ thắc mắc nào, vui lòng liên
+                                            hệ số hotline 0123456789.</p>
+                                        <p>Trân trọng,<br>Đội ngũ Doctor ABC</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <table class="email-footer" align="center" width="570" cellpadding="0" cellspacing="0"
+                               role="presentation">
+                            <tr>
+                                <td class="content-cell" align="center">
+                                    <p class="f-fallback sub align-center">
+                                        Doctor ABC
+                                        <br>123 Phan Chu Trinh, Đà Nẵng
+                                        <br>0123456789
+                                    </p>
+                                </td>
+                            </tr>
+                        </table>
+                    </td>
+                </tr>
+            </table>
+        </td>
+    </tr>
+</table>
+</body>
+
+</html>

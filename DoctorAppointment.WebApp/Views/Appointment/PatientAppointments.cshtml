@@ -20,17 +20,17 @@
             <form method="get" id="filterForm">
                 <div class="row gx-3 gy-3">
                     <div class="col-md-4">
-                        <label class="form-label" asp-for="From">From date</label>
+                        <label class="form-label" asp-for="From">Từ ngày</label>
                         <input type="date" asp-for="From" class="form-control">
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label" asp-for="To">To date</label>
+                        <label class="form-label" asp-for="To">Đến ngày</label>
                         <input type="date" asp-for="To" class="form-control">
                     </div>
                     <div class="col-md-2">
-                        <label class="form-label" asp-for="Status">Status</label>
+                        <label class="form-label" asp-for="Status">Tình Trạng</label>
                         <select id="statusFilter" asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<AppointmentStatus>()">
-                            <option value="" selected disabled>Status</option>
+                            <option value="" selected disabled>ALL</option>
                         </select>
                     </div>
                     <div class="col-md-2 align-self-end">
@@ -43,14 +43,12 @@
 
     <!-- Appointment List Section -->
     <div class="card">
-        <div class="card-header">Appointments</div>
-        <div class="card-body" id="appointmentList">
+        <div class="card-header">Danh sách lịch hẹn</div>
+        <div class="card-body" id="appointmentTable">
             <!-- Appointments will be loaded here -->
         </div>
     </div>
 </div>
-
-
 
 
 @section Scripts {
@@ -58,10 +56,10 @@
         $(document).ready(function () {
             // Load the appointments
             $.ajax({
-                url: "/Appointment/PatientAppointmentsFilter",
+                url: "appointments/patient",
                 type: "GET",
                 success: function (response) {
-                    $("#appointmentList").html(response);
+                    $("#appointmentTable").html(response);
                 }
             });
         });
@@ -69,20 +67,60 @@
             e.preventDefault();
         });
         $("#submitBtn").click(function () {
+            const from = $("#From").val();
+            const to = $("#To").val();
+            if (from === "" || to === "") {
+                alert("Vui lòng chọn khoảng thời gian");
+                return;
+            }
+            if (from > to) {
+                alert("Ngày bắt đầu phải nhỏ hơn ngày kết thúc");
+                return;
+            }
+            // Get the form data
             const form = document.getElementById('filterForm');
             const formData = new URLSearchParams(new FormData(form)).toString();
             // Get the selected values
             $.ajax({
-                url: `/Appointment/PatientAppointmentsFilter?${formData}`,
+                url: `appointments/patient?${formData}`,
                 type: "GET",
                 success: function (response) {
-                    $("#appointmentList").html(response);
+                    $("#appointmentTable").html(response);
                 }
             });
 
             // Redirect to the new URL
         });
-    </script>
-    <partial name="_ValidationScriptsPartial"/>
-}
+        $(document).on('click', '.page-link', function(e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (response) {
+                    $("#appointmentTable").html(response);
+                }
+            });
+        });
+        const connection = new signalR.HubConnectionBuilder()
+            .withUrl("/appointmentHub")
+                .build();
 
+                    connection.on("UpdateAppointmentStatus", (doctorId, patientId) => {
+                // Kiểm tra xem doctorId và date có khớp với lịch hiển thị hiện tại không
+                const selectedPatientId = @User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+                       if (patientId == selectedPatientId) {
+                            $.ajax({
+                            url: "/appointments/patient",
+                            type: "GET",
+                            success: function (response) {
+                                $("#appointmentTable").html(response);
+                            }
+                        });
+                }
+            });
+
+            connection.start().catch(err => console.error(err.toString()));
+    </script>
+}

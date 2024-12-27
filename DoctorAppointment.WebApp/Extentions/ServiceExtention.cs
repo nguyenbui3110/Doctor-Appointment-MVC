@@ -21,9 +21,9 @@ public static class ServiceExtentions
     public static IServiceCollection AddServices(this IServiceCollection services)
     {
         services.Scan(scan => scan.FromAssemblyOf<BaseService>()
-			.AddClasses(c => c.AssignableTo<BaseService>())
-			.AsSelf()
-			.WithScopedLifetime());
+            .AddClasses(c => c.AssignableTo<BaseService>())
+            .AsSelf()
+            .WithScopedLifetime());
         services.Scan(scan => scan.FromAssemblyOf<IBaseService>()
             .AddClasses(c => c.AssignableTo<IBaseService>())
             .AsImplementedInterfaces()
@@ -80,35 +80,35 @@ public static class ServiceExtentions
         services.AddHttpContextAccessor();
         return services;
     }
-    public static IServiceCollection ConfigureConfigurations(this IServiceCollection services, IConfiguration configuration)
+
+    public static IServiceCollection ConfigureConfigurations(this IServiceCollection services,
+        IConfiguration configuration)
     {
         services.Configure<EmailSettings>(configuration.GetSection("EmailConfiguration"));
         return services;
     }
+
     public static IServiceCollection AddEmailSender(this IServiceCollection services)
     {
         services.AddScoped<IEmailSender, EmailSender>();
         services.AddScoped<IMailTemplateHelper, MailTemplateHelper>();
         return services;
     }
-     public static IServiceCollection AddQuartz(this IServiceCollection services)
+
+    public static IServiceCollection AddQuartz(this IServiceCollection services)
     {
         services.AddQuartz(options =>
         {
             var jobKey = new JobKey("RemindAppointmentJob");
             options.AddJob<RemindAppointmentJob>(jobKey)
-                   .AddTrigger(trigger =>
-                        trigger.ForJob(jobKey)
-                            .WithSimpleSchedule(schedule =>
-                                schedule.WithIntervalInHours(24)
-                                        .RepeatForever()));
-            
-            // // Run at 12:00 PM every day
-            // var jobKey2 = new JobKey("MarkCheckoutDateBookingJob");
-            // options.AddJob<MarkCheckOutJob>(jobKey2)
-            //        .AddTrigger(trigger =>
-            //             trigger.ForJob(jobKey2)
-            //                 .WithCronSchedule("0 0 12 * * ? *"));
+                .AddTrigger(trigger =>
+                    trigger.ForJob(jobKey)
+                        .WithCronSchedule("0 0 0 * * ?"));
+            var jobKey2 = new JobKey("CheckCompleteAppointmentJob");
+            options.AddJob<CheckCompleteAppointmentJob>(jobKey2)
+                .AddTrigger(trigger =>
+                    trigger.ForJob(jobKey2)
+                        .WithCronSchedule("0 0 0 * * ?"));
         });
 
         services.AddQuartzHostedService(options =>
@@ -116,7 +116,7 @@ public static class ServiceExtentions
             options.AwaitApplicationStarted = true;
             options.WaitForJobsToComplete = true;
         });
-            
+
         return services;
     }
 }

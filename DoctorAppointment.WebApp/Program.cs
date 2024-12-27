@@ -24,7 +24,7 @@ builder.Services.AddControllersWithViews();
 
 
 var app = builder.Build();
-
+await app.ApplyMigrationAsync(app.Logger);
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
@@ -40,8 +40,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    "default",
+    "{controller=Home}/{action=Index}/{id?}");
+
+app.MapControllerRoute(
+    "schedule",
+    "DoctorSchedule/{action=Index}/{doctorId?}",
+    new { controller = "Schedule" });
 
 app.MapHub<AppointmentHub>("/appointmentHub");
 

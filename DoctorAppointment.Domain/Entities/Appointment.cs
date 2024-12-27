@@ -3,7 +3,7 @@ using DoctorAppointment.Domain.Enums;
 
 namespace DoctorAppointment.Domain.Entities;
 
-public class Appointment: EntityBase
+public class Appointment : EntityBase
 {
     public int? DoctorId { get; set; }
     public Doctor? Doctor { get; set; }

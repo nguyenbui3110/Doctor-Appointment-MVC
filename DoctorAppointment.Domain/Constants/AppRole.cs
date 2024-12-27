@@ -1,4 +1,3 @@
-
 namespace DoctorAppointment.Domain.Constants;
 
 public static class AppRole

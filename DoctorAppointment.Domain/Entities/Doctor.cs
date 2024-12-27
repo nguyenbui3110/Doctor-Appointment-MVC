@@ -3,9 +3,8 @@ using DoctorAppointment.Domain.Enums;
 
 namespace DoctorAppointment.Domain.Entities;
 
-public class Doctor:EntityBase
+public class Doctor : EntityBase
 {
-
     public int UserId { get; set; }
     public Specialization Specialization { get; set; }
     public int? YearsOfExperience { get; set; }

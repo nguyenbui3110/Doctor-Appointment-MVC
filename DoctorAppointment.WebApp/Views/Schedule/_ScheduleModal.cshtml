@@ -1,0 +1,68 @@
+﻿@model List<DoctorAppointment.Domain.Entities.Schedule>
+
+<div class="modal fade" id="scheduleModal" tabindex="-1" aria-labelledby="scheduleModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <form id="scheduleForm" action="/Schedule/UpdateDoctorAllSchedule" method="post">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="scheduleModalLabel">Chọn giờ hẹn trong tuần</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p class="text-danger fw-bold">
+                        Lưu ý: **
+                    </p>
+                    <div id="availableSlotsContainer">
+                        <!-- Các khung giờ khả dụng sẽ được hiển thị tại đây -->
+                    </div>
+                    <table class="table table-bordered table-striped">
+                        <thead>
+                        <tr>
+                            <th>Thời gian</th>
+                            <th>Giờ bắt đầu</th>
+                            <th>Giờ kết thúc</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        @foreach (var schedule in Model.Select((item, index) => new { Item = item, Index = index }))
+                        {
+                            var dayInVietnamese = schedule.Item.DayOfWeek switch
+                            {
+                                DayOfWeek.Monday => "Thứ Hai",
+                                DayOfWeek.Tuesday => "Thứ Ba",
+                                DayOfWeek.Wednesday => "Thứ Tư",
+                                DayOfWeek.Thursday => "Thứ Năm",
+                                DayOfWeek.Friday => "Thứ Sáu",
+                                DayOfWeek.Saturday => "Thứ Bảy",
+                                DayOfWeek.Sunday => "Chủ Nhật",
+                                _ => schedule.Item.DayOfWeek.ToString()
+                            };
+
+                            <tr>
+                                <td>@schedule.Item.DayOfWeek</td>
+                                <td>
+                                    <input type="time"
+                                           class="form-control"
+                                           name="[@schedule.Index].StartTime"
+                                           value="@schedule.Item.StartTime"/>
+                                </td>
+                                <td>
+                                    <input type="time"
+                                           class="form-control"
+                                           name="[@schedule.Index].EndTime"
+                                           value="@schedule.Item.EndTime"/>
+                                </td>
+                            </tr>
+                        }
+
+                        </tbody>
+                    </table>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                    <button type="submit" class="btn btn-success">Lưu</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

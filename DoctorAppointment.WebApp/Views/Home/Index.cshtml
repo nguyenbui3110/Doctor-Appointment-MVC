@@ -1,5 +1,6 @@
 ﻿@using DoctorAppointment.Domain.Enums
 @using System.ComponentModel.DataAnnotations
+@using DoctorAppointment.WebApp.Commons.Helpers
 @{
     Layout = "_Layout";
 }
@@ -24,19 +25,19 @@
                         <div class="row justify-content-center">
                             @foreach (var item in items)
                             {
-                                <partial name="_DoctorCard" model="item" />
+                                <partial name="_DoctorCard" model="item"/>
                             }
                         </div>
                     </div>
                 }
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#doctorCarousel"
-                data-bs-slide="prev">
+                    data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
             <button class="carousel-control-next" type="button" data-bs-target="#doctorCarousel"
-                data-bs-slide="next">
+                    data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
@@ -63,12 +64,12 @@
                         <div class="row justify-content-center">
                             @foreach (var specialization in items)
                             {
-                                var displayName = GetEnumDisplayName(specialization);
+                                var displayName = DisplayName.GetSpecialization(specialization);
                                 var image = GetImageUrl(specialization);
 
                                 <div class="col-md-3 mb-3">
                                     <a class="card text-decoration-none" style="cursor: pointer;"
-                                        href="@Url.Action("Doctors", "Home", new { specialization = specialization })">
+                                       href="@Url.Action("Doctors", "Home", new { specialization = specialization })">
                                         <img src="@Url.Content(image)" class="card-img-top" alt="@displayName">
                                         <div class="card-body text-center">
                                             <p class="text-decoration-none">@displayName</p>
@@ -81,12 +82,12 @@
                 }
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#specializationsCarousel"
-                data-bs-slide="prev">
+                    data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Previous</span>
             </button>
             <button class="carousel-control-next" type="button" data-bs-target="#specializationsCarousel"
-                data-bs-slide="next">
+                    data-bs-slide="next">
                 <span class="carousel-control-next-icon" aria-hidden="true"></span>
                 <span class="visually-hidden">Next</span>
             </button>
@@ -96,12 +97,6 @@
 </div>
 
 @functions {
-    private string GetEnumDisplayName(Specialization specialization)
-    {
-        var fieldInfo = specialization.GetType().GetField(specialization.ToString());
-        var attribute = (DisplayAttribute)Attribute.GetCustomAttribute(fieldInfo, typeof(DisplayAttribute));
-        return attribute?.Name ?? specialization.ToString();
-    }
 
     private string GetImageUrl(Specialization specialization)
     {
@@ -115,4 +110,5 @@
             _ => "~/img/default.png"
         };
     }
+
 }

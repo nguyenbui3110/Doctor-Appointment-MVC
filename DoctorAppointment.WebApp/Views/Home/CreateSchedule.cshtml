@@ -1,0 +1,57 @@
+﻿@{
+    ViewData["Title"] = "Tạo Lịch Rảnh";
+}
+
+<h2>Tạo Lịch Rảnh</h2>
+
+<form id="createScheduleForm">
+    <div class="form-group">
+        <label for="date">Ngày:</label>
+        <input type="date" id="date" name="date" class="form-control" required/>
+    </div>
+    <div class="form-group">
+        <label for="startTime">Giờ bắt đầu:</label>
+        <input type="time" id="startTime" name="startTime" class="form-control" required/>
+    </div>
+    <div class="form-group">
+        <label for="endTime">Giờ kết thúc:</label>
+        <input type="time" id="endTime" name="endTime" class="form-control" required/>
+    </div>
+    <button type="submit" class="btn btn-primary">Tạo Lịch Rảnh</button>
+</form>
+
+<div id="resultMessage" class="mt-3"></div>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#createScheduleForm').on('submit', function (e) {
+                e.preventDefault();
+
+                var formData = {
+                    doctorId: @Model.Id, // Giả sử bạn truyền ID bác sĩ từ Controller
+                    date: $('#date').val(),
+                    startTime: $('#startTime').val(),
+                    endTime: $('#endTime').val()
+                };
+
+                $.ajax({
+                    url: '/api/Schedule/Create',
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify(formData),
+                    success: function (response) {
+                        $('#resultMessage').html('<div class="alert alert-success">' + response + '</div>');
+                        // Reset form
+                        $('#createScheduleForm')[0].reset();
+                    },
+                    error: function (xhr) {
+                        var errorMsg = xhr.responseJSON?.message || 'Đã xảy ra lỗi. Vui lòng thử lại.';
+                        $('#resultMessage').html('<div class="alert alert-danger">' + errorMsg + '</div>');
+                    }
+                });
+            });
+        });
+    </script>
+}

@@ -1,13 +1,13 @@
-﻿@model Dictionary<string, int>
+﻿@model List<KeyValuePair<string, int>>
 <script>
     var doctorctx = document.getElementById('topDoctorsChart');
     topDoctorsChart = new Chart(doctorctx, {
         type: 'bar',
         data: {
-            labels: @Json.Serialize(Model.Keys),
+            labels: @Json.Serialize(Model.Select(x => x.Key)),
             datasets: [{
                 label: 'Number of Appointments',
-                data: @Json.Serialize(Model.Values),
+                data: @Json.Serialize(Model.Select(x => x.Value)),
                 backgroundColor: [
                     'rgba(75, 192, 192, 0.6)',
                     'rgba(54, 162, 235, 0.6)',

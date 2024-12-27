@@ -8,15 +8,19 @@ using Microsoft.AspNetCore.Identity;
 
 namespace DoctorAppointment.Application.Services;
 
-public class UserService(UserManager<User> userManager,IUnitOfWork unitOfWork,
-                        IMapper mapper,ICurrentUser currentUser) 
-                        : BaseService(unitOfWork, mapper, currentUser),IUserService
-{   
+public class UserService(
+    UserManager<User> userManager,
+    IUnitOfWork unitOfWork,
+    IMapper mapper,
+    ICurrentUser currentUser)
+    : BaseService(unitOfWork, mapper, currentUser), IUserService
+{
     public async Task<UserViewModel> GetCurrentUserAsync()
     {
-        var user= await userManager.FindByIdAsync(CurrentUser.Id);
+        var user = await userManager.FindByIdAsync(CurrentUser.Id);
         return Mapper.Map<UserViewModel>(user);
     }
+
     public async Task<bool> UpdateUserAsync(UserViewModel model)
     {
         var user = await userManager.FindByIdAsync(CurrentUser.Id);
@@ -24,5 +28,4 @@ public class UserService(UserManager<User> userManager,IUnitOfWork unitOfWork,
         var result = await userManager.UpdateAsync(user);
         return result.Succeeded;
     }
-
 }

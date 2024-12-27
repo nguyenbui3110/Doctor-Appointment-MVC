@@ -10,6 +10,5 @@ public class UserProfile : Profile
     {
         CreateMap<User, UserViewModel>();
         CreateMap<UserViewModel, User>().ForMember(u => u.Id, opt => opt.Ignore());
-            
     }
 }

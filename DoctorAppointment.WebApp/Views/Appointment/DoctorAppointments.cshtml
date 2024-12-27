@@ -1,0 +1,184 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@using DoctorAppointment.Domain.Enums
+@model AppointmentSearchModel
+@{
+}
+
+@{
+    Layout = "_Layout";
+    ViewData["Title"] = "Manage Doctor Appointments";
+}
+<div class="container-xl px-4 mt-4">
+
+
+    <button type="button" class="btn btn-primary mb-4" data-bs-toggle="modal" data-bs-target="#scheduleModal">
+        Chọn giờ hẹn đặt lịch
+    </button>
+
+    <div id="ModalContainer"></div>
+
+    <!-- Filters Section -->
+    <div class="card mb-4">
+        <div class="card-header">Filters</div>
+        <div class="card-body">
+            <form method="get" id="filterForm">
+                <div class="row gx-3 gy-3">
+                    <div class="col-md-4">
+                        <label class="form-label" asp-for="From">Từ ngày</label>
+                        <input type="date" asp-for="From" class="form-control">
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label" asp-for="To">Đến ngày</label>
+                        <input type="date" asp-for="To" class="form-control">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label" asp-for="Status">Tình Trạng</label>
+                        <select id="statusFilter" asp-for="Status" class="form-select" asp-items="Html.GetEnumSelectList<AppointmentStatus>()">
+                            <option value="" selected disabled>ALL</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2 align-self-end">
+                        <button class="btn btn-secondary w-100" type="submit" id="submitBtn">Apply Filters</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Appointment List Section -->
+    <div class="card">
+        <div class="card-header">Danh sách lịch hẹn</div>
+        <div class="card-body" id="appointmentTable">
+            <!-- Appointments will be loaded here -->
+        </div>
+    </div>
+</div>
+
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial"/>
+
+    <script>
+        $(document).ready(function () {
+            // Load the appointments
+            $.ajax({
+                url: "/appointments/doctor",
+                type: "GET",
+                success: function (response) {
+                    $("#appointmentTable").html(response);
+                }
+            });
+        });
+        $("#filterForm").submit(function (e) {
+            e.preventDefault();
+        });
+        $("#submitBtn").click(function () {
+            const from = $("#From").val();
+            const to = $("#To").val();
+            if (from === "" || to === "") {
+                alert("Vui lòng chọn khoảng thời gian");
+                return;
+            }
+            if (from > to) {
+                alert("Ngày bắt đầu phải nhỏ hơn ngày kết thúc");
+                return;
+            }
+            // Get the form data
+            const form = document.getElementById('filterForm');
+            const formData = new URLSearchParams(new FormData(form)).toString();
+            // Get the selected values
+            $.ajax({
+                url: "/appointments/doctor?" + formData,
+                type: "GET",
+                success: function (response) {
+                    $("#appointmentTable").html(response);
+                }
+            });
+
+            // Redirect to the new URL
+        });
+        $(document).on('click', '.page-link', function (e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (response) {
+                    $("#appointmentTable").html(response);
+                }
+            });
+        });
+        $(document).ready(function () {
+            $('button[data-bs-target="#scheduleModal"]').on('click', function () {
+                const modalElement = document.getElementById('scheduleModal');
+                if (modalElement) {
+                    const bootstrapModal = bootstrap.Modal.getInstance(modalElement);
+                    bootstrapModal.dispose();
+                }
+                $.ajax({
+                    url: '@Url.Action("GetDoctorAllSchedule", "Schedule")',
+                    type: 'GET',
+                    success: function (response) {
+                        $('#ModalContainer').html(response);
+                        $('#scheduleModal').modal('show');
+                    },
+                    error: function (xhr, status, error) {
+                        // Hiển thị lỗi nếu có
+                        console.log(error);
+                    }
+                });
+            });
+        });
+
+        $(document).on('submit', '#scheduleForm', function (e) {
+            e.preventDefault();
+            var form = $(this);
+
+            $.ajax({
+                url: form.attr('action'),
+                type: 'POST',
+                data: form.serialize(),
+                success: function (response) {
+                    if (response) {
+                        const modalElement = document.getElementById('scheduleModal');
+                        const bootstrapModal = bootstrap.Modal.getInstance(modalElement);
+                        bootstrapModal.dispose();
+                        alert('Cập nhật thành công!');
+                        $('#ModalContainer').html(response);
+                    } else {
+                        alert('Cập nhật thất bại! Vui lòng thử lại.');
+                        console.error('Error details:', response);
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', xhr.responseText || error);
+                    alert('Đã xảy ra lỗi khi gửi dữ liệu.');
+                }
+            });
+        });
+        const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/appointmentHub")
+            .build();
+
+                connection.on("UpdateAppointmentStatus", (doctorId, patientId) => {
+            // Kiểm tra xem doctorId và date có khớp với lịch hiển thị hiện tại không
+            const selectedDoctorId = @User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (doctorId == selectedDoctorId) {
+                        $.ajax({
+                        url: "/appointments/doctor",
+                        type: "GET",
+                        success: function (response) {
+                            $("#appointmentTable").html(response);
+                        }
+                    });
+            }
+        });
+
+        connection.start().catch(err => console.error(err.toString()));
+
+    </script>
+
+}
