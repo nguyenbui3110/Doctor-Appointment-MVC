@@ -32,6 +32,7 @@ namespace DoctorAppointment.WebApp.Controllers
             if(await _appointmentService.CreateAppointmentAsync(appointment))
             {
                 await _context.Clients.All.SendAsync("UpdateTimeSlots", appointment.DoctorId?.ToString(), appointment.AppointmentDate?.ToString("yyyy-MM-dd"));
+                //await _context.Clients.All.SendAsync("UpdateAppointmentStatus", appointment.Doctor?.User.Id, appointment.Patient?.User.Id);
                 return Json(new { success = true});
 
             }
@@ -55,6 +56,7 @@ namespace DoctorAppointment.WebApp.Controllers
             if(appointment!=null)
             {
                 await _context.Clients.All.SendAsync("UpdateTimeSlots", appointment.DoctorId?.ToString(), appointment.AppointmentDate?.ToString("yyyy-MM-dd"));
+                await _context.Clients.All.SendAsync("UpdateAppointmentStatus", appointment.Doctor?.User.Id, appointment.Patient?.User.Id);
                 return RedirectToAction("PatientAppointments");
             }
             ModelState.AddModelError("", "Error while cancel appointment");
@@ -77,7 +79,9 @@ namespace DoctorAppointment.WebApp.Controllers
             var appointment = await _appointmentService.CancelAppointmentAsync(id);
             if (appointment != null)
             {
+                
                 await _context.Clients.All.SendAsync("UpdateTimeSlots", appointment.DoctorId?.ToString(), appointment.AppointmentDate?.ToString("yyyy-MM-dd"));
+                await _context.Clients.All.SendAsync("UpdateAppointmentStatus", appointment.Doctor?.User.Id, appointment.Patient?.User.Id);
                 return RedirectToAction("DoctorAppointments");
             }
             ModelState.AddModelError("", "Error while cancel appointment");
@@ -90,6 +94,7 @@ namespace DoctorAppointment.WebApp.Controllers
             if (appointment != null)
             {
                 await _context.Clients.All.SendAsync("UpdateTimeSlots", appointment.DoctorId?.ToString(), appointment.AppointmentDate?.ToString("yyyy-MM-dd"));
+                await _context.Clients.All.SendAsync("UpdateAppointmentStatus", appointment.Doctor?.User.Id, appointment.Patient?.User.Id);
                 return RedirectToAction("DoctorAppointments");
             }
             ModelState.AddModelError("", "Error while cancel appointment");

@@ -160,6 +160,26 @@
                 }
             });
         });
+        const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/appointmentHub")
+            .build();
+
+                connection.on("UpdateAppointmentStatus", (doctorId, patientId) => {
+            // Kiểm tra xem doctorId và date có khớp với lịch hiển thị hiện tại không
+            const selectedDoctorId = @User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (doctorId == selectedDoctorId) {
+                        $.ajax({
+                        url: "/appointments/doctor",
+                        type: "GET",
+                        success: function (response) {
+                            $("#appointmentTable").html(response);
+                        }
+                    });
+            }
+        });
+
+        connection.start().catch(err => console.error(err.toString()));
 
     </script>
 
