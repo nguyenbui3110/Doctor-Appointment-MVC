@@ -7,6 +7,7 @@ using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Domain.Enums;
 using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DoctorAppointment.Application.Services;
 
@@ -16,10 +17,6 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
                                 IMailTemplateHelper mailTemplateHelper, IEmailSender emailSender)
     : BaseService(unitOfWork, mapper, currentUser), IAppointmentService
 {
-    public async Task<Appointment> GetDoctorAppointmentsAsync(int doctorId, DateTime date)
-    {
-        throw new NotImplementedException();
-    }
 
     public async Task<PagingItem<AppointmentViewModel>> GetPatientAppointmentsAsync(AppointmentSearchModel model, int page, int pageSize)
     {
@@ -39,6 +36,24 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         };
         // return Mapper.Map<List<AppointmentViewModel>>(appointments);
         // throw new NotImplementedException();
+    }
+
+    public async Task<PagingItem<AppointmentViewModel>> GetDoctorAppointmentsAsync(AppointmentSearchModel model, int page, int pageSize)
+    {
+        var currentUserId = int.Parse(CurrentUser.Id);
+        var doctor = await doctorRepo.GetDoctorByUserIdAsync(currentUserId);
+        if (doctor == null)
+            throw new Exception("Doctor not found");
+        var query = appointmentRepo.GetDoctorAppointmentsQuery(doctor.Id, model.From, model.To, model.Status);
+        (var appointments, var count) = await appointmentRepo.ApplyPaing(query, page, pageSize);
+        return new PagingItem<AppointmentViewModel>
+        {
+            Items = Mapper.Map<List<AppointmentViewModel>>(appointments),
+            CountPages = (int)Math.Ceiling(count / (double)pageSize),
+            CurrentPage = page,
+            PageSize = pageSize,
+            PageUrl = i => $"/appointments/doctor?page={i}&from={model.From}&to={model.To}&status={model.Status}"
+        };
     }
 
     public async Task<IEnumerable<TimeSpan>> GetFreeTimeSlotsAsync(int doctorId, DateTime date)
@@ -102,5 +117,22 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         return appointment;
         
     }
+
+    public async Task<Appointment> ConfirmAppointmentAsync(int id)
+    {
+        var appointment = await appointmentRepo.QueryGetById(id)
+                                .Include(a => a.Doctor.User)
+                                .Include(a => a.Patient.User)
+                                .FirstOrDefaultAsync();
+        if (appointment == null)
+            return null;
+        appointment.Status = AppointmentStatus.Confirmed;
+        await UnitOfWork.SaveChangesAsync();
+        var template = mailTemplateHelper.GetCancelAppointmentTemplate(appointment);
+        var message = new Message(new List<string> { appointment.Patient.User.Email! }, "Thông tin xác nhận lịch hẹn", template);
+        _ = emailSender.SendEmailAsync(message);
+        return appointment;
+    }
+
 }
 

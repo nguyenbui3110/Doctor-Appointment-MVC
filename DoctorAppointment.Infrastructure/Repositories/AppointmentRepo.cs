@@ -122,4 +122,36 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
         // .Include(a => a.Patient.User)
         .Where(a => a.Status == status).ToListAsync();
     }
+
+    public async Task<List<Appointment>>  GetDoctorAppointmentsAsync(int doctorId, DateTime? from, DateTime? to, AppointmentStatus? appointmentStatus = null)
+    {
+        var query =DbSet.Include(a => a.Doctor.User).Include(a => a.Patient.User).Where(a => a.DoctorId == doctorId);
+        if (appointmentStatus.HasValue)
+        {
+            query = query.Where(a => a.Status == appointmentStatus);
+        }
+        if(from<to && from!=null && to!=null)
+        {
+            query = query.Where(a => a.AppointmentDate >= from && a.AppointmentDate <= to);
+        }
+        return await query.ToListAsync();
+    }
+
+    public IQueryable<Appointment> GetDoctorAppointmentsQuery(int doctorId, DateTime? from, DateTime? to, AppointmentStatus? appointmentStatus = null)
+    {
+        var query = DbSet
+                    .IgnoreQueryFilters()
+                    .Include(a => a.Doctor.User)
+                    .Include(a => a.Patient.User)
+                    .Where(a => a.DoctorId == doctorId);
+        if (appointmentStatus.HasValue)
+        {
+            query = query.Where(a => a.Status == appointmentStatus);
+        }
+        if (from < to && from != null && to != null)
+        {
+            query = query.Where(a => a.AppointmentDate >= from && a.AppointmentDate <= to);
+        }
+        return query;
+    }
 }

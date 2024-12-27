@@ -17,4 +17,5 @@ public interface IDoctorService : IBaseService
     Task<List<DoctorViewModel>> GetAll();
     Task RestoreDoctor(int id);
 
+
 }

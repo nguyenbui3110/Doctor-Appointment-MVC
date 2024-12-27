@@ -1,4 +1,4 @@
-using DoctorAppointment.Application.Model;
+﻿using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Enums;
 using DoctorAppointment.Domain.exceptions;

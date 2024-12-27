@@ -46,6 +46,11 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Enti
         _dbContext.Set<TEntity>().Remove(entity);
     }
 
+    public async Task AddRangeAsync(IEnumerable<TEntity> entities)
+    {
+        await _dbContext.Set<TEntity>().AddRangeAsync(entities);
+    }
+
     public void RemoveRange(IEnumerable<TEntity> entities)
     {
         _dbContext.Set<TEntity>().RemoveRange(entities);

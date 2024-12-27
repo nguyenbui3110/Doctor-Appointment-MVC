@@ -15,6 +15,7 @@ public class RegisterModel
 
     [Required(ErrorMessage = "Password is required.")]
     [DataType(DataType.Password)]
+    [StringLength(16, MinimumLength = 6)]
     public string Password { get; set; }
 
     [Required(ErrorMessage = "Please confirm your password.")]

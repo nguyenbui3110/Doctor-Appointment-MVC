@@ -1,4 +1,4 @@
-using AutoMapper;
+﻿using AutoMapper;
 using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
@@ -12,10 +12,10 @@ using Microsoft.EntityFrameworkCore;
 
 namespace DoctorAppointment.Application.Services;
 
-public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
-                            IMapper mapper, ICurrentUser currentUser,
-                            UserManager<User> userManager)
-                            : BaseService(unitOfWork, mapper, currentUser), IDoctorService
+public class DoctorService(IDoctorRepo repository,IScheduleRepo schedule_repo ,IUnitOfWork unitOfWork,
+                             IMapper mapper, ICurrentUser currentUser,
+                              UserManager<User> userManager)
+    : BaseService(unitOfWork, mapper, currentUser), IDoctorService
 {
     public async Task<DoctorViewModel> GetByIdAsync(int id)
     {
@@ -74,6 +74,7 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
             doctor.UserId = user.Id;
             repository.Add(doctor);
             await UnitOfWork.SaveChangesAsync();
+            await CreateDefaultScheduleForDoctor(doctor.Id);
             return true;
         }
         return false;
@@ -118,6 +119,27 @@ public class DoctorService(IDoctorRepo repository, IUnitOfWork unitOfWork,
         var doctors = await repository.GetAll().Include(d => d.User).ToListAsync();
         return Mapper.Map<List<DoctorViewModel>>(doctors);
     }
+
+    private async Task<int> CreateDefaultScheduleForDoctor(int doctorId)
+    {
+        var schedules = new List<Schedule>();
+
+        for (var i = 1; i <= 7; i++)
+        {
+            schedules.Add(new Schedule
+            {
+                DoctorId = doctorId,
+                DayOfWeek = (DayOfWeek)i,
+                StartTime = TimeSpan.FromHours(8),
+                EndTime = TimeSpan.FromHours(17),
+            });
+        }
+
+        await schedule_repo.AddRangeAsync(schedules);
+        return await UnitOfWork.SaveChangesAsync();
+    }
+
+
 
     public async Task RestoreDoctor(int id)
     {

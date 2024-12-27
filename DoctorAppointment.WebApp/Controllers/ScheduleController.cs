@@ -1,8 +1,11 @@
-using DoctorAppointment.Application.Services.Interfaces;
+﻿using DoctorAppointment.Application.Services.Interfaces;
+using DoctorAppointment.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace DoctorAppointment.WebApp.Controllers
 {
+    
     public class ScheduleController : Controller
     {
         private readonly IScheduleService _scheduleService;
@@ -23,6 +26,21 @@ namespace DoctorAppointment.WebApp.Controllers
 
             var timeSlots = await _appointmentService.GetFreeTimeSlotsAsync(doctorId, date);
             return PartialView("_TimeSlot",timeSlots);
+        }
+        [Authorize]
+        public async Task<ActionResult> GetDoctorAllSchedule()
+        {
+
+            var schedule = await _scheduleService.GetDotorAllScheduleAsync();
+            return PartialView("_ScheduleModal", schedule);
+        }
+
+        [Authorize]
+        public async Task<ActionResult> UpdateDoctorAllSchedule(List<Schedule> schedules)
+        {
+
+            var schedule = await _scheduleService.UpdateDoctorAllScheduleAsync(schedules);
+            return PartialView("_ScheduleModal", schedule);
         }
 
     }

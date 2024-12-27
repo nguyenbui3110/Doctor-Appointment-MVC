@@ -108,6 +108,8 @@
                             $('#timeSlotsContainer').html(response);
                         },
                         error: function () {
+                                console.log(xhr.responseText); 
+                                console.log(status, error);
                             $('#timeSlotsContainer').html('<p class="text-danger">Không thể tải giờ khả dụng. Vui lòng thử lại.</p>');
                         }
                     });
