@@ -1,4 +1,3 @@
-
 namespace DoctorAppointment.Domain.Entities.Base;
 
 public class AuditableEntity

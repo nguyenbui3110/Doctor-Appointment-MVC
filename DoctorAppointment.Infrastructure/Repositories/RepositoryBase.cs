@@ -9,23 +9,24 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Enti
 {
     private DbSet<TEntity>? _dbSet;
     protected DbSet<TEntity> DbSet => _dbSet ??= _dbContext.Set<TEntity>();
-    
+
     private readonly DrAppointmentDbContext _dbContext;
-    
+
     public RepositoryBase(DrAppointmentDbContext dbContext)
     {
         _dbContext = dbContext;
     }
 
-     public IQueryable<TEntity> GetAll()
+    public IQueryable<TEntity> GetAll()
     {
-        return  _dbContext.Set<TEntity>();
+        return _dbContext.Set<TEntity>();
     }
 
     public IQueryable<TEntity> QueryGetById(int id)
     {
         return _dbContext.Set<TEntity>().Where(e => e.Id == id);
     }
+
     public async Task<TEntity?> GetByIdAsync(int id)
     {
         return await _dbContext.Set<TEntity>().FindAsync(id);
@@ -55,9 +56,10 @@ public class RepositoryBase<TEntity> : IRepository<TEntity> where TEntity : Enti
     {
         _dbContext.Set<TEntity>().RemoveRange(entities);
     }
-    public async Task<(IEnumerable<TEntity>,int)> ApplyPaing(IQueryable<TEntity> queryable, int page, int pageSize)
+
+    public async Task<(IEnumerable<TEntity>, int)> ApplyPaing(IQueryable<TEntity> queryable, int page, int pageSize)
     {
-        int totalCount = await queryable.CountAsync();
+        var totalCount = await queryable.CountAsync();
         return (await queryable.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync(), totalCount);
     }
 

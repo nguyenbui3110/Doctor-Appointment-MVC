@@ -13,6 +13,7 @@ public static class DisplayName
         var displayName = displayAttribute?.Name ?? specialization.ToString();
         return displayName;
     }
+
     public static string GetAppointmentStatus(AppointmentStatus appointmentStatus)
     {
         var memberInfo = typeof(AppointmentStatus).GetMember(appointmentStatus.ToString())[0];

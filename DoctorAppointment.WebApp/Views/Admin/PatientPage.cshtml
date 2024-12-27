@@ -7,10 +7,12 @@
 
 <ul class="navbar-nav me-auto col-md-4" style="margin-bottom: 10px;">
     <form class="d-flex align-items-center h-100" id="searchForm" asp-controller="Admin" asp-action="PatientPage"
-        method="get">
+          method="get">
         <input type="text" name="searchQuery" placeholder="Tên bệnh nhân..." class="form-control"
-            aria-label="Search Doctor" value="@ViewBag.SearchQuery" />
-        <button type="submit" class="btn btn-primary fw-bold"><i class="fa fa-search"></i></button>
+               aria-label="Search Doctor" value="@ViewBag.SearchQuery"/>
+        <button type="submit" class="btn btn-primary fw-bold">
+            <i class="fa fa-search"></i>
+        </button>
     </form>
 
 </ul>
@@ -24,48 +26,48 @@ else
 {
     <table class="table table-striped table-bordered table-hover">
         <thead>
-            <tr>
-                <th scope="col">Id</th>
-                <th scope="col">Tên</th>
-                <th scope="col">Email</th>
-                <th scope="col">Địa chỉ</th>
-                <th scope="col">Actions</th>
-            </tr>
+        <tr>
+            <th scope="col">Id</th>
+            <th scope="col">Tên</th>
+            <th scope="col">Email</th>
+            <th scope="col">Địa chỉ</th>
+            <th scope="col">Actions</th>
+        </tr>
         </thead>
         <tbody>
-            @foreach (var item in Model.Items)
-            {
-                <tr>
-                    <td>@item.Id</td>
-                    <td>@item.User.FullName</td>
-                    <td>@item.User.Email</td>
-                    <td>@item.User.Address</td>
-                    @if (item.IsDeleted)
-                    {
-                        <td>
-                            <button type="button" class="btn btn-success" data-bs-toggle="modal"
+        @foreach (var item in Model.Items)
+        {
+            <tr>
+                <td>@item.Id</td>
+                <td>@item.User.FullName</td>
+                <td>@item.User.Email</td>
+                <td>@item.User.Address</td>
+                @if (item.IsDeleted)
+                {
+                    <td>
+                        <button type="button" class="btn btn-success" data-bs-toggle="modal"
                                 data-bs-target="#restorePatientModal_@item.Id" RestoreId="@item.Id">
-                                <div class="fa fa-repeat"></div> phục hồi
-                            </button>
-                            <partial name="_RestorePatient" model="@item.Id" />
-                        </td>
-                    }
-                    else
-                    {
-                        <td>
-                            <button type="button" class="btn btn-danger" data-bs-toggle="modal"
+                            <div class="fa fa-repeat"></div> phục hồi
+                        </button>
+                        <partial name="_RestorePatient" model="@item.Id"/>
+                    </td>
+                }
+                else
+                {
+                    <td>
+                        <button type="button" class="btn btn-danger" data-bs-toggle="modal"
                                 data-bs-target="#deletePatientModal_@item.Id" DeleteId="@item.Id">
-                                <div class="fa fa-lock"></div> Khóa
-                            </button>
-                            <partial name="_DeletePatient" model="@item.Id" />
-                        </td>
-                    }
-                </tr>
-            }
+                            <div class="fa fa-lock"></div> Khóa
+                        </button>
+                        <partial name="_DeletePatient" model="@item.Id"/>
+                    </td>
+                }
+            </tr>
+        }
         </tbody>
     </table>
 }
-<partial name="_Paging" model="Model" />
+<partial name="_Paging" model="Model"/>
 
 <style>
     .modal-body {

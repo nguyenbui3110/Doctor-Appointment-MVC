@@ -1,4 +1,3 @@
-
 namespace DoctorAppointment.Application.Model;
 
 public class ErrorViewModel

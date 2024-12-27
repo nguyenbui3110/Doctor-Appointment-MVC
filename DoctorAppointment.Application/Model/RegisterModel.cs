@@ -24,6 +24,5 @@ public class RegisterModel
     [Compare("Password", ErrorMessage = "Passwords do not match.")]
     public string ConfirmPassword { get; set; }
 
-    [DataType(DataType.EmailAddress)]
-    public string Email { get; set; }
+    [DataType(DataType.EmailAddress)] public string Email { get; set; }
 }

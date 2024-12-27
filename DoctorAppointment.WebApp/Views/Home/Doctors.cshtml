@@ -19,11 +19,11 @@
                     <a class="text-decoration-none" href="@Url.Action("DoctorDetail", "Home", new { id = doctor.Id })">
                         <div class="card h-100 shadow-sm">
                             <div class="card-img-top-wrapper">
-                                <img src="@Url.Content((doctor.User.AvatarUrl != null) ? doctor.User.AvatarUrl : "~/img/doctorAvatar.png")" 
-                                     class="card-img-top rounded-circle mx-auto d-block mt-3" 
-                                     alt="@doctor.User.FullName" 
-                                     loading="lazy" 
-                                     style="width: 120px; height: 120px; object-fit: cover;" />
+                                <img src="@Url.Content(doctor.User.AvatarUrl != null ? doctor.User.AvatarUrl : "~/img/doctorAvatar.png")"
+                                     class="card-img-top rounded-circle mx-auto d-block mt-3"
+                                     alt="@doctor.User.FullName"
+                                     loading="lazy"
+                                     style="width: 120px; height: 120px; object-fit: cover;"/>
                             </div>
                             <div class="card-body text-center">
                                 <h5 class="card-title text-dark fw-bold mb-1">@doctor.User.FullName</h5>

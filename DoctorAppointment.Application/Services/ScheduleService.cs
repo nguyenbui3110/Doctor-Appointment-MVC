@@ -6,10 +6,14 @@ using DoctorAppointment.Domain.Entities;
 
 namespace DoctorAppointment.Application.Services;
 
-public class ScheduleService(IScheduleRepo scheduleRepo,IDoctorRepo doctorRepo ,IUnitOfWork unitOfWork, IMapper mapper, ICurrentUser currentUser)
+public class ScheduleService(
+    IScheduleRepo scheduleRepo,
+    IDoctorRepo doctorRepo,
+    IUnitOfWork unitOfWork,
+    IMapper mapper,
+    ICurrentUser currentUser)
     : BaseService(unitOfWork, mapper, currentUser), IScheduleService
 {
-
     public async Task<Schedule> GetDoctorScheduleAsync(int doctorId, DayOfWeek date)
     {
         return await scheduleRepo.GetDoctorScheduleAsync(doctorId, date);

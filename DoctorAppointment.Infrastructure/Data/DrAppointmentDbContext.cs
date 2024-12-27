@@ -11,17 +11,19 @@ namespace DoctorAppointment.Infrastructure.Data;
 public class DrAppointmentDbContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
     private readonly ICurrentUser _currentUser;
-    public DrAppointmentDbContext(DbContextOptions<DrAppointmentDbContext> options, ICurrentUser currentUser) : base(options)
+
+    public DrAppointmentDbContext(DbContextOptions<DrAppointmentDbContext> options, ICurrentUser currentUser) :
+        base(options)
     {
-        
         _currentUser = currentUser;
     }
+
     public DbSet<Doctor> Doctors { get; set; }
     public DbSet<Patient> Patients { get; set; }
     public DbSet<Appointment> Appointments { get; set; }
     public DbSet<Schedule> Schedules { get; set; }
 
-    protected override void OnModelCreating (ModelBuilder modelBuilder)
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.ApplyConfigurationsFromAssembly(typeof(DrAppointmentDbContext).Assembly);
         modelBuilder.AddIdentitySeedData();
@@ -34,6 +36,7 @@ public class DrAppointmentDbContext : IdentityDbContext<User, IdentityRole<int>,
             var tableName = entityType.GetTableName();
             if (tableName.StartsWith("AspNet")) entityType.SetTableName(tableName.Substring(6));
         }
+
         // Add soft delete query filter
         // https://www.thereformedprogrammer.net/ef-core-in-depth-soft-deleting-data-with-global-query-filters/
         foreach (var entityType in modelBuilder.Model.GetEntityTypes())
@@ -47,29 +50,27 @@ public class DrAppointmentDbContext : IdentityDbContext<User, IdentityRole<int>,
                     parameter);
             modelBuilder.Entity(entityType.ClrType).HasQueryFilter(deletedCheck);
         }
-            
-        
     }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
         // Enable sensitive data logging for debugging purposes
         optionsBuilder.EnableSensitiveDataLogging();
         base.OnConfiguring(optionsBuilder);
     }
-    
-    
+
+
     public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
     {
         SetAuditableEntityProperties();
         SetSoftDeleteEntityProperties();
         return base.SaveChangesAsync(cancellationToken);
     }
-    
+
     private void SetAuditableEntityProperties()
     {
         var userId = int.TryParse(_currentUser.Id, out var id) ? id : 0;
         foreach (var entry in ChangeTracker.Entries<AuditableEntity>())
-        {
             switch (entry.State)
             {
                 case EntityState.Added:
@@ -84,9 +85,8 @@ public class DrAppointmentDbContext : IdentityDbContext<User, IdentityRole<int>,
                     entry.Entity.LastModifiedAt = DateTime.UtcNow;
                     break;
             }
-        }
     }
-    
+
     private void SetSoftDeleteEntityProperties()
     {
         foreach (var entry in ChangeTracker.Entries<IDeleteEntity>())

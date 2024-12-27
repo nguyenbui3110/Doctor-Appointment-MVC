@@ -11,8 +11,8 @@
     <div class="row">
         <!-- Cột chứa ảnh bác sĩ -->
         <div class="col-md-4">
-            <img src="@Url.Content((Model.User.AvatarUrl != null) ? Model.User.AvatarUrl : "~/img/doctorAvatar.png")"
-                alt="Ảnh bác sĩ" class="rounded-circle" style="width: 100%">
+            <img src="@Url.Content(Model.User.AvatarUrl != null ? Model.User.AvatarUrl : "~/img/doctorAvatar.png")"
+                 alt="Ảnh bác sĩ" class="rounded-circle" style="width: 100%">
         </div>
 
         <!-- Cột chứa thông tin chi tiết -->
@@ -20,11 +20,16 @@
 
             <h2>@Model.User.FullName</h2>
             <p><strong>Năm kinh nghiệm: </strong>@Model.YearsOfExperience năm</p>
-            <p><strong>Khoa:</strong>
+            <p>
+                <strong>Khoa:</strong>
                 @DisplayName.GetSpecialization(Model.Specialization)
             </p>
-            <p><strong>Mô tả:</strong> @Model.About</p>
-            <p><strong>Số điện thoại:</strong> @Model.User.PhoneNumber</p>
+            <p>
+                <strong>Mô tả:</strong> @Model.About
+            </p>
+            <p>
+                <strong>Số điện thoại:</strong> @Model.User.PhoneNumber
+            </p>
 
             <form id="AppointmentForm" asp-controller="Appointment" asp-action="BookAppointment">
                 <div class="mb-3">
@@ -32,12 +37,12 @@
                     <select class="form-select" id="AppointmentDate" name="AppointmentDate" required>
                         <option value="">Chọn ngày</option>
                         @{
-                            for (int i = 0; i < 5; i++)
+                            for (var i = 0; i < 5; i++)
                             {
                                 var date = DateTime.Now.AddDays(i);
                                 <option value="@date.ToString("yyyy-MM-dd")">
                                     @date.ToString("dd/MM/yyyy") - @date.ToString("dddd", new
-                            System.Globalization.CultureInfo("vi-VN"))
+                                                                       System.Globalization.CultureInfo("vi-VN"))
                                 </option>
                             }
                         }

@@ -5,11 +5,12 @@
 @model DoctorViewModel
 <a class="col-lg-2 col-md-6 mb-2 text-decoration-none" href="@Url.Action("DoctorDetail", "Home", new { id = Model.Id })">
     <div class="card h-100 shadow-sm">
-        <img src="@Url.Content((Model.User.AvatarUrl != null) ? Model.User.AvatarUrl : "~/img/doctorAvatar.png")"
-            class="card-img-top" alt="@Model.User.FullName" loading="lazy" />
+        <img src="@Url.Content(Model.User.AvatarUrl != null ? Model.User.AvatarUrl : "~/img/doctorAvatar.png")"
+             class="card-img-top" alt="@Model.User.FullName" loading="lazy"/>
         <div class="card-body">
             <h5 class="card-title">@Model.User.FullName</h5>
-            <h6 class="card-subtitle mb-2 text-muted"> Khoa: @DisplayName.GetSpecialization(Model.Specialization)
+            <h6 class="card-subtitle mb-2 text-muted">
+                Khoa: @DisplayName.GetSpecialization(Model.Specialization)
             </h6>
             <p class="card-text">@Model.About</p>
         </div>
