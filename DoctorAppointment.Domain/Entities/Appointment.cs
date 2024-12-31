@@ -15,4 +15,5 @@ public class Appointment : EntityBase
     public TimeSpan? StartTime { get; set; }
     public TimeSpan? EndTime { get; set; }
     public AppointmentStatus? Status { get; set; } = AppointmentStatus.Pending; // Enum property
+    public string? Notes { get; set; }
 }

@@ -53,4 +53,12 @@ public class PatientService(
         await UnitOfWork.SaveChangesAsync();
         return true;
     }
+    public async Task<PatientViewModel> GetPatientByIdAsync(int id)
+    {
+        var query = repository.QueryGetById(id)
+            .Include(x => x.Appointments)
+            .Include(x => x.User);  
+        var patient = await repository.IgnoreQueryFilters(query).FirstOrDefaultAsync();
+        return Mapper.Map<PatientViewModel>(patient);
+    }
 }

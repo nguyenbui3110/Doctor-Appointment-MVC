@@ -130,10 +130,29 @@ public class AppointmentService(
             return null;
         appointment.Status = AppointmentStatus.Confirmed;
         await UnitOfWork.SaveChangesAsync();
-        var template = mailTemplateHelper.GetCancelAppointmentTemplate(appointment);
+        var template = mailTemplateHelper.GetConfirmedAppointmentTemplate(appointment);
         var message = new Message(new List<string> { appointment.Patient.User.Email! }, "Thông tin xác nhận lịch hẹn",
             template);
         _ = emailSender.SendEmailAsync(message);
         return appointment;
+    }
+
+    public async Task<AppointmentViewModel> GetAppointmentByIdAsync(int id)
+    {
+        var appointment = appointmentRepo.QueryGetById(id)
+            .Include(a => a.Doctor.User)
+            .Include(a => a.Patient.User)
+            .FirstOrDefault();
+        return Mapper.Map<AppointmentViewModel>(appointment);
+    }
+
+    public async Task<bool> UpdateAppointmentNotesAsync(int id, string notes)
+    {
+        var appointment = await appointmentRepo.GetByIdAsync(id);
+        if (appointment == null)
+            return false;
+        appointment.Notes = notes;
+        await UnitOfWork.SaveChangesAsync();
+        return true;
     }
 }

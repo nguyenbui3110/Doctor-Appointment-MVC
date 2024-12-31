@@ -16,4 +16,6 @@ public interface IAppointmentService : IBaseService
     public Task<Appointment> CreateAppointmentAsync(AppointmentPostModel model);
     public Task<Appointment> CancelAppointmentAsync(int id);
     public Task<Appointment> ConfirmAppointmentAsync(int id);
+    public Task<AppointmentViewModel> GetAppointmentByIdAsync(int id);
+    public Task<bool> UpdateAppointmentNotesAsync(int id, string notes);
 }
