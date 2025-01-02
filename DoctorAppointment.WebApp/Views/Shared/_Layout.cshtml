@@ -7,9 +7,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>@(ViewData["Title"] != null ? @ViewData["Title"] : "DoctorABC")</title>
+    <title>@((ViewData["Title"] != null) ? @ViewData["Title"] : "DoctorABC")</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@@event-calendar/build@3.7.2/event-calendar.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@@event-calendar/build@3.7.2/event-calendar.min.js"></script>
+
     <link href="~/lib/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet"/>
+    <link href="~/lib/font-awesome/css/all.min.css" rel="stylesheet">
+
+    
 </head>
 
 
@@ -55,9 +60,8 @@
 
                         @if (User.IsInRole("Doctor"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link text-primary fw-bold" asp-controller="Appointment" asp-action="DoctorAppointments">Quản lý</a>
-                            </li>
+                            <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="Appointment" asp-action="DoctorAppointments">Quản lý</a></li>
+                                    <li class="nav-item"><a class="nav-link text-primary fw-bold" asp-controller="Appointment" asp-action="ScheduleCurrent">Theo dõi lịch hẹn</a></li>
                         }
                         else
                         {

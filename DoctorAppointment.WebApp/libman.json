@@ -29,6 +29,36 @@
     {
       "library": "chartjs-adapter-luxon@1.3.1",
       "destination": "wwwroot\\lib\\chartjs-adapter-luxon"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@event-calendar/day-grid@3.7.2",
+      "destination": "wwwroot/event-calendar/day-grid/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@event-calendar/resource-timeline@3.7.2",
+      "destination": "wwwroot/event-calendar/resource-timeline/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@sveltejs/package@2.3.7",
+      "destination": "wwwroot/sveltejs/package/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@event-calendar/core@3.7.2",
+      "destination": "wwwroot/lib/event-calendar/core/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "@event-calendar/resource-time-grid@3.7.2",
+      "destination": "wwwroot/lib/event-calendar/resource-time-grid/"
+    },
+    {
+      "provider": "jsdelivr",
+      "library": "svelte@5.16.0",
+      "destination": "wwwroot/lib/svelte/"
     }
   ]
 }

@@ -39,7 +39,16 @@ public class ScheduleController : Controller
     [Authorize]
     public async Task<ActionResult> UpdateDoctorAllSchedule(List<Schedule> schedules)
     {
+
         var schedule = await _scheduleService.UpdateDoctorAllScheduleAsync(schedules);
         return PartialView("_ScheduleModal", schedule);
     }
+
+    [Authorize]
+    public IActionResult ScheduleCurrent()
+    {
+
+        return View();
+    }
+    
 }

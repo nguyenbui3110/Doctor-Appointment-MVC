@@ -13,4 +13,5 @@ public class AppointmentHub : Microsoft.AspNetCore.SignalR.Hub
     {
         await Clients.All.SendAsync("UpdateAppointmentStatus", doctorId, patientId);
     }
+
 }

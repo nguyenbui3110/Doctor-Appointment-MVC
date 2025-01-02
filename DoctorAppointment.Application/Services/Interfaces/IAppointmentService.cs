@@ -18,4 +18,5 @@ public interface IAppointmentService : IBaseService
     public Task<Appointment> ConfirmAppointmentAsync(int id);
     public Task<AppointmentViewModel> GetAppointmentByIdAsync(int id);
     public Task<bool> UpdateAppointmentNotesAsync(int id, string notes);
+    Task<List<AppointmentViewModel>> GetAllDoctorAppointmentsAsync();
 }

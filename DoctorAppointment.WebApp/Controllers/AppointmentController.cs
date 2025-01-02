@@ -134,4 +134,9 @@ public class AppointmentController : Controller
         }
         return Json(new {success=false});
     }
+    public async Task<IActionResult> ScheduleCurrent()
+    {
+        var appointments = await _appointmentService.GetAllDoctorAppointmentsAsync();
+        return View(appointments);
+    }
 }
