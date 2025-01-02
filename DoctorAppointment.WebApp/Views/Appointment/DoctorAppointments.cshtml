@@ -18,7 +18,7 @@
     </button>
 
     <div id="ModalContainer"></div>
-    
+
     <!-- Filters Section -->
     <div class="card mb-4">
         <div class="card-header">Filters</div>
@@ -46,17 +46,17 @@
             </form>
         </div>
     </div>
+    <div id="AppointmentDetailModalContainer"></div>
 
+    </div>
     <!-- Appointment List Section -->
-    <div class="card">
+    <div class="card px-5">
         <div class="card-header">Danh sách lịch hẹn</div>
         <div class="card-body" id="appointmentTable">
             <!-- Appointments will be loaded here -->
         </div>
     </div>
 </div>
-
-
 
 
 @section Scripts {
@@ -109,6 +109,23 @@
                 type: "GET",
                 success: function (response) {
                     $("#appointmentTable").html(response);
+                }
+            });
+        });
+        $(document).on('click', '.appointment-link', function (e) {
+            e.preventDefault();
+            const url = $(this).attr('href');
+            const patientDetailModalContainer = document.getElementById('patientDetailModal');
+            if (patientDetailModalContainer) {
+                const bootstrapModal = bootstrap.Modal.getInstance(patientDetailModalContainer);
+                bootstrapModal.dispose();
+            }
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function (response) {
+                    $("#AppointmentDetailModalContainer").html(response);
+                    $('#patientDetailModal').modal('show');
                 }
             });
         });
@@ -184,6 +201,3 @@
     </script>
 
 }
-
-
-

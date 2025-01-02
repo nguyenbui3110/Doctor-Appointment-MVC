@@ -1,0 +1,112 @@
+﻿@model (AppointmentViewModel appointment ,PatientViewModel patient)
+@using DoctorAppointment.Domain.Enums
+<div class="modal fade" id="patientDetailModal" tabindex="-1" aria-labelledby="patientDetailModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="patientDetailModalLabel">Thông tin chi tiết bệnh nhân</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row">
+                    <div class="col-md-12 card mb-2">
+                        <h6>Thông tin cá nhân</h6>
+                        <dl class="row">
+                            <dt class="col-sm-4">Họ và tên:</dt>
+                            <dd class="col-sm-8">@Model.patient.User.FullName</dd>
+
+                            <dt class="col-sm-4">Ngày sinh:</dt>
+                            <dd class="col-sm-8">@Model.patient.User.DateOfBirth?.ToString("dd/MM/yyyy")</dd>
+
+                            <dt class="col-sm-4">Giới tính:</dt>
+                            <dd class="col-sm-8">@Model.patient.User.Gender</dd>
+
+                            <dt class="col-sm-4">Địa chỉ:</dt>
+                            <dd class="col-sm-8">@Model.patient.User.Address</dd>
+
+                            <dt class="col-sm-4">Số điện thoại:</dt>
+                            <dd class="col-sm-8">@Model.patient.User.PhoneNumber</dd>
+
+                            <dt class="col-sm-4">Email:</dt>
+                            <dd class="col-sm-8">@Model.patient.User.Email</dd>
+                        </dl>
+                    </div>
+                    <div class="col-md-12 card mb-2">
+                        <h6>Thông tin khám bệnh hiện tại</h6>
+                        <dl class="row">
+                            <dt class="col-sm-4">Ngày khám:</dt>
+                            <dd class="col-sm-8">@Model.appointment.AppointmentDate?.ToString("dd/MM/yyyy")</dd>
+
+                            <dt class="col-sm-4">Thời gian:</dt>
+                            <dd class="col-sm-8">@Model.appointment.StartTime?.ToString(@"hh\:mm") - @Model.appointment.EndTime?.ToString(@"hh\:mm")</dd>
+
+                            <dt class="col-sm-4">Bác sĩ:</dt>
+                            <dd class="col-sm-8">@Model.appointment.DoctorName</dd>
+
+                            <dt class="col-sm-4">Trạng thái:</dt>
+                            <dd class="col-sm-8">@Model.appointment.Status</dd>
+
+                            <dt class="col-sm-4">Ghi chú:</dt>
+                            @if (Model.appointment.Status == AppointmentStatus.Confirmed)
+                            {
+                                <dd class="col-sm-8">
+                                    <textarea class="form-control" id="notes" rows="3">@Model.appointment.Notes</textarea>
+                                    <button class="btn btn-primary mt-2" id="saveNotes">Lưu</button>
+                                </dd>
+                            }
+                            else
+                            {
+                                <dd class="col-sm-8">@Model.appointment.Notes</dd>
+                            }
+                        </dl>
+                    </div>
+                    <script>
+                        $(document).ready(function () {
+                            $('#saveNotes').click(function () {
+                                var notes = $('#notes').val();
+                                $.ajax({
+                                    url: '/Appointment/UpdateNotes',
+                                    type: 'POST',
+                                    data: {
+                                        id: @Model.appointment.Id,
+                                        notes: notes
+                                    },
+                                    success: function (data) {
+                                        if (data.success) {
+                                            alert('Ghi chú đã được lưu');
+                                            $('#patientDetailModal').modal('hide');
+                                        }
+                                    }
+                                });
+                            });
+                        });
+                    </script>
+                    <div class="col-md-6"></div>
+                    <h6>Lịch sử khám bệnh</h6>
+                    <div class="appointment-history"></div>
+                    @foreach (var appointment in Model.patient.Appointments.Where(a => a.Status == AppointmentStatus.Completed))
+                    {
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <h6 class="card-title">Ngày: @appointment.AppointmentDate?.ToString("dd/MM/yyyy")</h6>
+                                <p class="card-text">
+                                    <small>Bác sĩ: @appointment.DoctorName</small><br />
+                                    <small>Thời gian: @appointment.StartTime?.ToString(@"hh\:mm") - @appointment.EndTime?.ToString(@"hh\:mm")</small>
+                                </p>
+                                @if (!string.IsNullOrEmpty(appointment.Notes))
+                                {
+                                    <p class="card-text"><strong>Ghi chú:</strong> @appointment.Notes</p>
+                                }
+                            </div>
+                        </div>
+
+                    }
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>

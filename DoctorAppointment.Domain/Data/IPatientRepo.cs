@@ -5,11 +5,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DoctorAppointment.Domain.Data
+namespace DoctorAppointment.Domain.Data;
+
+public interface IPatientRepo : IRepository<Patient>
 {
-    public interface IPatientRepo : IRepository<Patient>
-    {
-        Task<Patient?> GetPatientByUserIdAsync(int id);
-        IQueryable<Patient> Search(string searchQuerry);
-    }
+    Task<Patient?> GetPatientByUserIdAsync(int id);
+    IQueryable<Patient> Search(string searchQuerry);
 }

@@ -3,16 +3,16 @@
     @if (Model.Any())
     {
         <div class="row">
-        @{
-            foreach (var timeSlot in Model)
-            {
-                <div class="col-4 mb-2">
-                    <button class="btn btn-outline-primary w-100" type="button" onclick="selectTimeSlot('@timeSlot')">
-                        @timeSlot.ToString("hh\\:mm") - @timeSlot.Add(new TimeSpan(1,0,0)).ToString("hh\\:mm")
-                    </button>
-                </div>
+            @{
+                foreach (var timeSlot in Model)
+                {
+                    <div class="col-4 mb-2">
+                        <button class="btn btn-outline-primary w-100" type="button" onclick="selectTimeSlot('@timeSlot')">
+                            @timeSlot.ToString("hh\\:mm") - @timeSlot.Add(new TimeSpan(1, 0, 0)).ToString("hh\\:mm")
+                        </button>
+                    </div>
+                }
             }
-        }
         </div>
     }
     else

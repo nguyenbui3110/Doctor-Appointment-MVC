@@ -1,4 +1,3 @@
-
 namespace DoctorAppointment.Domain.Data;
 
 public interface IUnitOfWork

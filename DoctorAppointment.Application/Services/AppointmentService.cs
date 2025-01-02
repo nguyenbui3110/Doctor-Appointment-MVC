@@ -11,21 +11,28 @@ using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace DoctorAppointment.Application.Services;
 
-public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo patientRepo, IDoctorRepo doctorRepo,
-                                IScheduleService scheduleService, IUnitOfWork unitOfWork,
-                                IMapper mapper, ICurrentUser currentUser,
-                                IMailTemplateHelper mailTemplateHelper, IEmailSender emailSender)
+public class AppointmentService(
+    IAppointmentRepo appointmentRepo,
+    IPatientRepo patientRepo,
+    IDoctorRepo doctorRepo,
+    IScheduleService scheduleService,
+    IUnitOfWork unitOfWork,
+    IMapper mapper,
+    ICurrentUser currentUser,
+    IMailTemplateHelper mailTemplateHelper,
+    IEmailSender emailSender)
     : BaseService(unitOfWork, mapper, currentUser), IAppointmentService
 {
-
-    public async Task<PagingItem<AppointmentViewModel>> GetPatientAppointmentsAsync(AppointmentSearchModel model, int page, int pageSize)
+    public async Task<PagingItem<AppointmentViewModel>> GetPatientAppointmentsAsync(AppointmentSearchModel model,
+        int page, int pageSize)
     {
         var currentUserId = int.Parse(CurrentUser.Id);
         var patient = await patientRepo.GetPatientByUserIdAsync(currentUserId);
         if (patient == null)
             throw new Exception("Patient not found");
-        var query = appointmentRepo.GetPatientAppointmentsQuery(patient.Id, model.From, model.To, model.Status);
-        (var appointments, var count) = await appointmentRepo.ApplyPaing(query, page, pageSize);
+        var query = appointmentRepo.GetPatientAppointmentsQuery(patient.Id, model.From, model.To, model.Status)
+            .OrderByDescending(x => x.LastModifiedAt);
+        var (appointments, count) = await appointmentRepo.ApplyPaing(query, page, pageSize);
         return new PagingItem<AppointmentViewModel>
         {
             Items = Mapper.Map<List<AppointmentViewModel>>(appointments),
@@ -38,14 +45,16 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         // throw new NotImplementedException();
     }
 
-    public async Task<PagingItem<AppointmentViewModel>> GetDoctorAppointmentsAsync(AppointmentSearchModel model, int page, int pageSize)
+    public async Task<PagingItem<AppointmentViewModel>> GetDoctorAppointmentsAsync(AppointmentSearchModel model,
+        int page, int pageSize)
     {
         var currentUserId = int.Parse(CurrentUser.Id);
         var doctor = await doctorRepo.GetDoctorByUserIdAsync(currentUserId);
         if (doctor == null)
             throw new Exception("Doctor not found");
-        var query = appointmentRepo.GetDoctorAppointmentsQuery(doctor.Id, model.From, model.To, model.Status);
-        (var appointments, var count) = await appointmentRepo.ApplyPaing(query, page, pageSize);
+        var query = appointmentRepo.GetDoctorAppointmentsQuery(doctor.Id, model.From, model.To, model.Status)
+            .OrderByDescending(x => x.LastModifiedAt);
+        var (appointments, count) = await appointmentRepo.ApplyPaing(query, page, pageSize);
         return new PagingItem<AppointmentViewModel>
         {
             Items = Mapper.Map<List<AppointmentViewModel>>(appointments),
@@ -65,74 +74,91 @@ public class AppointmentService(IAppointmentRepo appointmentRepo,IPatientRepo pa
         var timeSlots = new List<TimeSpan>();
         var start = schedule.StartTime;
         var end = schedule.EndTime;
-        if(date.Date==DateTime.Today.Date)
-        {
-            start = new TimeSpan(DateTime.UtcNow.ToLocalTime().Hour+1,0,0);
-        }
+        if (date.Date == DateTime.Today.Date) start = new TimeSpan(DateTime.UtcNow.ToLocalTime().Hour + 1, 0, 0);
         //duration 1 hour
         var duration = new TimeSpan(1, 0, 0);
         while (start < end)
         {
-            if (appointments.All(a => a.StartTime != start))
-            {
-                timeSlots.Add(start);
-            }
+            if (appointments.All(a => a.StartTime != start)) timeSlots.Add(start);
             start = start.Add(duration);
         }
+
         return timeSlots;
     }
-    public async Task<bool> CreateAppointmentAsync(AppointmentPostModel model)
+
+    public async Task<Appointment> CreateAppointmentAsync(AppointmentPostModel model)
     {
         var appointment = Mapper.Map<Appointment>(model);
         var doctor = await doctorRepo.GetByIdAsync(appointment.DoctorId.Value);
-        if(doctor?.UserId == int.Parse(CurrentUser.Id))
-        {
-            return false;
-        }
-        appointment.EndTime = appointment.StartTime?.Add(new TimeSpan(1,0,0));
+        if (doctor?.UserId == int.Parse(CurrentUser.Id)) return null;
+        appointment.EndTime = appointment.StartTime?.Add(new TimeSpan(1, 0, 0));
         var patient = await patientRepo.GetPatientByUserIdAsync(int.Parse(CurrentUser.Id));
         appointment.PatientId = patient.Id;
         appointmentRepo.Add(appointment);
         await UnitOfWork.SaveChangesAsync();
         var appointmentInfo = await appointmentRepo.GetAppointmentAsync(appointment.Id);
         var template = mailTemplateHelper.GetAppointmentInfoTemplate(appointment);
-        var message = new Message(new List<string> {appointment.Patient.User.Email!}, "Thông tin lịch hẹn", template);
+        var message = new Message(new List<string> { appointment.Patient.User.Email! }, "Thông tin lịch hẹn", template);
         _ = emailSender.SendEmailAsync(message);
-        return true;
+        return appointmentInfo;
     }
 
     public async Task<Appointment> CancelAppointmentAsync(int id)
     {
         var appointment = await appointmentRepo.QueryGetById(id)
-                                .Include(a=>a.Doctor.User)
-                                .Include(a=>a.Patient.User)
-                                .FirstOrDefaultAsync();
+            .Include(a => a.Doctor.User)
+            .Include(a => a.Patient.User)
+            .FirstOrDefaultAsync();
         if (appointment == null)
             return null;
         appointment.Status = AppointmentStatus.Cancelled;
         await UnitOfWork.SaveChangesAsync();
         var template = mailTemplateHelper.GetCancelAppointmentTemplate(appointment);
-        var message = new Message(new List<string> {appointment.Patient.User.Email!}, "Thông tin hủy lịch hẹn", template);
+        var message = new Message(new List<string> { appointment.Patient.User.Email! }, "Thông tin hủy lịch hẹn",
+            template);
         _ = emailSender.SendEmailAsync(message);
         return appointment;
-        
     }
 
     public async Task<Appointment> ConfirmAppointmentAsync(int id)
     {
         var appointment = await appointmentRepo.QueryGetById(id)
-                                .Include(a => a.Doctor.User)
-                                .Include(a => a.Patient.User)
-                                .FirstOrDefaultAsync();
+            .Include(a => a.Doctor.User)
+            .Include(a => a.Patient.User)
+            .FirstOrDefaultAsync();
         if (appointment == null)
             return null;
         appointment.Status = AppointmentStatus.Confirmed;
         await UnitOfWork.SaveChangesAsync();
-        var template = mailTemplateHelper.GetCancelAppointmentTemplate(appointment);
-        var message = new Message(new List<string> { appointment.Patient.User.Email! }, "Thông tin xác nhận lịch hẹn", template);
+        var template = mailTemplateHelper.GetConfirmedAppointmentTemplate(appointment);
+        var message = new Message(new List<string> { appointment.Patient.User.Email! }, "Thông tin xác nhận lịch hẹn",
+            template);
         _ = emailSender.SendEmailAsync(message);
         return appointment;
     }
 
-}
+    public async Task<AppointmentViewModel> GetAppointmentByIdAsync(int id)
+    {
+        var appointment = appointmentRepo.QueryGetById(id)
+            .Include(a => a.Doctor.User)
+            .Include(a => a.Patient.User)
+            .FirstOrDefault();
+        return Mapper.Map<AppointmentViewModel>(appointment);
+    }
+    public async Task<List<AppointmentViewModel>> GetAllDoctorAppointmentsAsync()
+    {
+        var doctor = await doctorRepo.GetDoctorByUserIdAsync(int.Parse( CurrentUser.Id));
+        var appointments = appointmentRepo.GetDoctorAppointmentsQuery(doctor.Id, DateTime.MinValue, DateTime.MaxValue, AppointmentStatus.Confirmed);
+        return Mapper.Map<List<AppointmentViewModel>>( await appointments.ToListAsync());
+    }
 
+    public async Task<bool> UpdateAppointmentNotesAsync(int id, string notes)
+    {
+        var appointment = await appointmentRepo.GetByIdAsync(id);
+        if (appointment == null)
+            return false;
+        appointment.Notes = notes;
+        await UnitOfWork.SaveChangesAsync();
+        return true;
+    }
+}

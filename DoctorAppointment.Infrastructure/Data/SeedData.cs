@@ -38,7 +38,6 @@ public static class SeedData
             RoleId = roles[1].Id,
             UserId = b.UserId
         }));
-
     }
 
 
@@ -69,6 +68,7 @@ public static class SeedData
         };
         return roles;
     }
+
     private static List<User> GetUser()
     {
         return new Faker<User>("vi")
@@ -91,6 +91,7 @@ public static class SeedData
             .RuleFor(u => u.Gender, f => f.PickRandom<Gender>())
             .Generate(100);
     }
+
     private static List<Doctor> GetDoctors(List<User> users)
     {
         //first 10 users are doctors
@@ -109,8 +110,8 @@ public static class SeedData
                 return $"Bác sĩ có hơn {d.YearsOfExperience} năm trong lĩnh vực {displayName}";
             })
             .Generate(20);
-
     }
+
     private static List<Patient> GetPatients(List<User> users)
     {
         return new Faker<Patient>()
@@ -118,6 +119,7 @@ public static class SeedData
             .RuleFor(p => p.UserId, f => f.IndexFaker + 1)
             .Generate(users.Count + 1);
     }
+
     private static List<Appointment> GetAppointment(List<Doctor> doctors, List<Patient> patients)
     {
         var usedDateTimePairs = new HashSet<(DateTime, TimeSpan)>();
@@ -126,6 +128,7 @@ public static class SeedData
             .RuleFor(a => a.Id, f => f.IndexFaker + 1)
             .RuleFor(a => a.DoctorId, f => f.PickRandom(doctors).Id)
             .RuleFor(a => a.PatientId, f => f.PickRandom(patients).Id)
+            .RuleFor(a=>a.Notes,f=>f.Lorem.Sentence())
             .RuleFor(a => a.AppointmentDate, (f, a) =>
             {
                 DateTime appointmentDate;
@@ -139,23 +142,21 @@ public static class SeedData
                 } while (!usedDateTimePairs.Add((appointmentDate, startTime)));
 
                 a.StartTime = startTime; // Assign the unique start time here
-                
+
                 return appointmentDate;
             })
             .RuleFor(a => a.StartTime, (f, a) => a.StartTime) // Already assigned in AppointmentDate rule
             .RuleFor(a => a.EndTime, (f, a) => a.StartTime?.Add(TimeSpan.FromHours(1)))
-            .RuleFor(a => a.Status, (f,a) => 
+            .RuleFor(a => a.Status, (f, a) =>
             {
-                if(a.AppointmentDate <= DateTime.Now.Date)
-                {
-                    return f.PickRandom<AppointmentStatus>();
-                }
+                if (a.AppointmentDate <= DateTime.Now.Date) return f.PickRandom<AppointmentStatus>();
                 return f.PickRandom<AppointmentStatus>(AppointmentStatus.Pending, AppointmentStatus.Confirmed);
             })
             .Generate(300);
 
         return appointments;
     }
+
     private static List<Schedule> GetSchedules(List<Doctor> doctors)
     {
         // for each doctor generate schedule each day of the week
@@ -163,10 +164,7 @@ public static class SeedData
         var schedules = new List<Schedule>();
         var id = 1;
         foreach (var doctor in doctors)
-        {
-
             for (var i = 1; i < 7; i++)
-            {
                 schedules.Add(new Schedule
                 {
                     Id = id++,
@@ -175,8 +173,6 @@ public static class SeedData
                     StartTime = TimeSpan.FromHours(8),
                     EndTime = TimeSpan.FromHours(17)
                 });
-            }
-        }
 
         return schedules;
     }

@@ -30,7 +30,7 @@
                     <form asp-action="Update" method="post">
                         <!-- Form Group (username)-->
                         <div class="mb-3">
-                            <label class="small mb-1" asp-for="FullName">@Model.</label>
+                            <label class="small mb-1" asp-for="FullName"></label>
                             <input class="form-control" asp-for="FullName">
                         </div>
 
@@ -75,14 +75,14 @@
                     </form>
                 </div>
 
-                 
 
             </div>
         </div>
     </div>
 </div>
+
 @section Scripts {
-    <partial name="_ValidationScriptsPartial" />
+    <partial name="_ValidationScriptsPartial"/>
     <script>
         $(document).ready(function () {
             $('#DateOfBirthPicker').on('change', function () {

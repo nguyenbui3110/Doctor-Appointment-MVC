@@ -40,13 +40,13 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllerRoute(
-    name: "default",
-    pattern: "{controller=Home}/{action=Index}/{id?}");
+    "default",
+    "{controller=Home}/{action=Index}/{id?}");
 
 app.MapControllerRoute(
-    name: "schedule",
-    pattern: "DoctorSchedule/{action=Index}/{doctorId?}",
-    defaults: new { controller = "Schedule" });
+    "schedule",
+    "DoctorSchedule/{action=Index}/{doctorId?}",
+    new { controller = "Schedule" });
 
 app.MapHub<AppointmentHub>("/appointmentHub");
 

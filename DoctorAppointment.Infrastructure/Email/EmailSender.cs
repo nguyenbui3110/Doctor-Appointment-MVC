@@ -1,36 +1,35 @@
-
 namespace DoctorAppointment.Infrastructure.Email;
 
-using DoctorAppointment.Application.Commons;
-using DoctorAppointment.Application.Services.Interfaces;
+using Application.Commons;
+using Application.Services.Interfaces;
 using MailKit.Net.Smtp;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using MimeKit;
 
-
 public class EmailSender : IEmailSender
 {
     private readonly EmailSettings _emailConfig;
     private readonly ILogger<EmailSender> _logger;
+
     public EmailSender(IOptions<EmailSettings> emailConfig,
-                       ILogger<EmailSender> logger)
+        ILogger<EmailSender> logger)
     {
         _logger = logger;
         _emailConfig = emailConfig.Value;
     }
-    
+
     public async Task SendEmailAsync(Message message)
     {
         var emailMessage = CreateEmailMessage(message);
         await SendAsync(emailMessage);
         _logger.LogInformation($"Email sent to {message.To}.");
     }
-    
+
     private MimeMessage CreateEmailMessage(Message message, bool isHtml = true)
     {
         var emailMessage = new MimeMessage();
-        emailMessage.From.Add(new MailboxAddress(_emailConfig.UserName ,_emailConfig.From));
+        emailMessage.From.Add(new MailboxAddress(_emailConfig.UserName, _emailConfig.From));
         emailMessage.To.AddRange(message.To.Select(x => new MailboxAddress(string.Empty, x)));
         emailMessage.Subject = message.Subject;
         // send as html 
@@ -40,13 +39,14 @@ public class EmailSender : IEmailSender
         };
         return emailMessage;
     }
+
     private async Task SendAsync(MimeMessage mailMessage)
     {
         using (var client = new SmtpClient())
         {
             try
             {
-                await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.Port,  true);
+                await client.ConnectAsync(_emailConfig.SmtpServer, _emailConfig.Port, true);
                 client.AuthenticationMechanisms.Remove("XOAUTH2");
                 await client.AuthenticateAsync(_emailConfig.UserName, _emailConfig.Password);
                 await client.SendAsync(mailMessage);

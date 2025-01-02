@@ -50,13 +50,13 @@
             </a>
         </li>
         <li class="nav-item active">
-                <a class="nav-link" asp-controller="Admin" asp-action="PatientPage">
+            <a class="nav-link" asp-controller="Admin" asp-action="PatientPage">
                 <i class="fas fa-fw fa-user"></i>
                 <span>QUẢN LÝ BỆNH NHÂN</span>
             </a>
         </li>
         <li class="nav-item active">
-                <a class="nav-link" asp-controller="Admin" asp-action="Statistics">
+            <a class="nav-link" asp-controller="Admin" asp-action="Statistics">
                 <i class="fas fa-line-chart"></i>
                 <span>THỐNG KÊ</span>
             </a>
@@ -139,43 +139,43 @@
                 </ul>
                 <ul class="navbar-nav ml-auto">
 
-                        <!-- Nav Item - Search Dropdown (Visible Only XS) -->
-                        <li class="nav-item dropdown no-arrow d-sm-none">
-                            <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <i class="fas fa-search fa-fw"></i>
-                            </a>
-                            <!-- Dropdown - Messages -->
-                            <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
-                                <form class="form-inline mr-auto w-100 navbar-search">
-                                    <div class="input-group">
-                                        <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
-                                        <div class="input-group-append">
-                                            <button class="btn btn-primary" type="button">
-                                                <i class="fas fa-search fa-sm"></i>
-                                            </button>
-                                        </div>
+                    <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+                    <li class="nav-item dropdown no-arrow d-sm-none">
+                        <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-search fa-fw"></i>
+                        </a>
+                        <!-- Dropdown - Messages -->
+                        <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
+                            <form class="form-inline mr-auto w-100 navbar-search">
+                                <div class="input-group">
+                                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                                    <div class="input-group-append">
+                                        <button class="btn btn-primary" type="button">
+                                            <i class="fas fa-search fa-sm"></i>
+                                        </button>
                                     </div>
-                                </form>
-                            </div>
-                        </li>
+                                </div>
+                            </form>
+                        </div>
+                    </li>
 
-                        <!-- Nav Item - Alerts -->
-                        
+                    <!-- Nav Item - Alerts -->
 
-                        <!-- Nav Item - Messages -->
-                        
-                        <div class="topbar-divider d-none d-sm-block"></div>
 
-                        <!-- Nav Item - User Information -->
-                        <li class="nav-item">
-                            <a class="nav-link" asp-action="index" asp-controller="home" >
-                                <span class="mr-2 d-none d-lg-inline text-gray-600 "> Exit </span>
-                                <div class="  fa fa-sign-out"></div>
-                            </a>
-      
-                        </li>
+                    <!-- Nav Item - Messages -->
 
-                    </ul>
+                    <div class="topbar-divider d-none d-sm-block"></div>
+
+                    <!-- Nav Item - User Information -->
+                    <li class="nav-item">
+                        <a class="nav-link" asp-action="index" asp-controller="home">
+                            <span class="mr-2 d-none d-lg-inline text-gray-600 "> Exit </span>
+                            <div class="  fa fa-sign-out"></div>
+                        </a>
+
+                    </li>
+
+                </ul>
             </nav>
             <!-- End of Topbar -->
 
@@ -208,7 +208,7 @@
 <script src="~/lib/luxon/luxon.min.js"></script>
 <script src="~/lib/chartjs-adapter-luxon/chartjs-adapter-luxon.umd.js"></script>
 <script src="~/lib/chartjs-plugin-zoom/chartjs-plugin-zoom.js"></script>
-<partial name="_ValidationScriptsPartial" />
+<partial name="_ValidationScriptsPartial"/>
 @await RenderSectionAsync("Scripts", false)
 
 </html>

@@ -17,48 +17,43 @@
                     </div>
                     <table class="table table-bordered table-striped">
                         <thead>
-                            <tr>
-                                <th>Thời gian</th>
-                                <th>Giờ bắt đầu</th>
-                                <th>Giờ kết thúc</th>
-                            </tr>
+                        <tr>
+                            <th>Thời gian</th>
+                            <th>Giờ bắt đầu</th>
+                            <th>Giờ kết thúc</th>
+                        </tr>
                         </thead>
                         <tbody>
+                        @foreach (var schedule in Model.Select((item, index) => new { Item = item, Index = index }))
+                        {
+                            var dayInVietnamese = schedule.Item.DayOfWeek switch
+                            {
+                                DayOfWeek.Monday => "Thứ Hai",
+                                DayOfWeek.Tuesday => "Thứ Ba",
+                                DayOfWeek.Wednesday => "Thứ Tư",
+                                DayOfWeek.Thursday => "Thứ Năm",
+                                DayOfWeek.Friday => "Thứ Sáu",
+                                DayOfWeek.Saturday => "Thứ Bảy",
+                                DayOfWeek.Sunday => "Chủ Nhật",
+                                _ => schedule.Item.DayOfWeek.ToString()
+                            };
+
                             <tr>
-                                <th>Thứ 2</th>
-                                <th><input type="time" class="form-control" name="[0].StartTime" value="@Model[0].StartTime"></th>
-                                <th><input type="time" class="form-control" name="[0].EndTime" value="@Model[0].EndTime"></th>
+                                <td>@schedule.Item.DayOfWeek</td>
+                                <td>
+                                    <input type="time"
+                                           class="form-control"
+                                           name="[@schedule.Index].StartTime"
+                                           value="@schedule.Item.StartTime"/>
+                                </td>
+                                <td>
+                                    <input type="time"
+                                           class="form-control"
+                                           name="[@schedule.Index].EndTime"
+                                           value="@schedule.Item.EndTime"/>
+                                </td>
                             </tr>
-                            <tr>
-                                <th>Thứ 3</th>
-                                <th><input type="time" class="form-control" name="[1].StartTime" value="@Model[1].StartTime"></th>
-                                <th><input type="time" class="form-control" name="[1].EndTime" value="@Model[1].EndTime"></th>
-                            </tr>
-                            <tr>
-                                <th>Thứ 4</th>
-                                <th><input type="time" class="form-control" name="[2].StartTime" value="@Model[2].StartTime"></th>
-                                <th><input type="time" class="form-control" name="[2].EndTime" value="@Model[2].EndTime"></th>
-                            </tr>
-                            <tr>
-                                <th>Thứ 5</th>
-                                <th><input type="time" class="form-control" name="[3].StartTime" value="@Model[3].StartTime"></th>
-                                <th><input type="time" class="form-control" name="[3].EndTime" value="@Model[3].EndTime"></th>
-                            </tr>
-                            <tr>
-                                <th>Thứ 6</th>
-                                <th><input type="time" class="form-control" name="[4].StartTime" value="@Model[4].StartTime"></th>
-                                <th><input type="time" class="form-control" name="[4].EndTime" value="@Model[4].EndTime"></th>
-                            </tr>
-                            <tr>
-                                <th>Thứ 7</th>
-                                <th><input type="time" class="form-control" name="[5].StartTime" value="@Model[5].StartTime"></th>
-                                <th><input type="time" class="form-control" name="[5].EndTime" value="@Model[5].EndTime"></th>
-                            </tr>
-                            <tr>
-                                <th>Chủ nhật</th>
-                                <th><input type="time" class="form-control" name="[6].StartTime" value="@Model[6].StartTime"></th>
-                                <th><input type="time" class="form-control" name="[6].EndTime" value="@Model[6].EndTime"></th>
-                            </tr>
+                        }
 
                         </tbody>
                     </table>

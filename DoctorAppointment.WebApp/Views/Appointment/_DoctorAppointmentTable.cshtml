@@ -20,34 +20,40 @@
             <!-- Sample row -->
             @foreach (var Appointment in Model.Items)
             {
-                <tr>
-                    <td></td>
-                    <td>@Appointment?.PatientName</td>
-                    <td>@Appointment?.AppointmentDate?.ToString("dd/MM/yyyy")</td>
-                    <td>@Appointment?.StartTime</td>
-                    <td>
-                        @{
-                            string statusClass = Appointment.Status switch
+                
+                    <tr>
+                        <td></td>
+                        
+                        <td><a class="nav-link appointment-link" asp-action="PatientAppointmentDetails" asp-controller="Appointment" asp-route-id="@Appointment.Id">@Appointment?.PatientName </a></td>
+                        <td>@Appointment?.AppointmentDate?.ToString("dd/MM/yyyy")</td>
+                        <td>@Appointment?.StartTime</td>
+                        <td>
+                            @{
+                                var statusClass = Appointment.Status switch
+                                {
+                                    AppointmentStatus.Pending => "text-warning",
+                                    AppointmentStatus.Confirmed => "text-primary",
+                                    AppointmentStatus.Completed => "text-success",
+                                    AppointmentStatus.Cancelled => "text-danger",
+                                    _ => ""
+                                };
+                            }
+                            <span class="@statusClass">@DisplayName.GetAppointmentStatus(Appointment!.Status!.Value)</span>
+                        </td>
+                        <td>
+                            @if (Appointment.Status == AppointmentStatus.Pending)
                             {
-                                AppointmentStatus.Pending => "text-warning",
-                                AppointmentStatus.Confirmed => "text-primary",
-                                AppointmentStatus.Completed => "text-success",
-                                AppointmentStatus.Cancelled => "text-danger",
-                                _ => ""
-                            };
-                        }
-                        <span class="@statusClass">@DisplayName.GetAppointmentStatus(Appointment!.Status!.Value)</span>
-                    </td>
-                    <td>
-                        @if (Appointment.Status == AppointmentStatus.Pending)
-                        {
-                            <a asp-controller="Appointment" asp-action="DoctorAppointmentConfirm" asp-route-id="@Appointment.Id"
-                               class="btn btn-success">Confirm</a>
-                            <a asp-controller="Appointment" asp-action="DoctorAppointmentCancel" asp-route-id="@Appointment.Id"
-                                class="btn btn-danger">Cancel</a>
-                        }
-                    </td>
-                </tr>
+                                <a asp-controller="Appointment" asp-action="DoctorAppointmentConfirm"
+                                    asp-route-id="@Appointment.Id" class="btn btn-success">
+                                    Confirm
+                                </a>
+                                <a asp-controller="Appointment" asp-action="DoctorAppointmentCancel"
+                                    asp-route-id="@Appointment.Id" class="btn btn-danger">
+                                    Cancel
+                                </a>
+                            }
+                        </td>
+                    </tr>
             }
             <!-- Repeat for other appointments -->
         </tbody>
