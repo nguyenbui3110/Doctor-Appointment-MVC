@@ -1,0 +1,27 @@
+﻿@model Dictionary<DoctorAppointment.Domain.Enums.Specialization, int>
+<script>
+    var specializationData = @Html.Raw(Json.Serialize(Model));
+    var specializations = Object.keys(specializationData);
+    var counts = Object.values(specializationData);
+
+    var specializationCtx = document.getElementById('SpecializationAppointmentsChart');
+    SpecializationAppointmentsChart = new Chart(specializationCtx, {
+        type: 'pie',
+        data: {
+            labels: specializations,
+            datasets: [{
+                data: counts,
+                backgroundColor: specializations.map((_, index) => `hsl(${index * 360 / specializations.length}, 70%, 50%)`) // Màu sắc khác nhau
+            }]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'Specialization Appointments Distribution'
+                }
+            }
+        }
+    });
+</script>
