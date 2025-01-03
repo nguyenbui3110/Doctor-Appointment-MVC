@@ -4,8 +4,8 @@
     var specializations = Object.keys(specializationData);
     var counts = Object.values(specializationData);
 
-    var specializationCtx = document.getElementById('monthlySpecializationsChart');
-    new Chart(specializationCtx, {
+    var specializationCtx = document.getElementById('SpecializationAppointmentsChart');
+    SpecializationAppointmentsChart = new Chart(specializationCtx, {
         type: 'pie',
         data: {
             labels: specializations,

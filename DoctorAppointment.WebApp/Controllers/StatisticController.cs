@@ -43,6 +43,6 @@ public class StatisticController : Controller
     public async Task<ActionResult> GetSpecializationAppointmentsChart(DateRangeFilter filter)
     {
         var monthly = await _statisticsService.GetSpecializationAppointmentsCountAsync(filter);
-        return PartialView("_MonthlySpecializationChart", monthly);
+        return PartialView("_SpecializationAppointmentsChart", monthly);
     }
 }

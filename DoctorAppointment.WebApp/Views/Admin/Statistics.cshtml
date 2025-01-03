@@ -68,7 +68,7 @@
             <h6 class="text-center">
                 <strong>Specialization Appointments Chart</strong>
             </h6>
-            <canvas id="monthlySpecializationsChart" width="300" height="150"></canvas>
+            <canvas id="SpecializationAppointmentsChart" width="300" height="150"></canvas>
         </div>
     </div>
 </div>
@@ -79,9 +79,9 @@
     <script id="PatientChartScript"></script>
     <script id="dailyChartScript"></script>
     <script id="monthlyChartScript"></script>
-    <script id="monthlySpecializationsChartScript"></script>
+    <script id="SpecializationAppointmentsChartScript"></script>
     <script>
-        let dailyChart, monthlyChart, patientChart, topDoctorsChart, monthlySpecializationsChart;
+        let dailyChart, monthlyChart, patientChart, topDoctorsChart, SpecializationAppointmentsChart;
         $(document).ready(function () {
             // Function to fetch chart data
             async function fetchChartData(url, scriptId) {
@@ -103,10 +103,11 @@
                 fetchChartData('/Statistic/GetPatientChart', 'PatientChartScript'),
                 fetchChartData('/Statistic/GetDailyChart', 'dailyChartScript'),
                 fetchChartData('/Statistic/GetMonthlyChart', 'monthlyChartScript'),
-                fetchChartData('/Statistic/GetSpecializationAppointmentsChart', 'monthlySpecializationsChartScript')
+                fetchChartData('/Statistic/GetSpecializationAppointmentsChart', 'SpecializationAppointmentsChartScript')
             ]);
 
             $('#filterForm').submit(function (e) {
+                
                 const fromDate = new Date($('#From').val());
                 const toDate = new Date($('#To').val());
                 if (fromDate > toDate) {
@@ -117,7 +118,7 @@
                 monthlyChart.destroy();
                 patientChart.destroy();
                 topDoctorsChart.destroy();
-                monthlySpecializationsChart.detroy();
+                SpecializationAppointmentsChart.destroy();
                 e.preventDefault();
                 const formData = $(this).serialize();
                 Promise.all([
@@ -125,7 +126,7 @@
                     fetchChartData('/Statistic/GetPatientChart?' + formData, 'PatientChartScript'),
                     fetchChartData('/Statistic/GetDailyChart?' + formData, 'dailyChartScript'),
                     fetchChartData('/Statistic/GetMonthlyChart?' + formData, 'monthlyChartScript'),
-                    fetchChartData('/Statistic/GetSpecializationAppointmentsChart' + formData, 'monthlySpecializationsChartScript')
+                    fetchChartData('/Statistic/GetSpecializationAppointmentsChart?' + formData, 'SpecializationAppointmentsChartScript')
                 ]);
             });
             $('#resetBtn').click(function () {
