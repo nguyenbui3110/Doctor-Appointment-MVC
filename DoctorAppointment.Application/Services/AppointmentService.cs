@@ -148,7 +148,9 @@ public class AppointmentService(
     public async Task<List<AppointmentViewModel>> GetAllDoctorAppointmentsAsync()
     {
         var doctor = await doctorRepo.GetDoctorByUserIdAsync(int.Parse( CurrentUser.Id));
-        var appointments = appointmentRepo.GetDoctorAppointmentsQuery(doctor.Id, DateTime.MinValue, DateTime.MaxValue, AppointmentStatus.Confirmed);
+        var appointments = appointmentRepo
+            .GetDoctorAppointmentsQuery(doctor.Id, DateTime.MinValue, DateTime.MaxValue, AppointmentStatus.Confirmed)
+            .Concat(appointmentRepo.GetDoctorAppointmentsQuery(doctor.Id, DateTime.MinValue, DateTime.MaxValue, AppointmentStatus.Completed));
         return Mapper.Map<List<AppointmentViewModel>>( await appointments.ToListAsync());
     }
 
