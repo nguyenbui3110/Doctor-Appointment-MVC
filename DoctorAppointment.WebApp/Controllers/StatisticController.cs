@@ -39,4 +39,10 @@ public class StatisticController : Controller
         var patient = await _statisticsService.GetPatientCountAsync(filter);
         return PartialView("_PatientChart", patient);
     }
+
+    public async Task<ActionResult> GetSpecializationAppointmentsChart(DateRangeFilter filter)
+    {
+        var monthly = await _statisticsService.GetSpecializationAppointmentsCountAsync(filter);
+        return PartialView("_MonthlySpecializationChart", monthly);
+    }
 }

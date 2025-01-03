@@ -1,4 +1,4 @@
-using DoctorAppointment.Domain.Data;
+﻿using DoctorAppointment.Domain.Data;
 using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Domain.Enums;
 using DoctorAppointment.Infrastructure.Data;
@@ -77,6 +77,27 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
             .ToDictionaryAsync(g => g.Key, g => g.Count());
         return appointments.OrderBy(kv => kv.Key) // Order by month (key)
             .ToDictionary(kv => kv.Key, kv => kv.Value); // Convert to dictionary
+    }
+    public async Task<Dictionary<Specialization, int>> GetSpecializationAppointmentsCountAsync(DateTime start, DateTime end)
+    {
+        var appointments = await DbSet
+            .Include(a => a.Doctor)
+            .IgnoreQueryFilters()
+            .Where(a => a.AppointmentDate >= start && a.AppointmentDate <= end &&
+                        a.Status == AppointmentStatus.Completed)
+            .GroupBy(a => a.Doctor.Specialization)
+            .Select(g => new
+            {
+                Specialization = g.Key,
+                Count = g.Count()
+            })
+            .ToListAsync();
+        return appointments
+            .OrderBy(a => a.Specialization.ToString())
+            .ToDictionary(
+                g => g.Specialization,
+                g => g.Count
+            );
     }
 
     public async Task<Dictionary<int, int>> GetTop5DoctorsAsync(DateTime start, DateTime end)

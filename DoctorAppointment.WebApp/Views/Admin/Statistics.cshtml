@@ -63,6 +63,14 @@
             <canvas id="topDoctorsChart" width="400" height="200"></canvas>
         </div>
     </div>
+    <div class="col-md-5 offset-md-3 mb-5">
+        <div class="chart-container">
+            <h6 class="text-center">
+                <strong>Specialization Appointments Chart</strong>
+            </h6>
+            <canvas id="monthlySpecializationsChart" width="300" height="150"></canvas>
+        </div>
+    </div>
 </div>
 
 
@@ -71,8 +79,9 @@
     <script id="PatientChartScript"></script>
     <script id="dailyChartScript"></script>
     <script id="monthlyChartScript"></script>
+    <script id="monthlySpecializationsChartScript"></script>
     <script>
-        let dailyChart, monthlyChart, patientChart, topDoctorsChart;
+        let dailyChart, monthlyChart, patientChart, topDoctorsChart, monthlySpecializationsChart;
         $(document).ready(function () {
             // Function to fetch chart data
             async function fetchChartData(url, scriptId) {
@@ -93,7 +102,8 @@
                 fetchChartData('/Statistic/GetTopDoctorsChart', 'doctorsChartScript'),
                 fetchChartData('/Statistic/GetPatientChart', 'PatientChartScript'),
                 fetchChartData('/Statistic/GetDailyChart', 'dailyChartScript'),
-                fetchChartData('/Statistic/GetMonthlyChart', 'monthlyChartScript')
+                fetchChartData('/Statistic/GetMonthlyChart', 'monthlyChartScript'),
+                fetchChartData('/Statistic/GetSpecializationAppointmentsChart', 'monthlySpecializationsChartScript')
             ]);
 
             $('#filterForm').submit(function (e) {
@@ -107,20 +117,20 @@
                 monthlyChart.destroy();
                 patientChart.destroy();
                 topDoctorsChart.destroy();
+                monthlySpecializationsChart.detroy();
                 e.preventDefault();
                 const formData = $(this).serialize();
                 Promise.all([
                     fetchChartData('/Statistic/GetTopDoctorsChart?' + formData, 'doctorsChartScript'),
                     fetchChartData('/Statistic/GetPatientChart?' + formData, 'PatientChartScript'),
                     fetchChartData('/Statistic/GetDailyChart?' + formData, 'dailyChartScript'),
-                    fetchChartData('/Statistic/GetMonthlyChart?' + formData, 'monthlyChartScript')
+                    fetchChartData('/Statistic/GetMonthlyChart?' + formData, 'monthlyChartScript'),
+                    fetchChartData('/Statistic/GetSpecializationAppointmentsChart' + formData, 'monthlySpecializationsChartScript')
                 ]);
             });
             $('#resetBtn').click(function () {
                 dailyChart.resetZoom(1000);
                 monthlyChart.resetZoom(1000);
-
-
             });
         });
     </script>

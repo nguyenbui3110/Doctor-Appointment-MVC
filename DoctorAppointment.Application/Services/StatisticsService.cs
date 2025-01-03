@@ -3,6 +3,7 @@ using DoctorAppointment.Application.Commons.Identity;
 using DoctorAppointment.Application.Model;
 using DoctorAppointment.Application.Services.Interfaces;
 using DoctorAppointment.Domain.Data;
+using DoctorAppointment.Domain.Enums;
 
 namespace DoctorAppointment.Application.Services;
 
@@ -34,6 +35,12 @@ public class StatisticsService(
     {
         ValidateDateRange(filter);
         return await appointmentRepo.GetMonthlyAppointmentsCountAsync(filter.From.Value, filter.To.Value);
+    }
+
+    public async Task<Dictionary<Specialization, int>> GetSpecializationAppointmentsCountAsync(DateRangeFilter filter)
+    {
+        ValidateDateRange(filter);
+        return await appointmentRepo.GetSpecializationAppointmentsCountAsync(filter.From.Value, filter.To.Value);
     }
 
     public async Task<(int NewPatient, int ReturningPatient)> GetPatientCountAsync(DateRangeFilter filter)
