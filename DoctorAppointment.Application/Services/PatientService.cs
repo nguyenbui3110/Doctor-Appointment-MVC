@@ -22,16 +22,16 @@ public class PatientService(
         var query = repository.Search(searchQuery);
         var patients = repository.IgnoreQueryFilters(query).OrderBy(d => d.IsDeleted);
 
-        var (data, count) = await repository.ApplyPaing(patients, page, pageSize);
-        return new PagingItem<PatientViewModel>
-        {
-            Items = Mapper.Map<List<PatientViewModel>>(data),
-            CountPages = (int)Math.Ceiling(count / (double)pageSize),
-            CurrentPage = page,
-            PageSize = pageSize,
-            PageUrl = i => $"?page={i}&searchQuery={searchQuery}"
-        };
-    }
+            (var data, var count) = await repository.ApplyPaing(patients, page, pageSize);
+            return new PagingItem<PatientViewModel>
+            {
+                Items = Mapper.Map<List<PatientViewModel>>(data),
+                CountPages = (int)Math.Ceiling(count / (double)pageSize),
+                CurrentPage = page,
+                PageSize = pageSize,
+                PageUrl = i => $"?page={i}&searchQuery={searchQuery}"
+            };
+        }
 
     public async Task<bool> DeletePatient(int id)
     {
