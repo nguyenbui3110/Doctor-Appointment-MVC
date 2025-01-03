@@ -75,8 +75,19 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
                         a.Status == AppointmentStatus.Completed) // Appointments in the date range
             .GroupBy(a => new DateTime(a.AppointmentDate.Value.Year, a.AppointmentDate.Value.Month, 1))
             .ToDictionaryAsync(g => g.Key, g => g.Count());
-        return appointments.OrderBy(kv => kv.Key) // Order by month (key)
-            .ToDictionary(kv => kv.Key, kv => kv.Value); // Convert to dictionary
+
+        var allMonths = Enumerable.Range(0, (end.Year - start.Year) * 12 + end.Month - start.Month + 1)
+            .Select(offset => new DateTime(start.Year, start.Month, 1).AddMonths(offset));
+
+        var result = allMonths
+            .ToDictionary(
+                month => month,
+                month => appointments.ContainsKey(month) ? appointments[month] : 0
+            )
+            .OrderBy(kv => kv.Key) // Order by month (key)
+            .ToDictionary(kv => kv.Key, kv => kv.Value);
+
+        return result;
     }
 
     public async Task<Dictionary<int, int>> GetTop5DoctorsAsync(DateTime start, DateTime end)
