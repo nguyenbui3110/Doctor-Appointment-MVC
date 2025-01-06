@@ -99,6 +99,9 @@ public static class ServiceExtentions
     {
         services.AddQuartz(options =>
         {
+            // Run every minute "0 * * * * ?"
+            // Run every hour "0 0 * * * ?"
+            // Run every day "0 0 0 * * ?"
             var jobKey = new JobKey("RemindAppointmentJob");
             options.AddJob<RemindAppointmentJob>(jobKey)
                 .AddTrigger(trigger =>
@@ -108,7 +111,7 @@ public static class ServiceExtentions
             options.AddJob<CheckCompleteAppointmentJob>(jobKey2)
                 .AddTrigger(trigger =>
                     trigger.ForJob(jobKey2)
-                        .WithCronSchedule("0 0 0 * * ?"));
+                        .WithCronSchedule("0 * * * * ?"));
         });
 
         services.AddQuartzHostedService(options =>

@@ -10,4 +10,5 @@ public class PatientViewModel
 
     public UserViewModel User { get; set; }
     public bool IsDeleted { get; set; }
+    public List<AppointmentViewModel> Appointments { get; set; }
 }

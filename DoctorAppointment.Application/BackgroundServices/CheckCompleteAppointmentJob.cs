@@ -19,9 +19,8 @@ public class CheckCompleteAppointmentJob : IJob
     public async Task Execute(IJobExecutionContext context)
     {
         var appointments = await _appointmentRepo.GetAppointmentByStatusAsync(AppointmentStatus.Confirmed);
-        var yesterday = DateTime.Now.AddDays(-1);
         foreach (var appointment in appointments)
-            if (appointment.AppointmentDate < yesterday)
+            if (appointment.AppointmentDate.Value.Add(appointment.EndTime.Value) < DateTime.Now)
                 appointment.Status = AppointmentStatus.Completed;
         await _unitOfWork.SaveChangesAsync();
     }

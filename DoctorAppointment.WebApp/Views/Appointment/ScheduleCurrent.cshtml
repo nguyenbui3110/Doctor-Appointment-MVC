@@ -1,0 +1,96 @@
+﻿@{
+    Layout = "_Layout";
+}
+@model List<AppointmentViewModel>
+
+<div id="ec" class="m-2"></div>
+<div id="patientDetail"></div>
+
+<body>
+    <script>
+        let ec = new EventCalendar(document.getElementById('ec'), {
+            view: 'timeGridWeek',
+            slotMinTime: "07:00",
+            slotMaxTime: "18:00",
+            nowIndicator: true,
+            events: [
+        @foreach (var appointment in Model)
+        {
+            <text>
+                {
+                    start: "@appointment.AppointmentDate.Value.Add(appointment.StartTime.Value).ToString("yyyy-MM-ddTHH:mm:ss")",
+                    end: "@appointment.AppointmentDate.Value.Add(appointment.EndTime.Value).ToString("yyyy-MM-ddTHH:mm:ss")",
+                    resourceId: 1,
+                    title: "",
+                    backgroundColor: "#87CEEB",
+                    borderColor: "#004080",
+                    extendedProps: {
+                        description: "Cuộc hẹn với bệnh nhân @appointment.PatientName",
+                        appointmentId: @appointment.Id
+                    }
+                },
+            </text>
+        }
+                                ],
+            eventContent: function (info) {
+                let customContent = document.createElement('div');
+                customContent.innerHTML = '<span style="font-weight: bold; color: #333;">Cuộc hẹn với bệnh nhân </span>'   
+                customContent.addEventListener('click', function () {
+                    showModal(info.event.extendedProps.appointmentId);
+                });
+
+                return { domNodes: [customContent] };
+            },
+            eventMouseEnter: function (info) {
+                // No tooltip needed since we use the modal
+            },
+            eventMouseLeave: function (info) {
+                // No tooltip needed since we use the modal
+            },
+            eventMouseMove: function (info) {
+                // No tooltip needed since we use the modal
+            }
+        });
+
+        function showModal(appointmentId) {
+            const patientDetailModal = document.getElementById('patientDetailModal');
+            if (patientDetailModal) {
+                const bootstrapModal = bootstrap.Modal.getInstance(patientDetailModal);
+                bootstrapModal.dispose();
+            }
+            $.ajax({
+                url: '/Appointment/PatientAppointmentDetails',  // URL to your controller action
+                type: 'GET',
+                data: { id: appointmentId },  // Send the appointment ID
+                success: function(response) {
+                    // Update modal with the response (partial view content)
+                    $('#patientDetail').html(response);
+                    $('#patientDetailModal').modal('show');  // Show the modal
+                },
+                error: function(xhr, status, error) {
+                    console.error("Error loading appointment details:", error);
+                }
+            });
+        }
+    </script>
+
+</body>
+
+@section Scripts {
+    <script>
+        const connection = new signalR.HubConnectionBuilder()
+        .withUrl("/appointmentHub")
+            .build();
+
+                connection.on("UpdateAppointmentStatus", (doctorId, patientId) => {
+            // Kiểm tra xem doctorId và date có khớp với lịch hiển thị hiện tại không
+            const selectedDoctorId = @User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            if (doctorId == selectedDoctorId) {
+                location.reload();
+            }
+        });
+
+        connection.start().catch(err => console.error(err.toString()));
+    </script>
+}

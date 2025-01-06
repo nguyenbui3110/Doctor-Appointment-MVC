@@ -11,11 +11,13 @@ namespace DoctorAppointment.WebApp.Controllers;
 public class AppointmentController : Controller
 {
     private readonly IAppointmentService _appointmentService;
+    private readonly IPatientService _patientService;
     private readonly IHubContext<AppointmentHub> _context;
 
-    public AppointmentController(IAppointmentService appointmentService, IHubContext<AppointmentHub> context)
+    public AppointmentController(IAppointmentService appointmentService, IHubContext<AppointmentHub> context, IPatientService patientService)
     {
         _appointmentService = appointmentService;
+        _patientService = patientService;
         _context = context;
     }
 
@@ -115,5 +117,26 @@ public class AppointmentController : Controller
 
         ModelState.AddModelError("", "Error while cancel appointment");
         return RedirectToAction("DoctorAppointments");
+    }
+    public async Task<IActionResult> PatientAppointmentDetails(int id)
+    {
+        var appointment = await _appointmentService.GetAppointmentByIdAsync(id);
+        var patient = await _patientService.GetPatientByIdAsync(appointment.PatientId);
+        return PartialView("_PatientAppointmentDetail",(appointment,patient));
+    }
+    [HttpPost]
+    public async Task<IActionResult> UpdateNotes(int id,string notes)
+    {
+        var appointment = await _appointmentService.UpdateAppointmentNotesAsync(id,notes);
+        if(appointment)
+        {
+            return Json(new {success=true});
+        }
+        return Json(new {success=false});
+    }
+    public async Task<IActionResult> ScheduleCurrent()
+    {
+        var appointments = await _appointmentService.GetAllDoctorAppointmentsAsync();
+        return View(appointments);
     }
 }

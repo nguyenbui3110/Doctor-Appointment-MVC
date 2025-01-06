@@ -128,6 +128,7 @@ public static class SeedData
             .RuleFor(a => a.Id, f => f.IndexFaker + 1)
             .RuleFor(a => a.DoctorId, f => f.PickRandom(doctors).Id)
             .RuleFor(a => a.PatientId, f => f.PickRandom(patients).Id)
+            .RuleFor(a=>a.Notes,f=>f.Lorem.Sentence())
             .RuleFor(a => a.AppointmentDate, (f, a) =>
             {
                 DateTime appointmentDate;

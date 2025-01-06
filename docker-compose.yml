@@ -1,0 +1,32 @@
+services:
+  doctorappointment.webapp:
+    image: doctorappointment.webapp
+    build:
+      context: .
+      dockerfile: DoctorAppointment.WebApp/Dockerfile
+    ports:
+      - "5000:80"
+      - "5001:443"
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ASPNETCORE_URLS=http://+:80;https://+:443
+      - Kestrel__Certificates__Default__Password=Admin123
+      - Kestrel__Certificates__Default__Path=/https/aspnetapp.pfx
+      - ConnectionStrings__DefaultConnection=Server=db,1433;Database=DoctorAppointment;User=sa;Password=Admin123;TrustServerCertificate=False;Encrypt=False;
+    volumes:
+        - ./DoctorAppointment.WebApp/https:/https/
+    depends_on: 
+      - db
+    restart: on-failure
+  db:
+    image: mcr.microsoft.com/mssql/server
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=Admin123
+    ports:
+      - "1433:1433"
+    volumes:
+      - appdata:/var/opt/mssql
+volumes:
+    appdata:
+      
