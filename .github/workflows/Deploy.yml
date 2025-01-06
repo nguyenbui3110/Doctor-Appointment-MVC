@@ -31,5 +31,5 @@ jobs:
       with:
         context: .
         push: true
-        tags: index.docker.io/nguyenbui3110/drappointment:latest
-        file: ./AirCnc_Backend/AirCnC.API/Dockerfile
+        tags:  nguyenbui2/drappointment:latest
+        file: ./DoctorAppointment.WebApp/Dockerfile
