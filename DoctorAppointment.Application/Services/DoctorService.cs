@@ -15,6 +15,7 @@ namespace DoctorAppointment.Application.Services;
 public class DoctorService(
     IDoctorRepo repository,
     IScheduleRepo schedule_repo,
+    IReviewRepo reviewRepo,
     IUnitOfWork unitOfWork,
     IMapper mapper,
     ICurrentUser currentUser,
@@ -24,6 +25,7 @@ public class DoctorService(
     public async Task<DoctorViewModel> GetByIdAsync(int id)
     {
         var doctor = await repository.QueryGetById(id).Include(d => d.User).FirstOrDefaultAsync();
+        doctor.Reviews = await reviewRepo.GetDoctorReview(doctor.Id).Include(r => r.Patient.User).ToListAsync();
         return Mapper.Map<DoctorViewModel>(doctor);
     }
 

@@ -122,5 +122,10 @@
             });
 
             connection.start().catch(err => console.error(err.toString()));
+        $(document).on('click', '.reviewDoctor', function (e) { 
+            let doctorId = $(this).data("doctor-id");
+
+            window.location.href = `/Home/DoctorDetail/${doctorId}`;
+        });
     </script>
 }

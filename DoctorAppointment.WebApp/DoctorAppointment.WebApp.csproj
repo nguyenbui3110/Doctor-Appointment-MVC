@@ -5,23 +5,27 @@
         <ImplicitUsings>enable</ImplicitUsings>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="..\DoctorAppointment.Application\DoctorAppointment.Application.csproj"/>
-        <ProjectReference Include="..\DoctorAppointment.Infrastructure\DoctorAppointment.Infrastructure.csproj"/>
+        <ProjectReference Include="..\DoctorAppointment.Application\DoctorAppointment.Application.csproj" />
+        <ProjectReference Include="..\DoctorAppointment.Infrastructure\DoctorAppointment.Infrastructure.csproj" />
 
     </ItemGroup>
     <ItemGroup>
-        <PackageReference Include="AutoMapper" Version="13.0.1"/>
+        <PackageReference Include="AutoMapper" Version="13.0.1" />
         <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="8.0.11">
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
             <PrivateAssets>all</PrivateAssets>
         </PackageReference>
-        <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1"/>
-        <PackageReference Include="Scrutor" Version="5.0.2"/>
+        <PackageReference Include="Quartz.Extensions.Hosting" Version="3.13.1" />
+        <PackageReference Include="Scrutor" Version="5.0.2" />
     </ItemGroup>
     <ItemGroup>
         <Content Update="Views\Appointment\_DoctorAppointmentTable.cshtml">
             <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
             <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+        </Content>
+        <Content Update="Views\Review\_ReviewBoxUpdate.cshtml">
+          <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+          <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
         </Content>
     </ItemGroup>
 </Project>

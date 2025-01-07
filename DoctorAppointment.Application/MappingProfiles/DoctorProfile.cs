@@ -13,6 +13,8 @@ public class DoctorProfile : Profile
             .ForMember(dest => dest.Specialization, opt => opt.MapFrom(src => src.Specialization))
             .ForMember(dest => dest.YearsOfExperience, opt => opt.MapFrom(src => src.YearsOfExperience))
             .ForMember(dest => dest.About, opt => opt.MapFrom(src => src.About))
+            .ForMember(dest => dest.Reviews, opt => opt.MapFrom(src => src.Reviews))
+            .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src => src.AverageRating))
             .ForMember(dest => dest.User, opt => opt.MapFrom(src => src.User)).ReverseMap();
         CreateMap<DoctorPostModel, Doctor>();
     }
