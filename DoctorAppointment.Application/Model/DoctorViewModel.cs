@@ -1,3 +1,4 @@
+using DoctorAppointment.Domain.Entities;
 using DoctorAppointment.Domain.Enums;
 
 namespace DoctorAppointment.Application.Model;
@@ -11,6 +12,9 @@ public class DoctorViewModel
     public string? About { get; set; }
 
     public bool IsDeleted { get; set; }
+    public List<Review>? Reviews { get; set; }
+
+    public float AverageRating { get; set; }
 
     // Optional for tracking users associated with doctors
     public UserViewModel User { get; set; }

@@ -4,6 +4,8 @@
 @{
     Layout = "_Layout";
     ViewData["Title"] = "DoctorDetail";
+    int reviewCount = Model.Reviews.Count();
+    int currentIndex = 0;
 }
 
 
@@ -15,57 +17,385 @@
                  alt="Ảnh bác sĩ" class="rounded-circle" style="width: 100%">
         </div>
 
-        <!-- Cột chứa thông tin chi tiết -->
+        <!-- Cột chứa thông tin chi tiết và đánh giá -->
         <div class="col-md-8">
-
-            <h2>@Model.User.FullName</h2>
-            <p><strong>Năm kinh nghiệm: </strong>@Model.YearsOfExperience năm</p>
-            <p>
-                <strong>Khoa:</strong>
-                @DisplayName.GetSpecialization(Model.Specialization)
-            </p>
-            <p>
-                <strong>Mô tả:</strong> @Model.About
-            </p>
-            <p>
-                <strong>Số điện thoại:</strong> @Model.User.PhoneNumber
-            </p>
-
-            <form id="AppointmentForm" asp-controller="Appointment" asp-action="BookAppointment">
-                <div class="mb-3">
-                    <label for="AppointmentDate" class="form-label">Ngày hẹn</label>
-                    <select class="form-select" id="AppointmentDate" name="AppointmentDate" required>
-                        <option value="">Chọn ngày</option>
-                        @{
-                            for (var i = 0; i < 5; i++)
+            <!-- Thông tin bác sĩ -->
+            <div class="row">
+                <div class="col-12">
+                    <div class="d-flex justify-content-between align-items-center w-100">
+                        <h2>@Model.User.FullName</h2>
+                        <div class="rating d-flex">
+                            @Model.AverageRating.ToString("F1")
+                            @for (int i = 1; i <= 5; i++)
                             {
-                                var date = DateTime.Now.AddDays(i);
-                                <option value="@date.ToString("yyyy-MM-dd")">
-                                    @date.ToString("dd/MM/yyyy") - @date.ToString("dddd", new
-                                                                       System.Globalization.CultureInfo("vi-VN"))
-                                </option>
+                                if (i <= @Model.AverageRating)
+                                {
+                                    <span class="fa fa-star checked"></span>
+                                }
+                                else
+                                {
+                                    <span class="fa fa-star"></span>
+                                }
                             }
-                        }
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label for="appointmentTime" class="form-label">Giờ hẹn</label>
-                    <input type="hidden" id="DoctorId" name="DoctorId" value="@Model.Id">
-                    <input type="hidden" id="StartTime" name="StartTime">
-                    <input type="hidden" id="EndTime" name="EndTime">
-                    <div id="timeSlotsContainer"></div>
-                </div>
-                <button type="submit" class="btn btn-success">Xác nhận đặt lịch</button>
-            </form>
+                        </div>
+                    </div>
 
+                    <p><strong>Năm kinh nghiệm: </strong>@Model.YearsOfExperience năm</p>
+                    <p>
+                        <strong>Khoa:</strong>
+                        @DisplayName.GetSpecialization(Model.Specialization)
+                    </p>
+                    <p>
+                        <strong>Mô tả:</strong> @Model.About
+                    </p>
+                    <p>
+                        <strong>Số điện thoại:</strong> @Model.User.PhoneNumber
+                    </p>
+                </div>
+            </div>
+
+            <!-- Form đặt lịch -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <form id="AppointmentForm" asp-controller="Appointment" asp-action="BookAppointment">
+                        <div class="mb-3">
+                            <label for="AppointmentDate" class="form-label">Ngày hẹn</label>
+                            <select class="form-select" id="AppointmentDate" name="AppointmentDate" required>
+                                <option value="">Chọn ngày</option>
+                                @for (var i = 0; i < 5; i++)
+                                {
+                                    var date = DateTime.Now.AddDays(i);
+                                    <option value="@date.ToString("yyyy-MM-dd")">
+                                        @date.ToString("dd/MM/yyyy") - @date.ToString("dddd", new System.Globalization.CultureInfo("vi-VN"))
+                                    </option>
+                                }
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="appointmentTime" class="form-label">Giờ hẹn</label>
+                            <input type="hidden" id="DoctorId" name="DoctorId" value="@Model.Id">
+                            <input type="hidden" id="StartTime" name="StartTime">
+                            <input type="hidden" id="EndTime" name="EndTime">
+                            <div id="timeSlotsContainer"></div>
+                        </div>
+                        <button type="submit" class="btn btn-success">Xác nhận đặt lịch</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Đánh giá -->
+            <div class="row mt-4">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h4 class="mb-0">Đánh giá</h4>
+                                @if(Model.Reviews.Count > 3)
+                                {
+                                    <p id="seeMoreReviews" class="see-more mb-0" style="cursor: pointer; text-decoration: underline; color: blue;">Xem thêm</p>
+                                }
+                            </div>
+                            <!-- reviews  -->
+                            <div id="reviews-container" class="review-container" style="max-height: 300px; overflow-y: auto; display: none;">
+                                @foreach(var review in Model.Reviews){
+                                    currentIndex++;
+                                    <div class="review rating">
+                                        <p class="mb-1"><strong>@review.Doctor.User.FullName</strong></p>
+                                        <div style="display: flex; align-items: center;">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= review.Rating)
+                                                {
+                                                    <span class="fa fa-star checked" style="margin-right: 2px; font-size: 15px;"></span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="fa fa-star" style="margin-right: 2px; font-size: 15px;"></span>
+                                                }
+                                            }
+                                            <span style="margin-left: 10px; font-size: 14px; color: gray;">
+                                                @review.ReviewDate.Value.ToString("dd/MM/yyyy")
+                                            </span>
+                                        </div>
+                                        <p>@review.Content</p>
+                                    </div>
+
+                                    @if (Model.Reviews.IndexOf(review) < Model.Reviews.Count - 1)
+                                    {
+                                        <hr class="my-3 border-secondary">
+                                    }
+                                }
+                                @if (!User.IsInRole("Doctor"))
+                                {
+                                    <button type="button" class="btn btn-primary" data-doctorId="@Model.User.Id" data-bs-toggle="modal" data-bs-target="#ratingModal">
+                                        Đánh giá
+                                    </button>
+                                }
+                            </div>
+                            <!-- reviews preview -->
+                            <div id="reviews-preview" class="review-preview">
+                                @if (Model.Reviews.Count == 0)
+                                {
+                                    <span>Không có đánh giá</span>
+                                }
+                                @foreach (var review in Model.Reviews.Take(3))
+                                {
+                                    currentIndex++;
+                                    <div class="review rating">
+                                        <p class="mb-1"><strong>@review.Patient.User.FullName</strong></p>
+                                        <div style="display: flex; align-items: center;">
+                                            @for (int i = 1; i <= 5; i++)
+                                            {
+                                                if (i <= review.Rating)
+                                                {
+                                                    <span class="fa fa-star checked" style="margin-right: 2px; font-size: 15px;"></span>
+                                                }
+                                                else
+                                                {
+                                                    <span class="fa fa-star" style="margin-right: 2px; font-size: 15px;"></span>
+                                                }
+                                            }
+                                            <span style="margin-left: 10px; font-size: 14px; color: gray;">
+                                                @review.ReviewDate.Value.ToString("dd/MM/yyyy")
+                                            </span>
+                                        </div>
+                                        <p>@review.Content</p>
+                                    </div>
+
+                                    @if (Model.Reviews.IndexOf(review) < 2)
+                                    {
+                                        <hr class="my-3 border-secondary">
+                                    }
+                                }
+                                @if (!User.IsInRole("Doctor"))
+                                {
+                                    <button type="button" class="btn btn-primary" data-doctorId="@Model.User.Id" data-bs-toggle="modal" data-bs-target="#ratingModal">
+                                        Đánh giá
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-
-
 </div>
+
+<div id="ReviewBox"></div>
+<div id="ReviewBoxUpdate"></div>
+
+<style>
+    .rating .fa {
+        font-size: 20px;
+        color: gray;
+        margin-left: 2px; 
+    }
+
+    .rating .checked {
+        color: gold;
+    }
+
+    .d-flex {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+    }
+
+    .mb-0 {
+        margin-bottom: 0;
+    }
+
+    .review-container
+    {
+        max-height: 200px;
+        overflow-y: auto;
+    }
+
+    .see-more {
+        cursor: pointer;
+        text-decoration: underline;
+        color: blue;
+    }
+
+    .hidden {
+        display: none;
+    }
+    
+</style>
 
 @section Scripts {
     <script>
+        function setStarRating(rating) {
+            $('#updateStarRating .fa-star').each(function () {
+                const starValue = $(this).data('value');
+                if (starValue <= rating) {
+                    $(this).addClass('checked');
+                } else {
+                    $(this).removeClass('checked');
+                }
+            });
+            $('#updateRating').val(rating);
+        }
+
+        $(document).on('click', '#seeMoreReviews', function () {
+            const reviewContainer = document.getElementById('reviews-container');
+            const reviewPreview = document.getElementById('reviews-preview');
+
+            if (reviewContainer && reviewPreview) {
+                $(reviewPreview).hide();
+                $(reviewContainer).show();
+                $(this).hide();
+            }
+        });
+
+        $('button[data-bs-target="#ratingModal"]').on('click', function () {
+            const doctorId = @Model.Id;
+            $.ajax({
+                url: '/Appointment/CheckAppointment',
+                type: 'POST',
+                data: { doctorId: doctorId },
+                success: function (data) {
+                    if (data.success === true) {
+                        $.ajax({
+                            url: '/Review/CheckReview',
+                            type: 'POST',
+                            data: { doctorId: doctorId },
+                            success: function (data) {
+                                if (data.success === true) {
+                                    $.ajax({
+                                        url: '/Review/GetReview',
+                                        type: 'POST',
+                                        data: { doctorId: doctorId },
+                                        success: function (data) {
+                                            const modalElement = document.getElementById('updateRatingModal');
+                                            const rating = data.review.rating;
+                                            const content = data.review.content;
+                                            if (modalElement) {
+                                                const bootstrapModal = bootstrap.Modal.getInstance(modalElement);
+                                                bootstrapModal.dispose();
+                                            }
+                                            $.get('/Review/ReviewBoxUpdate', function (data) {
+                                                $('#ReviewBoxUpdate').html(data);
+                                                $('#updateRatingModal').modal('show');
+                                                $('#updateDoctorId').val(doctorId);
+                                                setStarRating(rating);
+                                                $('#updateContent').val(content);
+                                            });
+                                        },
+                                        error: function (xhr, status, error) {
+                                            console.error('Error:', error);
+                                            alert('An error occurred while get review of doctor.');
+                                        }
+                                    });
+
+                                } else {
+                                    const modalElement = document.getElementById('ratingModal');
+                                    if (modalElement) {
+                                        const bootstrapModal = bootstrap.Modal.getInstance(modalElement);
+                                        bootstrapModal.dispose();
+                                    }
+                                    $.get('/Review/ReviewBox', function (data) {
+                                        $('#ReviewBox').html(data);
+                                        $('#ratingModal').modal('show');
+                                        $('#doctorId').val(doctorId);
+                                    });
+                                }
+                            },
+                            error: function (xhr, status, error) {
+                                console.error('Error:', error);
+                                alert('An error occurred while review the doctor.');
+                            }
+                        });
+                    } else {
+                        alert("Bạn phải có cuộc hẹn với bác sĩ này mới có thể đánh giá!")
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error('Error:', error);
+                    alert('An error occurred while checking the appointment with doctor.');
+                }
+            });
+        });
+
+
+        document.addEventListener("DOMContentLoaded", function () {
+            // Gắn sự kiện click cho các ngôi sao
+            $(document).on('click', '#starRating .review', function () {
+                const selectedValue = $(this).data('value');
+                $('#rating').val(selectedValue);
+
+                // Cập nhật trạng thái checked cho các ngôi sao
+                $('#starRating .review').each(function () {
+                    const starValue = $(this).data('value');
+                    $(this).toggleClass('checked', starValue <= selectedValue);
+                });
+            });
+
+            $(document).on('click', '#updateStarRating .review', function () {
+                const selectedValue = $(this).data('value');
+                $('#updateRating').val(selectedValue);
+
+                $('#updateStarRating .review').each(function () {
+                    const starValue = $(this).data('value');
+                    $(this).toggleClass('checked', starValue <= selectedValue);
+                });
+            });
+
+            // Xử lý form gửi đánh giá
+            $(document).on('click', '#ratingForm button[type="submit"]', function (e) {
+                e.preventDefault();
+                const form = $('#ratingForm');
+                const modal = bootstrap.Modal.getInstance(document.getElementById("ratingModal")); // Lấy instance của modal
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: form.serialize(),
+                    success: function (data) {
+                        if (data.success) {
+                            form[0].reset();
+                            $('#rating').val(0);
+                            $('#starRating .review').removeClass('checked');
+
+                            modal.hide();
+                            location.reload();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                        alert('Gửi đánh giá thất bại, vui lòng thử lại.');
+                    }
+                });
+            });
+            // Xử lý form update đánh giá
+            $(document).on('click', '#updateRatingForm button[type="submit"]', function (e) {
+                e.preventDefault();
+                const form = $('#updateRatingForm');
+                const modal = bootstrap.Modal.getInstance(document.getElementById("updateRatingModal"));
+
+                $.ajax({
+                    url: form.attr('action'),
+                    type: 'POST',
+                    data: form.serialize(),
+                    success: function (data) {
+                        if (data.success) {
+                            form[0].reset();
+                            $('#updateRating').val(0);
+                            $('#updateStarRating .review').removeClass('checked');
+
+                            modal.hide();
+                            location.reload();
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        console.error('Error:', error);
+                        alert('Update đánh giá thất bại, vui lòng thử lại.');
+                    }
+                });
+            });
+        });
+
         const connection = new signalR.HubConnectionBuilder()
             .withUrl("/appointmentHub")
             .build();

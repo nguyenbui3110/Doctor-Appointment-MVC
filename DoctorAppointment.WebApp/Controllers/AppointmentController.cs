@@ -139,4 +139,13 @@ public class AppointmentController : Controller
         var appointments = await _appointmentService.GetAllDoctorAppointmentsAsync();
         return View(appointments);
     }
+    [HttpPost]
+    public async Task<ActionResult> CheckAppointment(int doctorId)
+    {
+        if (await _appointmentService.CheckAppointmentAsync(doctorId))
+        {
+            return Json(new { success = true });
+        }
+        return Json(new { success = false });
+    }
 }

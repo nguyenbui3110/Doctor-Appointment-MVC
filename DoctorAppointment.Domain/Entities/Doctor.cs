@@ -10,6 +10,8 @@ public class Doctor : EntityBase
     public int? YearsOfExperience { get; set; }
     public string? About { get; set; }
     public ICollection<Appointment> Appointments { get; set; }
+    public ICollection<Review>? Reviews { get; set; }
+    public double AverageRating { get; set; }
 
     // Optional for tracking users associated with doctors
     public User User { get; set; }
