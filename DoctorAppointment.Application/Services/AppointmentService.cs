@@ -163,4 +163,10 @@ public class AppointmentService(
         await UnitOfWork.SaveChangesAsync();
         return true;
     }
+
+    public async Task<bool> CheckAppointmentAsync(int doctorId)
+    {
+        var patient = await patientRepo.GetPatientByUserIdAsync(int.Parse(CurrentUser.Id));
+        return await appointmentRepo.CheckAppointmentAsync(doctorId, patient.Id);
+    }
 }

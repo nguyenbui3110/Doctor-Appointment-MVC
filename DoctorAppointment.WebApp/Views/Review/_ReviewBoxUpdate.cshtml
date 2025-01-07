@@ -1,0 +1,54 @@
+﻿@*
+    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
+*@
+@{
+}
+
+<!-- Modal -->
+<div class="modal fade" id="updateRatingModal" tabindex="-1" aria-labelledby="ratingModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="ratingModalLabel">Đánh giá bác sĩ</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="updateRatingForm" asp-action="UpdateReviewDoctor">
+                    <input type="hidden" name="doctorId" id="updateDoctorId">
+                    <!-- Đánh giá sao -->
+                    <div class="mb-3">
+                        <label class="form-label">Chọn số sao:</label>
+                        <div id="updateStarRating" class="rating d-flex" style="font-size: 1.5rem;">
+                            <span class="fa fa-star review" data-value="1"></span>
+                            <span class="fa fa-star review" data-value="2"></span>
+                            <span class="fa fa-star review" data-value="3"></span>
+                            <span class="fa fa-star review" data-value="4"></span>
+                            <span class="fa fa-star review" data-value="5"></span>
+                        </div>
+                        <input type="hidden" name="rating" id="updateRating" value="0">
+                    </div>
+
+                    <!-- Nội dung đánh giá -->
+                    <div class="mb-3">
+                        <label for="Content" class="form-label">Nội dung đánh giá:</label>
+                        <textarea id="updateContent" name="Content" class="form-control" rows="4" placeholder="Nhập nội dung đánh giá của bạn..."></textarea>
+                    </div>
+
+                    <!-- Nút gửi -->
+                    <button type="submit" class="btn btn-success">Gửi đánh giá</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .rating .fa {
+        cursor: pointer;
+        color: gray;
+    }
+
+    .rating .fa.checked {
+        color: gold;
+    }
+</style>

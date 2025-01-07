@@ -39,6 +39,10 @@
                         };
                     }
                     <span class="@statusClass">@DisplayName.GetAppointmentStatus(Appointment!.Status!.Value)</span>
+                    @if (Appointment.Status == AppointmentStatus.Completed)
+                    {
+                        <button data-doctor-id="@Appointment?.DoctorId" class="reviewDoctor btn btn-secondary btn-sm ml-2">Đánh giá</button>
+                    }
                 </td>
                 <td>
                     @if (Appointment.Status == AppointmentStatus.Pending || Appointment.Status ==

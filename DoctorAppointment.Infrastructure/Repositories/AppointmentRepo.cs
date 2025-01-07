@@ -190,4 +190,10 @@ public class AppointmentRepo : RepositoryBase<Appointment>, IAppointmentRepo
             query = query.Where(a => a.AppointmentDate >= from && a.AppointmentDate <= to);
         return query;
     }
+
+    public async Task<bool> CheckAppointmentAsync(int doctorId, int patientId)
+    {
+        var hasAppointment = await DbSet.AnyAsync(a => a.DoctorId == doctorId && a.PatientId == patientId && a.Status == AppointmentStatus.Completed);
+        return hasAppointment;
+    }
 }
