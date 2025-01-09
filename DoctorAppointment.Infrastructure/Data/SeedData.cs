@@ -86,7 +86,7 @@ public static class SeedData
             .RuleFor(u => u.EmailConfirmed, _ => true)
             .RuleFor(u => u.SecurityStamp, _ => Guid.NewGuid().ToString())
             .RuleFor(u => u.PasswordHash, _ => new PasswordHasher<User>().HashPassword(null!, "User@123"))
-            .RuleFor(u => u.AvatarUrl, (f, u) => f.Image.PlaceholderUrl(250, 250, u.FullName))
+            .RuleFor(u => u.AvatarUrl, (f, u) => "https://placehold.co/250/2D2D2D/ffffff.png?text=" + u.FullName)
             .RuleFor(u => u.DateOfBirth, f => f.Date.Past(30).Date)
             .RuleFor(u => u.Gender, f => f.PickRandom<Gender>())
             .Generate(100);
